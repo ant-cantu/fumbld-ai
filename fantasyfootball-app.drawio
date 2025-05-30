@@ -1,0 +1,53 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0" version="27.0.9">
+  <diagram name="Page-1" id="fbVDKvVrY0pf_wrF8faw">
+    <mxGraphModel dx="1224" dy="1112" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="1700" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="DJ12fH-5KLJPkDTYWNq8-1" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Fantasy Football Stats App&lt;/h1&gt;&lt;p&gt;Web application utilizing AI and API calls in order for users to register their fantasy/yahoo rosters and determine best starting roster on a weekly basis&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="40" y="30" width="270" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="DJ12fH-5KLJPkDTYWNq8-6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="DJ12fH-5KLJPkDTYWNq8-3" target="DJ12fH-5KLJPkDTYWNq8-5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DJ12fH-5KLJPkDTYWNq8-3" value="Actor" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+          <mxGeometry x="10" y="240" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="DJ12fH-5KLJPkDTYWNq8-5" value="Fantasy Football App Web Page" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="75" y="240" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="DJ12fH-5KLJPkDTYWNq8-7" value="" style="curved=1;endArrow=classic;html=1;rounded=0;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="190" y="260" as="sourcePoint" />
+            <mxPoint x="240" y="210" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="240" y="260" />
+              <mxPoint x="190" y="210" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DJ12fH-5KLJPkDTYWNq8-8" value="First-time User&lt;div&gt;*Requires registration&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="240" y="180" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="DJ12fH-5KLJPkDTYWNq8-10" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="190" y="300" as="sourcePoint" />
+            <mxPoint x="260" y="300" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DJ12fH-5KLJPkDTYWNq8-11" value="Returning User&lt;div&gt;*Requires login&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="260" y="270" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="DJ12fH-5KLJPkDTYWNq8-12" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="310" y="330" as="sourcePoint" />
+            <mxPoint x="310" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DJ12fH-5KLJPkDTYWNq8-13" value="Prompt Login" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="270" y="370" width="80" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
