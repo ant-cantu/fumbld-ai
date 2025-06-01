@@ -26,3 +26,16 @@ class RegistrationForm(FlaskForm):
     ])
 
     submit = SubmitField("Register")
+
+class LoginForm(FlaskForm):
+    username = StringField("Username", validators=[
+        DataRequired(message="Username is required, please enter a username."),
+        Length(min=3, max=30, message="Username must be between 3 and 30 characters.")
+    ])
+
+    password = PasswordField("Password", validators=[
+        DataRequired(message="Password is required."),
+        Length(min=6, message="Password must be at least 6 characters long.")
+    ])
+
+    submit = SubmitField("Register")
