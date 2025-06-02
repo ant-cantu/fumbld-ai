@@ -10,9 +10,18 @@
     <header>
         <h1>Welcome to Gridiron AI</h1>
     </header>
+    {% with messages = get_flashed_messages(category_filter=["error"]) %}
+        {% if messages %}
+            <div class="flash-error">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
     <main>
         <p>{{ message }}</p>
-        <p><a href="">Click here to login.</a></p>
+        <p><a href="/logout">Click here to logout.</a></p>
     </main>
     <footer>
         <p>&copy; 2024 Gridiron AI</p>
