@@ -1,6 +1,8 @@
 # Gridiron AI
 
-<img src="https://github.com/user-attachments/assets/59a9d7c2-746a-4fab-bc73-b983457047b1" height="50%" width="50%">
+<p align="center">
+<img src="https://github.com/user-attachments/assets/59a9d7c2-746a-4fab-bc73-b983457047b1" height="30%" width="30%">
+</p>
 
 ## About Gridiron AI
 
