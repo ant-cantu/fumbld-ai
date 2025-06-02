@@ -1,5 +1,7 @@
 # Gridiron AI
 
+<img src="https://github.com/user-attachments/assets/fe307ff8-17e6-49bf-996c-e59680abe9ed" style="width:25%; height:auto;">
+
 ## About Gridiron AI
 
 This AI-powered software helps you make smarter fantasy football decisions. 
