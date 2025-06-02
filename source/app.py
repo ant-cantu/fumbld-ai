@@ -1,8 +1,6 @@
 import os
-from werkzeug.security import check_password_hash, generate_password_hash
-import account_manager.login
 from extensions import db
-from flask import Flask, render_template, flash, redirect
+from flask import Flask, render_template, flash, redirect, session, url_for
 from models import User #, Roster
 import account_manager as account
 
@@ -28,9 +26,17 @@ def init_app():
     # Defining root page
     @app.route("/")
     def index():
-        message = "Database Initialized"
-        return render_template("index.html", message=message)
+        # If user is not logged in, redirect to login page
+        if 'user_id' not in session:
+            flash("You need to be logged in to view this page.", "error")
+            return redirect(url_for('handle_login'))
 
+        # Get the logged in user by user ID
+        query_user = User.query.filter_by(id=session['user_id']).first()
+
+        message = f"Welcome to Gridiron AI {query_user.username}"
+        return render_template("index.html", message=message)
+        
     # User Registration
     @app.route('/register', methods=['GET', 'POST'])
     def handle_reg():
@@ -42,6 +48,12 @@ def init_app():
         return account.account_login()
 
     # User Logout
+    @app.route('/logout')
+    def handle_logout():
+        # Remove user from session & redirect to login page
+        session.pop('user_id', None)
+        flash("You have been logged out." "info")
+        return redirect(url_for('handle_login'))
     return app
 
 app = init_app()
