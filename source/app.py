@@ -4,6 +4,7 @@ from flask import Flask, render_template, flash, redirect, session, url_for
 from models import User #, Roster
 import account_manager as account
 from datetime import datetime
+import roster
 
 def init_app():
     # Configure application
@@ -47,6 +48,7 @@ def init_app():
         elif query_user.last_login:
             last_login = query_user.last_login.strftime("%m-%d-%y %I:%M:%S")
             
+            # ** Need to figure out where to store the last login, so we can display it before its updated to the current time **
             utc_now = datetime.now(pytz.utc)
             pacific_tmz = pytz.timezone("America/Los_Angeles")
             pacific_now = utc_now.astimezone(pacific_tmz)
@@ -55,6 +57,11 @@ def init_app():
         return render_template("dashboard.html",
                                username=query_user.username,
                                last_login=last_login)
+    
+    # User roster (TESTING)
+    @app.route('/roster')
+    def handle_roster():
+        return roster.roster()
         
     # User Registration
     @app.route('/register', methods=['GET', 'POST'])
