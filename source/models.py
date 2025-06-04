@@ -14,7 +14,8 @@ class User(db.Model):
     email = db.Column(db.String(50), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
     date_registered = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))
-    last_logon = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))
+    last_login = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))
+    now_login = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))
 
     # Relationship with Roster
     roster = db.relationship('Roster', backref='team', lazy=True, cascade="all, delete-orphan")

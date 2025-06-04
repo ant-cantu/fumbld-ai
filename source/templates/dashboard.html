@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gridiron AI</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <p>{{ username }}, last logged in {{ last_login }}</p>
+        <h1>Welcome to Gridiron AI, <b>{{ username }}</b></h1>
+    </header>
+    {% with messages = get_flashed_messages(category_filter=["error"]) %}
+        {% if messages %}
+            <div class="flash-error">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <main>
+        <p><a href="/logout">Click here to logout.</a></p>
+    </main>
+    <footer>
+        <p>&copy; 2024 Gridiron AI</p>
+    </footer>
+</body>
+</html>

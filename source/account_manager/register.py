@@ -1,5 +1,5 @@
 # account_manager.py
-from flask import render_template, flash, redirect
+from flask import render_template, flash, redirect, url_for
 from forms import RegistrationForm
 from models import User
 from extensions import db
@@ -22,6 +22,7 @@ def account_register():
             flash("The username already exists, please choose another.", "error")
             return render_template("registration.html", form=form)
         
+        # Check if existing email
         exisiting_email = User.query.filter_by(email=userEmail).first()
         if exisiting_email:
             flash("This email is already registered!", "error")
@@ -37,7 +38,7 @@ def account_register():
             # Save the changes to the database
             db.session.commit()
             flash("Account successfully created! You can now log in!", "success")
-            return redirect("index.html")
+            return redirect(url_for('dashboard'))
         except Exception as e:
             # Rollback changes made to database incase of error
             db.session.rollback()

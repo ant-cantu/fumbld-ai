@@ -1,8 +1,9 @@
-import os
+import os, pytz
 from extensions import db
 from flask import Flask, render_template, flash, redirect, session, url_for
 from models import User #, Roster
 import account_manager as account
+from datetime import datetime
 
 def init_app():
     # Configure application
@@ -23,9 +24,15 @@ def init_app():
     with app.app_context():
         db.create_all()
 
-    # Defining root page
-    @app.route("/")
-    def index():
+    # Defining Root Page
+    @app.route('/')
+    def home():
+        message = f"Welcome to Gridiron AI"
+        return render_template("index.html", message=message)
+
+    # User Dashboard
+    @app.route("/dashboard")
+    def dashboard():
         # If user is not logged in, redirect to login page
         if 'user_id' not in session:
             flash("You need to be logged in to view this page.", "error")
@@ -34,8 +41,20 @@ def init_app():
         # Get the logged in user by user ID
         query_user = User.query.filter_by(id=session['user_id']).first()
 
-        message = f"Welcome to Gridiron AI {query_user.username}"
-        return render_template("index.html", message=message)
+        # Get date for last login
+        if not query_user.last_login:
+            last_login = query_user.now_login.strftime("%m-%d-%y %I:%M:%S")
+        elif query_user.last_login:
+            last_login = query_user.last_login.strftime("%m-%d-%y %I:%M:%S")
+            
+            utc_now = datetime.now(pytz.utc)
+            pacific_tmz = pytz.timezone("America/Los_Angeles")
+            pacific_now = utc_now.astimezone(pacific_tmz)
+            query_user.last_login = pacific_now
+
+        return render_template("dashboard.html",
+                               username=query_user.username,
+                               last_login=last_login)
         
     # User Registration
     @app.route('/register', methods=['GET', 'POST'])
