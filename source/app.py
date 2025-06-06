@@ -284,7 +284,8 @@ def init_app():
         consumer_secret = current_app.config.get('YAHOO_CONSUMER_SECRET')
         # callback_url = current_app.config.get('YAHOO_CALLBACK_URL')
         callback_url = url_for('yahoo_callback', _external=True, _scheme='https')
-        print(f"CALLBACK: {callback_url}")
+
+        print(f"yahoo_authorize() CALLBACK: {callback_url}")
 
         if not all([consumer_key, consumer_secret, callback_url]):
             print("Yahoo API credentials are not properly configured.")
@@ -327,6 +328,8 @@ def init_app():
         # callback_url = current_app.config.get('YAHOO_CALLBACK_URL')
         callback_url = url_for('yahoo_callback', _external=True, _scheme='https')
 
+        print(f"yahoo_callback() CALLBACK: {callback_url}")
+        
         user_id = session.get('user_id')
         if not user_id:
             print("User is not logged in.")
