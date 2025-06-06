@@ -20,6 +20,11 @@ class User(db.Model):
     # Relationship with Roster
     roster = db.relationship('Roster', backref='team', lazy=True, cascade="all, delete-orphan")
 
+    # Relationship to the YahooToken table
+    # 'uselist=False' makes this a one-to-one relationship from the User side
+    # 'back_populates' connects it to the 'user' attribute in YahooToken
+    yahoo_token = db.relationship("YahooToken", back_populates="user", uselist=False, cascade="all, delete-orphan")
+
     def set_password(self, password):
         """
         Take plain text and generate password hash
@@ -62,3 +67,27 @@ class Roster(db.Model):
         self.league_id = league_id
         self.season = season
         self.user_id = user_id
+
+class YahooToken(db.Model):
+    __tablename__ = 'yahoo_tokens'
+
+    # Primary key for this table
+    id = db.Column(db.Integer, primary_key=True)
+
+    # Foreign Key to link to the User table
+    # 'users.id' refers to the 'id' column in the 'users' table
+    # unique=True enforces the one-to-one
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
+
+    # Yahoo OAuth fields
+    access_token = db.Column(db.String(1024), nullable=True)
+    refresh_token = db.Column(db.String(1024), nullable=True)
+    token_type = db.Column(db.String(50), nullable=True)
+    token_expiry = db.Column(db.DateTime, nullable=True)
+
+    # Relationship back to the User table
+    # 'back_populates' connects it to the 'yahoo_token' attribute in User
+    user = db.relationship("User", back_populates="yahoo_token")
+
+    def __repr__(self):
+        return f'<YahooToken for User ID: {self.user_id}>'

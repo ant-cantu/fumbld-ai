@@ -21,6 +21,13 @@
         {% endif %}
     {% endwith %}
     <main>
+        <ul>
+            {% if roster %}
+                {% for player in roster %}
+                    <li>{{ player }}</li>
+                {% endfor %}
+            {% endif %}
+        </ul>
         <p><a href="/logout">Click here to logout.</a></p>
     </main>
     <footer>

@@ -4,19 +4,19 @@ import yahoo_fantasy_api as yfa
 import json, os
 from flask import render_template
 
-current_script_dir = os.path.dirname(os.path.abspath(__file__))
+#current_script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Define the name of the subdirectory you're looking for
-subdirectory_name = "ignore"
+#subdirectory_name = "ignore"
 
 # Construct the full path to the potential subdirectory
-potential_subdir_path = os.path.join(current_script_dir, subdirectory_name)
+#potential_subdir_path = os.path.join(current_script_dir, subdirectory_name)
 
-file_path = os.path.join(potential_subdir_path, "oauth2.json")
+#file_path = os.path.join(potential_subdir_path, "oauth2.json")
 
-oauth = OAuth2(None, None, from_file=file_path)
+#oauth = OAuth2(None, None, from_file=file_path)
 
-game = yfa.Game(oauth, 'nfl')
+#game = yfa.Game(oauth, 'nfl')
 
 # print(game.league_ids(year=2024))
 
