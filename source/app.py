@@ -13,6 +13,10 @@ import requests
 import yahoo_fantasy_api as yfa
 from yahoo_oauth import OAuth2
 from account_manager import yahoo_utils 
+from decorators import login_required
+from requests_oauthlib import OAuth2Session
+from types import SimpleNamespace
+from oauthlib.oauth2.rfc6749.errors import InvalidGrantError
 
 def init_app():
     # Load environment variables
@@ -54,7 +58,7 @@ def init_app():
         message = f"Welcome to Gridiron AI"
         return render_template("index.html", message=message)
 
-    def get_yahoo_fantasy_roster():
+    # def get_yahoo_fantasy_roster():
         consumer_key = current_app.config.get('YAHOO_CONSUMER_KEY')
         consumer_secret = current_app.config.get('YAHOO_CONSUMER_SECRET')
 
@@ -82,7 +86,7 @@ def init_app():
     
         return roster_data
     
-    def get_roster():
+   # def get_roster():
         user_id = session.get('user_id')
         if not user_id:
             return redirect(url_for('handle_login'))
@@ -135,9 +139,84 @@ def init_app():
         except Exception as e:
             print(f"An error occured with the Yahoo Fantasy API: {e}")
         
+    def get_roster():
+        user_id = session.get('user_id')
+        if not user_id:
+            return redirect(url_for('handle_login'))
+    
+        # Retrieve Yahoo Credentials
+        consumer_key = current_app.config.get('YAHOO_CONSUMER_KEY')
+        consumer_secret = current_app.config.get('YAHOO_CONSUMER_SECRET')
+
+        user = User.query.filter_by(id=user_id).first()
+        print(f"Roster Pull From User: {user.username}") # Debug
+
+        def token_updater(token):
+            # This is the callback function we've discussed
+            print("--- Running token_updater callback ---")
+            yahoo_utils.update_token_in_db(user, token)
+            print("--- Finished token_updater callback ---")
+
+        # Calculate token expiration
+        expires_in = (user.yahoo_token.token_expiry - datetime.utcnow()).total_seconds()
+
+        token_data = {
+            'access_token': user.yahoo_token.access_token,
+            'refresh_token': user.yahoo_token.refresh_token,
+            'token_type': user.yahoo_token.token_type,
+            'expires_in': expires_in
+        }
+
+        # The token endpoint for Yahoo Fantasy Sports
+        token_url = 'https://api.login.yahoo.com/oauth2/get_token'
+
+        oauth = OAuth2Session(
+            client_id=consumer_key,
+            token=token_data,
+            auto_refresh_url=token_url,
+            auto_refresh_kwargs={
+                'client_id': consumer_key,
+                'client_secret': consumer_secret,
+            },
+            token_updater=token_updater
+        )
+
+        auth_handler = SimpleNamespace()
+        auth_handler.session = oauth
+
+        try:
+            # Pass the authenticated OAuth2Session object to the yahoo_fantasy_api Game class
+            gm = yfa.Game(auth_handler, 'nfl')
+            print(gm.game_id())
+            roster_data = []
+            # Example: Fetching data for a specific league
+            # You would likely have the league_id stored or passed in for a multi-user app
+            leagues = gm.league_ids()
+            print(leagues)
+            league = gm.to_league(leagues[0])
+            team = league.to_team(league.team_key())
+            roster = team.roster()
+
+            for player in roster:
+                if "name" in player:
+                    roster_data.append(player["name"])
+                    print(player["name"])
+
+            return roster_data
+
+        except InvalidGrantError:
+            # Step 4: If the automatic refresh fails, handle it gracefully
+            # This means the refresh token is bad, and the user must re-authenticate.
+            print(f"Refresh token for user {user.id} is invalid. Forcing re-authentication.")
+        except Exception as e:
+            print(f"An error occurred with the Yahoo Fantasy API: {e}")
+            # You might want to handle specific OAuth errors here,
+            # like redirecting to re-authorize if the refresh token is invalid.
+            return None, 500 # Or render an error template
 
     # User Dashboard
     @app.route("/dashboard")
+    @login_required
     def dashboard():
         # If user is not logged in, redirect to login page
         if 'user_id' not in session:
@@ -198,11 +277,14 @@ def init_app():
         return redirect(url_for('handle_login'))
     
     @app.route('/yahoo/authorize')
+    @login_required
     def yahoo_authorize():
         """Redirects the user to Yahoo for authentication."""
         consumer_key = current_app.config.get('YAHOO_CONSUMER_KEY')
         consumer_secret = current_app.config.get('YAHOO_CONSUMER_SECRET')
-        callback_url = current_app.config.get('YAHOO_CALLBACK_URL')
+        # callback_url = current_app.config.get('YAHOO_CALLBACK_URL')
+        callback_url = url_for('yahoo_callback', _external=True, _scheme='https')
+        print(f"CALLBACK: {callback_url}")
 
         if not all([consumer_key, consumer_secret, callback_url]):
             print("Yahoo API credentials are not properly configured.")
@@ -210,38 +292,42 @@ def init_app():
         
         print("Passed the yahoo config check")
         
-        yahoo_service = OAuth2Service(
-            name='yahoo',
-            client_id=consumer_key,
-            client_secret=consumer_secret,
-            access_token_url='https://api.login.yahoo.com/oauth2/get_token',
-            authorize_url='https://api.login.yahoo.com/oauth2/request_auth'
-        )
+        try:
+            yahoo_service = OAuth2Service(
+                name='yahoo',
+                client_id=consumer_key,
+                client_secret=consumer_secret,
+                access_token_url='https://api.login.yahoo.com/oauth2/get_token',
+                authorize_url='https://api.login.yahoo.com/oauth2/request_auth'
+            )
 
-        generated_state = binascii.hexlify(os.urandom(16)).decode()
-        session['yahoo_oauth_state'] = generated_state
-        
-        auth_url = yahoo_service.get_authorize_url(
-            state=generated_state,
-            redirect_uri=callback_url,
-            response_type='code'
-        )
+            generated_state = binascii.hexlify(os.urandom(16)).decode()
+            session['yahoo_oauth_state'] = generated_state
+            
+            auth_url = yahoo_service.get_authorize_url(
+                state=generated_state,
+                redirect_uri=callback_url,
+                response_type='code'
+            )
+        except Exception as e:
+            print(f"Yahoo Authorize Error: {e}")
 
         print(f"Generated Yahoo Auth URL: {auth_url}")
     
         return redirect(auth_url)
     
     @app.route('/yahoo/callback')
+    @login_required
     def yahoo_callback():
         """Handles the callback from Yahoo after authorization"""
         print("Entering Yahoo Callback")
 
         consumer_key = current_app.config.get('YAHOO_CONSUMER_KEY')
         consumer_secret = current_app.config.get('YAHOO_CONSUMER_SECRET')
-        callback_url = current_app.config.get('YAHOO_CALLBACK_URL')
+        # callback_url = current_app.config.get('YAHOO_CALLBACK_URL')
+        callback_url = url_for('yahoo_callback', _external=True, _scheme='https')
 
         user_id = session.get('user_id')
-
         if not user_id:
             print("User is not logged in.")
             return redirect(url_for('handle_login'))
@@ -265,13 +351,13 @@ def init_app():
             return "Missing state parameter.", 403
 
         # Recreate the service object to get the access token
-        yahoo_service = OAuth2Service(
-            name='yahoo',
-            client_id=consumer_key,
-            client_secret=consumer_secret,
-            access_token_url='https://api.login.yahoo.com/oauth2/get_token',
-            authorize_url='https://api.login.yahoo.com/oauth2/request_auth'
-        )
+        # yahoo_service = OAuth2Service(
+        #    name='yahoo',
+        #    client_id=consumer_key,
+        #    client_secret=consumer_secret,
+        #    access_token_url='https://api.login.yahoo.com/oauth2/get_token',
+        #    authorize_url='https://api.login.yahoo.com/oauth2/request_auth'
+        # )
 
         try:
             token_url = 'https://api.login.yahoo.com/oauth2/get_token'

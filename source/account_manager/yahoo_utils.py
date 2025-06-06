@@ -1,32 +1,27 @@
-from extensions import db # Assuming 'db' is your SQLAlchemy instance
-from models import User, YahooToken # Import your User and YahooToken models
+# In your yahoo_utils.py or models.py file
+
 from datetime import datetime, timedelta
-from flask import session
+from extensions import db  # Adjust this to import your database instance
 
-def update_token_in_db(token_dict):
+def update_token_in_db(user, token):
     """
-    Callback function to update the user's token in the database.
+    Saves the new token dictionary to the database for a given user.
+    This is the callback function used by requests-oauthlib.
     """
-    # You need a way to identify the current user within this callback.
-    # One common way is to use a request context if this is Flask-specific,
-    # or pass the user_id when setting up the oauth object.
-    # For this example, we'll assume you can get the user_id from the session.
-    user_id = session.get('user_id')
-    if not user_id:
-        print("Error: Could not find user_id in session to update token.")
-        return
-
-    user_token = YahooToken.query.filter_by(user_id=user_id).first()
-    if user_token:
-        user_token.access_token = token_dict.get('access_token')
-        user_token.refresh_token = token_dict.get('refresh_token')
-        user_token.token_type = token_dict.get('token_type')
-        expires_in = token_dict.get('expires_in', 3600)
-        user_token.token_expiry = datetime.utcnow() + timedelta(seconds=expires_in)
-        
-        try:
-            db.session.commit()
-            print("Successfully updated token in the database.")
-        except Exception as e:
-            db.session.rollback()
-            print(f"Error updating token in DB: {e}")
+    print("--- Running token_updater callback to save new token ---")
+    
+    # Update all the critical fields
+    user.yahoo_token.access_token = token['access_token']
+    user.yahoo_token.refresh_token = token['refresh_token']  # <-- THE CRITICAL LINE
+    user.yahoo_token.token_type = token['token_type']
+    
+    # Calculate the new expiry time from the 'expires_in' field
+    user.yahoo_token.token_expiry = datetime.utcnow() + timedelta(seconds=token['expires_in'])
+    
+    try:
+        # Commit the changes to the database
+        db.session.commit()
+        print("--- Successfully saved new token to the database. ---")
+    except Exception as e:
+        db.session.rollback()
+        print(f"--- FAILED to save new token to the database: {e} ---")
