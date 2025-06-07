@@ -38,11 +38,9 @@ def init_app():
     # Yahoo OAuth Credentials
     app.config['YAHOO_CONSUMER_KEY'] = os.environ.get('YAHOO_CONSUMER_KEY')
     app.config['YAHOO_CONSUMER_SECRET'] = os.environ.get('YAHOO_CONSUMER_SECRET')
-    app.config['YAHOO_CALLBACK_URL'] = os.environ.get('YAHOO_CALLBACK_URL')
 
     if not app.config['YAHOO_CONSUMER_KEY'] or \
-       not app.config['YAHOO_CONSUMER_SECRET'] or \
-       not app.config['YAHOO_CALLBACK_URL']:
+       not app.config['YAHOO_CONSUMER_SECRET']:
         print("[CRITICAL]: Yahoo OAuth credentials are not fully configured in .env.")
         print("[CRITICAL] Terminating Application")
         return 
@@ -329,7 +327,7 @@ def init_app():
         callback_url = url_for('yahoo_callback', _external=True, _scheme='https')
 
         print(f"yahoo_callback() CALLBACK: {callback_url}")
-        
+
         user_id = session.get('user_id')
         if not user_id:
             print("User is not logged in.")
