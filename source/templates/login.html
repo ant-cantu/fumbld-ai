@@ -22,7 +22,7 @@
                 </div>
             {% endif %}
         {% endwith %}
-        <form method="POST" action="{{ url_for('handle_login') }}" novalidate>
+        <form method="POST" action="{{ url_for('main.account_login') }}" novalidate>
             {{ form.hidden_tag() }}
             <div>
                 <label for="username">{{ form.username.label }}</label>

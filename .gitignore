@@ -1,1 +1,10 @@
+# .gitignore
+
+# Python Trash
 __pycache__/
+
+# Virtual Environment
+venv/
+
+# Sensitive Configs
+.env
