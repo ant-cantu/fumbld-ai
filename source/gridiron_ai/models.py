@@ -1,5 +1,5 @@
 # models.py
-from extensions import db
+from .utils import db
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
 
