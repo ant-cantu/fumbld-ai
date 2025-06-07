@@ -3,6 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email, Length, EqualTo
 
+# '/register' form
 class RegistrationForm(FlaskForm):
     username = StringField("Username", validators=[
         DataRequired(message="Username is required, please enter a username."),
@@ -27,6 +28,7 @@ class RegistrationForm(FlaskForm):
 
     submit = SubmitField("Register")
 
+# '/login' form
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[
         DataRequired(message="Username is required, please enter a username."),
