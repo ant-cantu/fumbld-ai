@@ -44,6 +44,7 @@ nav img {
 .nav-links {
     flex: 1;
     text-align: right;
+    font-size: larger;
 }
 .nav-links ul {
     margin: 0;
@@ -59,15 +60,28 @@ nav img {
 
 .nav-links ul li a {
     text-decoration: none;
-    font-size: 13px;
+    font-size: 20px;
     color: white;
 }
 
+.nav-links ul li::after {
+    content: '';
+    width: 0%;
+    height: 2px;
+    background-color: #74b9ff;
+    display: block;
+    margin: auto;
+    transition: .3s;
+}
+
+.nav-links ul li:hover::after {
+    width: 100%;
+}
 /* Hero Section */
 .header{
     min-height: 100vh;
     width: 100%;
-    background-image: linear-gradient(rgba(4,9,30,0.7),rgba(4,9,30,0.7)),url(/source/static/img/gridiron-background.png);
+    background-image: linear-gradient(rgba(4,9,30,0.7),rgba(4,9,30,0.7)),url(/source/static/img/draftmind-hero-img.png);
     background-position: center;
     background-size: cover;
     position: relative;
@@ -76,7 +90,51 @@ nav img {
 
 .hero-box{
     color: white;
-    text-align: center;
-    justify-content: center;
+    text-align: right;
     align-items: center;
+    margin: 25vh;
+}
+
+.hero-btn {
+    display: inline-block;
+    text-decoration: none;
+    color: white;
+    border: 2px solid #74b9ff;
+    margin: 25px 0;
+    padding: 12px 35px;
+    font-size: 20px;
+    background: transparent;
+    position: relative;
+    cursor: pointer;
+    border-radius: 15%;
+}
+
+.hero-btn:hover {
+    color:black;
+    background: #74b9ff;
+}
+
+/* About Section */
+.about-us {
+    display: flex;
+    flex-direction: row;
+    padding-top: 100px;
+    background-color: lightgrey;
+}
+.about-col {
+    flex: 1;
+    padding: 10px;
+    justify-content: space-between;
+}
+.about-us h1 {
+    text-align: center;
+}
+.about-img {
+    width: 10%;
+    height: auto;
+}
+.about-content{
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
 }

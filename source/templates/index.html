@@ -9,7 +9,7 @@
 
 
     <!-- Favicon -->
-     <link rel="icon" href="/source/static/img/gridiron-ai.png" type="image/x-icon">
+     <link rel="icon" href="/source/static/img/DraftMind Logo.png" type="image/x-icon">
 
      <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,25 +18,45 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
+<!-- Hero Section -->
     <section class="header">
         <nav>
-            <a href="index.html"><img src="/source/static/img/gridiron-ai.png" alt="gridiron-ai Logo"></a>
+            <a href="index.html"><img src="/source/static/img/DraftMind Full Logo.png" alt="draftmind-ai Logo"></a>
             <div class="nav-links">
                 <ul>
                     <li><a href="index.html">Home</a></li>
                     <li><a href="index.html">About</a></li>
-                    <li><a href="/register" role="button" class="btn btn-secondary">Register</a></li>
-                    <li><a href="/login" role="button" class="btn btn-primary">Log In</a></li>
+                    <li><a href="/register" role="button" style="color: green;">Register</a></li>
+                    <li><a href="/login" role="button">Log In</a></li>
                 </ul>
             </div>
         </nav>
         <div class="hero-box">
-            <h1>Welcome to Gridiron-AI</h1>
-            <h5>Kicking your league's ass</h5>
-            <a href="#" class="btn btn-primary" role="button">Sign Up Now!</a>
+            <h1>FantasyMind-<span style="color: #75a2cf; ">AI</span></h1>
+            <h5>Data Driven Excellence</h5>
+            <a href="#" class="hero-btn" role="button">Sign Up Now!</a>
+        </div>
+    </section>
+<!-- End Hero Section-->
+ <!-- About Section -->
+    <section class="about-us">
+        <div class="about-col left-col">
+            <h1>Data Driven Decisions for Everyone</h1>
+            <div class="about-content">
+            <img class="about-img" src="/source/static/img/DraftMind Logo.png" alt="company-logo"><p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio cum commodi ab quasi eveniet mollitia quia voluptate hic praesentium alias esse adipisci aliquid ex tempore officia, excepturi incidunt numquam nostrum?</p>
+            </div>
+        </div>
+        <div class="about-col right-col">
+            <h1>Data Driven Decisions for Everyone</h1>
+            <div class="about-content">
+            <img class="about-img" src="/source/static/img/DraftMind Logo.png" alt="company-logo"><p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Vel pariatur, incidunt corporis suscipit eligendi sequi inventore tempore, provident adipisci molestias officiis neque sed consectetur id fugit esse, maxime asperiores porro.</p>
+            </div>
         </div>
     </section>
 
+
+
+    <!-- Flask Stuff -->
     {% with messages = get_flashed_messages(category_filter=["error"]) %}
         {% if messages %}
             <div class="flash-error">
@@ -50,6 +70,8 @@
         <p>{{ message }}</p>
         <p><a href="/logout">Click here to logout.</a></p>
     </main>
+
+ <!-- Footer -->   
     <footer>
         <p>&copy; 2024 Gridiron AI</p>
     </footer>
