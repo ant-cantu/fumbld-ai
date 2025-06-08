@@ -1,7 +1,7 @@
 # Gridiron AI
 
 <p align="center">
-<img src="https://github.com/user-attachments/assets/59a9d7c2-746a-4fab-bc73-b983457047b1" height="50%" width="50%">
+<img src="https://github.com/ant-cantu/gridiron-ai/blob/main/DraftMind%20Full%20Logo.png?raw=true" height="50%" width="75%">
 </p>
 
 ## About Gridiron AI
