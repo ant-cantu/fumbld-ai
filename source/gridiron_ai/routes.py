@@ -1,6 +1,6 @@
 from flask import render_template, Blueprint, session, flash, redirect, url_for
 import pytz, datetime
-from .yahoo_fantasy import get_roster
+from .yahoo_fantasy import get_roster, get_opp_roster
 from .utils import login_required, db
 from .models import User
 from .forms import LoginForm, RegistrationForm
@@ -40,14 +40,20 @@ def dashboard():
     # Yahoo Sports
     team_roster = []
     if not query_user or not query_user.yahoo_token or not query_user.yahoo_token.access_token:
-        team_roster.append("You are not authenticated with Yahoo.")
+        return render_template("dashboard.html",
+                            username=query_user.username,
+                            last_login=last_login)
     else:
-        team_roster = get_roster(query_user)
+        team_starters = get_roster(query_user)
+        opp_starters = get_opp_roster(query_user)
+        # Testing
+        get_opp_roster(query_user)
 
     return render_template("dashboard.html",
                             username=query_user.username,
                             last_login=last_login,
-                            roster=team_roster)
+                            user_team=team_starters,
+                            opp_team=opp_starters)
     
 # User Registration
 @main_bp.route('/register', methods=['GET', 'POST'])

@@ -5,6 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gridiron AI</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #fcfcfc;
+        }
+        table {
+            border-collapse: collapse;
+            width: 800px;
+            margin: auto;
+            border: 2px solid #a9a9a9;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #d3d3d3;
+            padding: 12px;
+            text-align: center;
+        }
+        .main-header {
+            font-size: 1.5em;
+            font-weight: bold;
+            background-color: #e9e9e9;
+        }
+        .sub-header {
+            font-size: 1.2em;
+            font-weight: bold;
+            background-color: #f3f3f3;
+        }
+        .position-label {
+            font-weight: bold;
+            text-align: center;
+            width: 50px;
+            background-color: #fafafa;
+        }
+        .player-name {
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -21,6 +59,7 @@
         {% endif %}
     {% endwith %}
     <main>
+        <!--
         <ul>
             {% if roster %}
                 {% for player in roster %}
@@ -28,6 +67,36 @@
                 {% endfor %}
             {% endif %}
         </ul>
+         -->
+
+        {% if user_team %}
+        <h1>Week 16</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="4" class="main-header">Week 16</th>
+                </tr>
+                <tr>
+                    <th colspan="2" class="sub-header">Your Starters</th>
+                    <th colspan="2" class="sub-header">Opponent Starters</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in range(user_team|length) %}
+                    <tr>
+                        <td class="position-label">{{ user_team[i].position }}</td>
+                        <td class="player-name">{{ user_team[i].name }}</td>
+
+                        <td class="position-label">{{ opp_team[i].position }}</td>
+                        <td class="player-name">{{ opp_team[i].name }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p>You are not authenticated in Yahoo!</p>
+        {% endif %}
+
         <p><a href="/yahoo/authorize">Connect to Yahoo</a></p>
         <p><a href="/logout">Click here to logout.</a></p>
     </main>
