@@ -8,3 +8,4 @@ venv/
 
 # Sensitive Configs
 .env
+source/gridiron.db
