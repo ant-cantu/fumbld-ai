@@ -2,7 +2,7 @@
 from openai import OpenAI
 
 # API Key
-api_key = "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"
+api_key = ""
 
 # Create an object of OpenAPI and pass the API key to it
 client = OpenAI(api_key=api_key)
