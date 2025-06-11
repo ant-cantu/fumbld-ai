@@ -48,6 +48,7 @@ class User(db.Model):
     def __repr__(self):
         return f"<user {self.username}>"
 
+# Probably get rid of this
 class Roster(db.Model):
     __tablename__ = "roster"
 
@@ -68,6 +69,7 @@ class Roster(db.Model):
         self.season = season
         self.user_id = user_id
 
+# Save Yahoo! credentials
 class YahooToken(db.Model):
     __tablename__ = 'yahoo_tokens'
 
