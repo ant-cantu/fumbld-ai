@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gridiron AI</title>
     <!-- CSS -->
-    <link rel="stylesheet" href="/source/static/css/style.css">
+    <!-- <link rel="stylesheet" href="/source/static/css/style.css"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
 
     <!-- Favicon -->
-     <link rel="icon" href="/source/static/img/DraftMind Logo.png" type="image/x-icon">
+    <!-- <link rel="icon" href="/source/static/img/DraftMind Logo.png" type="image/x-icon"> -->
+    <link rel="icon" href="{{ url_for('static', filename='img/DraftMind Logo.png') }}" type="image/x-icon">
 
      <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,11 +23,12 @@
 <!-- Hero Section -->
     <section class="header">
         <nav>
-            <a href="index.html"><img src="/source/static/img/DraftMind Full Logo.png" alt="draftmind-ai Logo"></a>
+            <!-- <a href="index.html"><img src="/source/static/img/DraftMind Full Logo.png" alt="draftmind-ai Logo"></a> -->
+            <a href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='img/DraftMind Full Logo.png') }}" alt="draftmind-ai Logo"></a>
             <div class="nav-links">
                 <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="index.html">About</a></li>
+                    <li><a href="{{ url_for('main.home') }}">Home</a></li>
+                    <li><a href="{{ url_for('main.home') }}">About</a></li>
                     <li><a href="/register" role="button" style="color: green;">Register</a></li>
                     <li><a href="/login" role="button">Log In</a></li>
                 </ul>
@@ -43,13 +46,17 @@
         <div class="about-col left-col">
             <h1>Data Driven Decisions for Everyone</h1>
             <div class="about-content">
-            <img class="about-img" src="/source/static/img/DraftMind Logo.png" alt="company-logo"><p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio cum commodi ab quasi eveniet mollitia quia voluptate hic praesentium alias esse adipisci aliquid ex tempore officia, excepturi incidunt numquam nostrum?</p>
+            <!-- <img class="about-img" src="/source/static/img/DraftMind Logo.png" alt="company-logo"> -->
+            <img class="about-img" src="{{ url_for('static', filename='img/DraftMind Logo.png') }}" alt="company-logo">
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio cum commodi ab quasi eveniet mollitia quia voluptate hic praesentium alias esse adipisci aliquid ex tempore officia, excepturi incidunt numquam nostrum?</p>
             </div>
         </div>
         <div class="about-col right-col">
             <h1>Data Driven Decisions for Everyone</h1>
             <div class="about-content">
-            <img class="about-img" src="/source/static/img/DraftMind Logo.png" alt="company-logo"><p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Vel pariatur, incidunt corporis suscipit eligendi sequi inventore tempore, provident adipisci molestias officiis neque sed consectetur id fugit esse, maxime asperiores porro.</p>
+            <!-- <img class="about-img" src="/source/static/img/DraftMind Logo.png" alt="company-logo"> -->
+            <img class="about-img" src="{{ url_for('static', filename='img/DraftMind Logo.png') }}" alt="company-logo">
+            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Vel pariatur, incidunt corporis suscipit eligendi sequi inventore tempore, provident adipisci molestias officiis neque sed consectetur id fugit esse, maxime asperiores porro.</p>
             </div>
         </div>
     </section>
