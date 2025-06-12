@@ -118,15 +118,16 @@ nav img {
 .about-us {
     display: flex;
     flex-direction: row;
-    padding-top: 100px;
+    padding: 25px 25px 0 0;
     background-color: lightgrey;
+    flex-wrap: wrap;
 }
 .about-col {
     flex: 1;
     padding: 10px;
     justify-content: space-between;
 }
-.about-us h1 {
+.about-us h3 {
     text-align: center;
 }
 .about-img {
@@ -137,4 +138,70 @@ nav img {
     display: flex;
     align-items: flex-start;
     gap: 20px;
+}
+
+/* Main - Register Section */
+.register-now {
+    background-color: lightgrey;
+}
+.email-form {
+    display: block;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+}
+
+.register-main h1 {
+    text-align: center;
+}
+
+/* Footer */
+footer {
+    background-color: #111;
+}
+
+.footer-container {
+    width: 100%;
+    padding: 70px 30px 20px;
+}
+
+.footer-nav {
+    margin: 30px 0;
+}
+
+.footer-nav ul{
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+}
+
+.footer-nav ul li a{
+    color: white;
+    margin: 20px;
+    text-decoration: none;
+    font-size: 1.3em;
+    opacity: 0.7;
+    transition: 0.5s;
+}
+
+.footer-nav ul li a:hover {
+    opacity: 1;
+    color: #74b9ff;
+    transition: 0.3s;
+}
+
+.footer-bottom {
+    background-color: #000;
+    padding: 20px;
+    text-align: center;
+}
+
+.footer-bottom p {
+    color: white;
+}
+
+.footer-design {
+    color: #74b9ff;
+    font-weight: 400;
+    margin: 0px 5px;
 }
