@@ -1,8 +1,12 @@
 # ai.py
 from openai import OpenAI
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # API Key
-api_key = ""
+api_key = os.environ.get('OPENAI_KEY')
 
 # Create an object of OpenAPI and pass the API key to it
 client = OpenAI(api_key=api_key)

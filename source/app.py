@@ -31,6 +31,14 @@ def init_app():
         print("[CRITICAL]: Yahoo OAuth credentials are not fully configured in .env.")
         print("[CRITICAL] Terminating Application")
         return 
+    
+    # OpenAI Key
+    app.config['OPENAI_KEY'] = os.environ.get('OPENAI_KEY')
+
+    if not app.config['OPENAI_KEY']:
+        print("[CRITICAL] OpenAI Key not configured correctly.")
+        print('[CRITICAL] Terminating Application')
+        return
 
     # Initialize SQLAlchemy
     db.init_app(app)
