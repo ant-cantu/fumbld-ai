@@ -1,6 +1,6 @@
 # forms.py
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Email, Length, EqualTo
 
 # '/register' form
@@ -40,4 +40,6 @@ class LoginForm(FlaskForm):
         Length(min=6, message="Password must be at least 6 characters long.")
     ])
 
-    submit = SubmitField("Register")
+    submit = SubmitField("Login")
+
+    remember = BooleanField("Remember Me")

@@ -4,11 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 </head>
 <body>
     <header>
-        <h1>Login</h1>
+        <!-- Nav Menu -->
+        <nav class="nav-bar">
+            <a href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='img/draftmind-small-logo.png') }}" alt="draftmind-ai Logo"></a>
+            <div class="nav-links">
+                <ul>
+                    <li><a href="{{ url_for('main.home') }}">Home</a></li>
+                    <li><a href="{{ url_for('main.home') }}">About</a></li>
+                    <li><a href="/register" role="button" style="color: green;">Register</a></li>
+                    <li><a href="/login" role="button">Log In</a></li>
+                </ul>
+            </div>
+        </nav>
+        <!-- End Nav Section-->
     </header>
     <main>
         {% with messages = get_flashed_messages(category_filter=["error"]) %}
@@ -22,34 +34,46 @@
                 </div>
             {% endif %}
         {% endwith %}
-        <form method="POST" action="{{ url_for('main.account_login') }}" novalidate>
-            {{ form.hidden_tag() }}
-            <div>
-                <label for="username">{{ form.username.label }}</label>
-                {{ form.username(size=30, class="form-control") }}
-                {% if form.username.errors %}
-                    <ul class="errors">
-                        {% for error in form.username.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+        <div class="login-container">
+            <div class="login-header">
+                <h2>Sign in to your account</h2>
+                <p>Or <a href="{{ url_for('main.account_register') }}">sign up for a new account</a></p>
             </div>
-            <div>
-                <label for="password">{{ form.password.label }}</label>
-                {{ form.password(size=30, class="form-control") }}
-                {% if form.password.errors %}
-                    <ul class="errors">
-                        {% for error in form.password.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+            <div class="login-menu">
+                <form method="POST" action="{{ url_for('main.account_login') }}" novalidate>
+                    {{ form.hidden_tag() }}
+                    <div class="form-username">
+                        <label for="username">{{ form.username.label(class="form-label") }}</label>
+                        {{ form.username(size=30, class="form-control") }}
+                        {% if form.username.errors %}
+                            <ul class="errors">
+                                {% for error in form.username.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-password">
+                        <label for="password">{{ form.password.label(class="form-label") }}</label>
+                        {{ form.password(size=30, class="form-control") }}
+                        {% if form.password.errors %}
+                            <ul class="errors">
+                                {% for error in form.password.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-lower">
+                        {{ form.remember(class="remember-me") }} Remember Me
+                        <a class="forgot-link" href="#">Forgot Your Password?</a>
+                    </div>
+                    <div class="form-button">
+                        {{ form.submit(class="form-submit") }}
+                    </div>
+                </form>
             </div>
-            <div>
-                {{ form.submit() }}
-            </div>
-        </form>
+        </div>
     </main>
     <footer>
         <p>&copy; 2024 Gridiron AI</p>
