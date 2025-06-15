@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gridiron AI</title>
+    <!-- CSS -->
+    <!-- <link rel="stylesheet" href="/source/static/css/style.css"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+
+    <!-- Favicon -->
+    <!-- <link rel="icon" href="/source/static/img/DraftMind Logo.png" type="image/x-icon"> -->
+    <link rel="icon" href="{{ url_for('static', filename='img/DraftMind Logo.png') }}" type="image/x-icon">
+
+     <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+<!-- Hero Section -->
+    <section class="header">
+        <nav>
+            <!-- <a href="index.html"><img src="/source/static/img/DraftMind Full Logo.png" alt="draftmind-ai Logo"></a> -->
+            <a href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='img/DraftMind Full Logo.png') }}" alt="draftmind-ai Logo"></a>
+            <div class="nav-links">
+                <ul>
+                    <li><a href="{{ url_for('main.home') }}">Home</a></li>
+                    <li><a href="{{ url_for('main.home') }}">About</a></li>
+                    <li><a href="/register" role="button" style="color: green;">Register</a></li>
+                    <li><a href="/login" role="button">Log In</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="hero-box">
+            <h1>FantasyMind-<span style="color: #75a2cf; ">AI</span></h1>
+            <h5>Data Driven Excellence</h5>
+            <a href="#" class="hero-btn" role="button">Sign Up Now!</a>
+        </div>
+    </section>
+<!-- End Hero Section-->
+ <!-- About Section -->
+<section class="about-us">
+    <div class="about-us">
+        <div class="about-col left-col">
+            <h3>Data Driven Decisions for Everyone</h3>
+            <div class="about-content">
+            <!-- <img class="about-img" src="/source/static/img/DraftMind Logo.png" alt="company-logo"> -->
+            <img class="about-img" src="{{ url_for('static', filename='img/DraftMind Logo.png') }}" alt="company-logo">
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio cum commodi ab quasi eveniet mollitia quia voluptate hic praesentium alias esse adipisci aliquid ex tempore officia, excepturi incidunt numquam nostrum?</p>
+            </div>
+        </div>
+        <div class="about-col right-col">
+            <h3>Data Driven Decisions for Everyone</h3>
+            <div class="about-content">
+            <!-- <img class="about-img" src="/source/static/img/DraftMind Logo.png" alt="company-logo"> -->
+            <img class="about-img" src="{{ url_for('static', filename='img/DraftMind Logo.png') }}" alt="company-logo">
+            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Vel pariatur, incidunt corporis suscipit eligendi sequi inventore tempore, provident adipisci molestias officiis neque sed consectetur id fugit esse, maxime asperiores porro.</p>
+            </div>
+        </div>
+    </div>
+    <div class="about-us">
+                <div class="about-col left-col">
+                <h3>Data Driven Decisions for Everyone</h3>
+            <div class="about-content">
+            <!-- <img class="about-img" src="/source/static/img/DraftMind Logo.png" alt="company-logo"> -->
+                <img class="about-img" src="{{ url_for('static', filename='img/DraftMind Logo.png') }}" alt="company-logo">
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio cum commodi ab quasi eveniet mollitia quia voluptate hic praesentium alias esse adipisci aliquid ex tempore officia, excepturi incidunt numquam nostrum?</p>
+            </div>
+        </div>
+        <div class="about-col right-col">
+                <h3>Data Driven Decisions for Everyone</h3>
+            <div class="about-content">
+            <!-- <img class="about-img" src="/source/static/img/DraftMind Logo.png" alt="company-logo"> -->
+                <img class="about-img" src="{{ url_for('static', filename='img/DraftMind Logo.png') }}" alt="company-logo">
+                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Vel pariatur, incidunt corporis suscipit eligendi sequi inventore tempore, provident adipisci molestias officiis neque sed consectetur id fugit esse, maxime asperiores porro.</p>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End About Section -->
+
+<!-- Register Now -->
+<section class="register-now">
+    <div class="register-main">
+        <h1>Try it out for Free!</h1>
+        <form class="email-form mx-auto" style="max-width: 600px;">
+        <div class="text-center mb-3">
+            <label for="user-email" class="form-label d-block text-start">Email Address</label>
+            
+            <div class="input-group">
+            <input type="email" class="form-control" placeholder="Enter email" id="user-email" required>
+            <button class="btn btn-primary" type="submit">Submit</button>
+            </div>
+
+            <div id="emailHelp" class="form-text text-start mt-2">We'll never share your email with anyone else.</div>
+        </div>
+        </form>
+
+    </div>
+ </section>
+
+ <!-- End Register Now -->
+
+ <!-- Footer -->
+    <!-- Flask Stuff -->
+   <!-- {% with messages = get_flashed_messages(category_filter=["error"]) %}
+        {% if messages %}
+            <div class="flash-error">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <main>
+        <p>{{ message }}</p>
+        <p><a href="/logout">Click here to logout.</a></p>
+    </main>
+-->
+
+ <!-- Footer -->   
+ <footer>
+    <div class="footer-container">
+        <div class="footer-nav">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Register</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+        <div class="footer-bottom">
+            <p>Copyright&copy; 2025 <span class="footer-design">DynastyMind </span>AI</p>
+        </div>
+    </div>
+</footer>
+
+    <!-- Scripts -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+</body>
+</html>
