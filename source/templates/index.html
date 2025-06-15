@@ -86,25 +86,27 @@
 <section class="register-now">
     <div class="register-main">
         <h1>Try it out for Free!</h1>
-        <form>
-            <div class="email-form">
-                <label for="exampleInputEmail1" class="form-label">Email Address</label>
-                <input type="email" class="form-control" id="user-email">
-                <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+        <form class="email-form mx-auto" style="max-width: 600px;">
+        <div class="text-center mb-3">
+            <label for="user-email" class="form-label d-block text-start">Email Address</label>
+            
+            <div class="input-group">
+            <input type="email" class="form-control" placeholder="Enter email" id="user-email" required>
+            <button class="btn btn-primary" type="submit">Submit</button>
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+
+            <div id="emailHelp" class="form-text text-start mt-2">We'll never share your email with anyone else.</div>
+        </div>
         </form>
+
     </div>
  </section>
 
  <!-- End Register Now -->
 
  <!-- Footer -->
-
-
-
     <!-- Flask Stuff -->
-    {% with messages = get_flashed_messages(category_filter=["error"]) %}
+   <!-- {% with messages = get_flashed_messages(category_filter=["error"]) %}
         {% if messages %}
             <div class="flash-error">
                 {% for message in messages %}
@@ -117,6 +119,7 @@
         <p>{{ message }}</p>
         <p><a href="/logout">Click here to logout.</a></p>
     </main>
+-->
 
  <!-- Footer -->   
  <footer>
