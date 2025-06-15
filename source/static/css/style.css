@@ -146,9 +146,12 @@ nav img {
 }
 .email-form {
     display: block;
+    max-width: 600px;
+    padding: 1rem;
     justify-content: center;
     align-items: center;
     width: 50%;
+    margin: 0 auto;
 }
 
 .register-main h1 {
@@ -204,4 +207,125 @@ footer {
     color: #74b9ff;
     font-weight: 400;
     margin: 0px 5px;
+}
+
+/* Mobile Queries */
+
+@media (max-width: 1024px) {
+    .hero-box {
+        margin: 20vh 10vw;
+        text-align: center;
+    }
+
+    .about-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .about-img {
+        width: 25%;
+        margin-bottom: 15px;
+    }
+    .email-form {
+        width: 75%;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    .nav-links {
+        text-align: center;
+    }
+    .nav-links ul {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .hero-box {
+        margin: 15vh 5vw;
+        text-align: center;
+    }
+    .about-us {
+        flex-direction: column;
+        padding: 20px;
+    }
+    .about-col {
+        padding: 10px 0;
+    }
+    .about-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .about-img {
+        width: 30%;
+    }
+    .email-form {
+        width: 90%;
+        margin: 0 auto;
+    }
+    .footer-nav ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    .footer-container {
+        padding: 40px 15px 10px;
+    }
+    .footer-bottom {
+        padding: 10px;
+    }
+    .footer-bottom p {
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 28px;
+  }
+
+  h3 {
+    font-size: 20px;
+  }
+
+  p {
+    font-size: 13px;
+  }
+
+  .hero-btn {
+    font-size: 16px;
+    padding: 10px 25px;
+    border-radius: 10%;
+  }
+
+  .about-img {
+    width: 40%;
+  }
+
+  .email-form label,
+  .email-form input {
+    font-size: 14px;
+  }
+
+  .btn {
+    font-size: 16px;
+    padding: 10px 20px;
+  }
+  .footer-container {
+    padding: 30px 10px 5px;
+  }
+
+  .footer-nav ul li a {
+    font-size: 0.9em;
+  }
+
+  .footer-bottom p {
+    font-size: 0.8em;
+  }
 }
