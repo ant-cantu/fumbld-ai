@@ -71,6 +71,19 @@ body {
 }
 
 /* Login Menu */
+/* .logo-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+
+    #logo-img {
+        width: 125px;
+        height: auto;
+    }
+} */
+
 .login-container {
     background-color:white;
     /* border: 5px solid black; */
