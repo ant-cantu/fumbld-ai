@@ -1,9 +1,9 @@
 import os
 from flask import Flask
-from gridiron_ai.utils import db
+from fumbld_ai.utils import db
 from dotenv import load_dotenv # Development Stage ONLY
-from gridiron_ai.routes import main_bp
-from gridiron_ai.utils import yahoo_bp
+from fumbld_ai.routes import main_bp
+from fumbld_ai.utils import yahoo_bp
 
 def init_app():
     # Load environment variables
@@ -13,6 +13,7 @@ def init_app():
     app = Flask(__name__)
 
     # DB File Location
+    # THIS IS FOR DEV ONLY, PRODUCTION WILL BE MOVED TO A MORE SECURE DATABASE
     basedir = os.path.abspath(os.path.dirname(__file__))
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///" + os.path.join(basedir, "gridiron.db")
 
