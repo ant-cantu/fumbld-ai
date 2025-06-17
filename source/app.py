@@ -4,7 +4,7 @@ from fumbld_ai.utils import db
 from dotenv import load_dotenv # Development Stage ONLY
 from fumbld_ai.routes import main_bp
 from fumbld_ai.utils import yahoo_bp
-#
+
 def init_app():
     # Load environment variables
     load_dotenv() # <- Development Stage ONLY
