@@ -9,7 +9,7 @@
     <link rel="icon" href="{{ url_for('static', filename='img/fumbld-main-logo-only.png') }}" type="image/x-icon">
 
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 
      <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,6 +18,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
+
     <!-- Header -->
     <header>
         <!-- Nav Menu -->
@@ -39,15 +40,16 @@
 
     <!-- Main Body -->
     <main>
-        <!-- Login menu -->
-        <div class="menu-container">
-            <div class="menu-container-header">
-                <h2>Register for an account</h2>
-                <p>Or <a href="{{ url_for('main.account_login') }}">login to your existing account</a></p>
+        <!-- Login Menu -->
+        <div class="login-container">
+            <div class="login-header">
+                <h2>Sign in to your account</h2>
+                <p>Or <a href="{{ url_for('main.account_register') }}">sign up for a new account</a></p>
             </div>
-            <div class="menu-form-container">
-                <form method="POST" action="{{ url_for('main.account_register') }}" novalidate>
+            <div class="login-menu-container">
+                <form method="POST" action="{{ url_for('main.account_login') }}" novalidate>
                     {{ form.hidden_tag() }}
+
                     <div class="form-username">
                         <label for="username">{{ form.username.label(class="form-label") }}</label>
 
@@ -56,17 +58,6 @@
                             size=30,
                             class="form-control" if not username_error else "form-control is-invalid",
                             placeholder=username_error if username_error else "Enter username"
-                        ) }}
-                    </div>
-
-                    <div class="form-email">
-                        <label for="email">{{ form.email.label(class="form-label") }}</label>
-
-                        {% set error_message = form.email.errors[0] if form.email.errors else '' %}
-                        {{ form.email(
-                            size=30, 
-                            class="form-control" if not error_message else "form-control is-invalid", 
-                            placeholder=error_message if error_message else "Enter email"
                         ) }}
                     </div>
 
@@ -81,15 +72,9 @@
                         ) }}
                     </div>
 
-                    <div class="form-password">
-                        <label for="password">{{ form.confirm_password.label(class="form-label") }}</label>
-
-                        {% set error_message = form.confirm_password.errors[0] if form.confirm_password.errors else '' %}
-                        {{ form.confirm_password(
-                            size=30, 
-                            class="form-control" if not error_message else "form-control is-invalid", 
-                            placeholder=error_message if error_message else "Confirm password"
-                        ) }}
+                    <div class="login-lower">
+                        <span id="remember-me-container">{{ form.remember(class="remember-me") }} Remember Me</span>
+                        <a class="forgot-link" href="#">Forgot Your Password?</a>
                     </div>
 
                     <div class="form-button">
@@ -131,5 +116,6 @@
         navLinks.classList.toggle('show');
         });
     </script>
+
 </body>
 </html>

@@ -87,7 +87,7 @@ body {
     }
 } */
 
-.menu-container {
+.login-container {
     background-color:white;
     /* border: 5px solid black; */
     display: flex;
@@ -103,7 +103,7 @@ body {
     border-radius: 18px;
 }
 
-.menu-container .menu-form-container form {
+.login-container .login-menu-container form {
     /* border: 5px solid red; */
     display: flex;
     flex-direction: column;
@@ -115,22 +115,22 @@ body {
     height: 280px;
 }
 
-.menu-container .menu-container-header {
+.login-container .login-header {
     /* border: 5px solid red; */
     text-align: center;
 }
 
-/* .menu-container .form-username,
-.menu-container .form-password {
+/* .login-container .form-username,
+.login-container .form-password {
     border: 5px solid blue;
 } */
 
-.menu-container .form-control {
+.login-container .form-control {
     width: 25rem;
     /* border: 5px solid violet; */
 }
 
-.menu-container .menu-container-lower {
+.login-container .login-lower {
     display: flex;
     margin: 0;
     padding: 0;
@@ -140,15 +140,15 @@ body {
     width: 100%;
 }
 
-/* .menu-container .menu-container-lower .remember-me span {
+/* .login-container .login-lower .remember-me span {
     border: 5px solid violet;
 }
 
-.menu-container .menu-container-lower .forgot-link {
+.login-container .login-lower .forgot-link {
     border: 5px solid violet;
 } */
 
-.menu-container .form-button {
+.login-container .form-button {
     /* border: 5px solid blue; */
     margin-top: 25px;
     width: 95%;
@@ -278,19 +278,19 @@ body {
     }
 
     /* Login Container */
-    .menu-container {
+    .login-container {
         width: 90%;
     }
 
-    .menu-container .menu-form-container {
+    .login-container .login-menu-container {
         width: 90%;
     }
 
-    .menu-container .form-control {
+    .login-container .form-control {
         width: 20rem;
     }
 
-    .menu-container .menu-container-lower {
+    .login-container .login-lower {
         width: inherit;
         font-size: .8rem;
         justify-content: center;
