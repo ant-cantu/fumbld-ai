@@ -1,10 +1,10 @@
-# Gridiron AI
+# Fumbld AI
 
 <p align="center">
 <img src="https://github.com/ant-cantu/gridiron-ai/blob/main/DraftMind%20Full%20Logo.png?raw=true" height="50%" width="75%">
 </p>
 
-## About Gridiron AI
+## About Fumbld AI
 
 This AI-powered software helps you make smarter fantasy football decisions. 
 It analyzes both your roster and your opponent's roster against current player 
