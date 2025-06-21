@@ -17,14 +17,6 @@ def home():
 @main_bp.route("/dashboard")
 @login_required
 def dashboard():
-    # If user is not logged in, redirect to login page
-    # if 'user_id' not in session:
-    #     flash("You need to be logged in to view this page.", "error")
-    #     return redirect(url_for('main.account_login'))
-
-    # Get the logged in user by user ID
-    #query_user = User.query.filter_by(id=session['user_id']).first()
-
     # Get date for last login
     if not current_user.last_login:
         last_login = current_user.now_login.strftime("%m-%d-%y %I:%M:%S")
@@ -45,8 +37,6 @@ def dashboard():
     else:
         team_starters = get_roster(current_user)
         opp_starters = get_opp_roster(current_user)
-        # Testing
-        get_opp_roster(current_user)
 
     return render_template("dashboard.html",
                             username=current_user.username,

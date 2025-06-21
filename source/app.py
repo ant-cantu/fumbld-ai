@@ -1,6 +1,6 @@
 import os
 from flask import Flask
-from fumbld_ai.utils import db
+from fumbld_ai.utils import db, TokenEncryptor
 from dotenv import load_dotenv # Development Stage ONLY
 from fumbld_ai.routes import main_bp
 from fumbld_ai.utils import yahoo_bp
@@ -48,7 +48,7 @@ def init_app():
         print('[CRITICAL] Terminating Application')
         return
     
-    # Testing Login Manager
+    # TLogin Manager
     login_manager = LoginManager()
     login_manager.init_app(app)
 
@@ -59,7 +59,11 @@ def init_app():
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
-    # ------------------------------------
+    
+    # Generate Key
+    # from cryptography.fernet import Fernet
+    # key = Fernet.generate_key()
+    # print(key)
 
     # Initialize SQLAlchemy
     db.init_app(app)
@@ -68,6 +72,7 @@ def init_app():
         
     app.register_blueprint(main_bp)
     app.register_blueprint(yahoo_bp)
+
     return app
 
 app = init_app()

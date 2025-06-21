@@ -17,4 +17,4 @@ from .utils.extensions import db
 from .utils.yahoo_oauth import update_token_in_db, yahoo_bp
 
 # helper.py
-from .utils.helper import is_safe_url
+from .utils.helper import is_safe_url, TokenEncryptor

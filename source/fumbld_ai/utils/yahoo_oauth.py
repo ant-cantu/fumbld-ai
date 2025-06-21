@@ -7,6 +7,7 @@ from types import SimpleNamespace
 import binascii, requests, os
 from .extensions import db 
 from flask_login import login_required, current_user
+from .helper import TokenEncryptor
 
 # Yahoo Blueprint to handle Flask routes
 yahoo_bp = Blueprint('yahoo', __name__, template_folder='templates')
@@ -19,9 +20,12 @@ def update_token_in_db(user, token):
         user: Database user object
         token: Yahoo token to refresh
     """
+    # Cryptography
+    crypt = TokenEncryptor(current_app.config.get("SECRET_KEY").encode())
+
     # Update database fields
-    user.yahoo_token.access_token = token['access_token']
-    user.yahoo_token.refresh_token = token['refresh_token'] 
+    user.yahoo_token.access_token = crypt.encrypt(token['access_token'].encode())
+    user.yahoo_token.refresh_token = crypt.encrypt(token['refresh_token'].encode())
     user.yahoo_token.token_type = token['token_type']
     
     # Calculate the new expiry time from the 'expires_in' field
@@ -38,41 +42,54 @@ def update_token_in_db(user, token):
         # ----> Print for now, adding logger later <----
         print(f"--- FAILED to save new token to the database: {e} ---")
 
+@login_required
 def yahoo_api_connect():
     """
     Connects user to the Yahoo! Sports API
 
     Returns: OAuth Handler
     """
-    from ..models import User
+    # from ..models import User
 
-    # Get user_id from session
-    user_id = current_user.id
-    if not user_id:
-        return redirect(url_for('main.handle_login'))
+    # # Get user_id from session
+    # if not current_user.is_authenticated:
+    #     return redirect(url_for('main.handle_login'))
 
     # Retrieve Yahoo Credentials
     consumer_key = current_app.config.get('YAHOO_CONSUMER_KEY')
     consumer_secret = current_app.config.get('YAHOO_CONSUMER_SECRET')
 
+    # Retrieve Secret Key
+    app_key = current_app.config.get("SECRET_KEY").encode()
+
     # Fetch the current user from the database using their user_id
-    user = User.query.filter_by(id=user_id).first()
+    # user = User.query.filter_by(id=user_id).first()
     
     def token_updater(token):
         # ----> Print for now, adding logger later <----
         print("--- Running token_updater callback ---")
-        update_token_in_db(user, token)
+        update_token_in_db(current_user, token)
         # ----> Print for now, adding logger later <----
         print("--- Finished token_updater callback ---")
 
     # Calculate token expiration
-    expires_in = (user.yahoo_token.token_expiry - datetime.utcnow()).total_seconds()
+    expires_in = (current_user.yahoo_token.token_expiry - datetime.utcnow()).total_seconds()
+    # expires_in = (current_user.yahoo_token.token_expiry - datetime.now(timezone.utc)).total_seconds()
 
     # Prepare the token dictionary for OAuth2Session
+    # token_data = {
+    #     'access_token': user.yahoo_token.access_token,
+    #     'refresh_token': user.yahoo_token.refresh_token,
+    #     'token_type': user.yahoo_token.token_type,
+    #     'expires_in': expires_in
+    # }
+    # Cryptography
+    crypt = TokenEncryptor(app_key)
+
     token_data = {
-        'access_token': user.yahoo_token.access_token,
-        'refresh_token': user.yahoo_token.refresh_token,
-        'token_type': user.yahoo_token.token_type,
+        'access_token': crypt.decrypt(current_user.yahoo_token.access_token).decode(),
+        'refresh_token': crypt.decrypt(current_user.yahoo_token.refresh_token).decode(),
+        'token_type': current_user.yahoo_token.token_type,
         'expires_in': expires_in
     }
 
@@ -101,7 +118,7 @@ def yahoo_api_connect():
 @login_required
 def yahoo_authorize():
     """Redirects the user to Yahoo for authentication."""
-    from ..models import User, YahooToken
+    #  ..models import User, YahooToken
 
     # Get Yahoo API Keys
     consumer_key = current_app.config.get('YAHOO_CONSUMER_KEY')
@@ -141,28 +158,33 @@ def yahoo_authorize():
 @login_required
 def yahoo_callback():
     """Handles the callback from Yahoo after authorization"""
-    from ..models import User, YahooToken
+    from ..models import YahooToken
 
     # Get Yahoo API Keys
     consumer_key = current_app.config.get('YAHOO_CONSUMER_KEY')
     consumer_secret = current_app.config.get('YAHOO_CONSUMER_SECRET')
     callback_url = url_for('yahoo.yahoo_callback', _external=True, _scheme='https')
 
+    # Get Secret Key
+    app_key = current_app.config.get("SECRET_KEY").encode()
+    print(f"[DEBUG]: App Key: {app_key}")
+    print(f"Type of key is: {type(app_key)}")
+
     # The two 'if' checks are not really needed due to the 'login_required' decorator
     # Fetch user_id by session
-    user_id = session.get('user_id')
-    if not user_id:
+    # user_id = session.get('user_id')
+    if not current_user.is_authenticated:
         # ----> Print for now, adding logger later <----
         print("User is not logged in.")
         return redirect(url_for('main.handle_login'))
     
     # Fetch the current user from the database using their user_id
-    user = User.query.filter_by(id=user_id).first()
-    if not user:
-        # ----> Print for now, adding logger later <----
-        print("User was not found. Please log in again.")
-        session.pop('user_id', None)
-        return redirect(url_for('main.handle_login'))
+    # user = User.query.filter_by(id=user_id).first()
+    # if not user:
+    #     # ----> Print for now, adding logger later <----
+    #     print("User was not found. Please log in again.")
+    #     session.pop('user_id', None)
+    #     return redirect(url_for('main.handle_login'))
     
     # Get 'code' arg from url
     code = request.args.get('code')
@@ -209,17 +231,22 @@ def yahoo_callback():
         return redirect(url_for('main.dashboard'))
     
     # Access the users related YahooToken model
-    token_entry = user.yahoo_token
+    # token_entry = user.yahoo_token
+    token_entry = current_user.yahoo_token
     if not token_entry:
-        token_entry = YahooToken(user_id=user.id)
-        user.yahoo_token = token_entry
+        token_entry = YahooToken(user_id=current_user.id)
+        current_user.yahoo_token = token_entry
+
+    # Cryptography
+    crypt = TokenEncryptor(app_key)
 
     # Update users database with Yahoo's token
-    token_entry.access_token = token_payload.get('access_token')
-    token_entry.refresh_token = token_payload.get('refresh_token')
+    token_entry.access_token = crypt.encrypt(token_payload.get('access_token').encode())
+    token_entry.refresh_token = crypt.encrypt(token_payload.get('refresh_token').encode())
     token_entry.token_type = token_payload.get('token_type')
     expires_in = token_payload.get('expires_in', 3600)
-    token_entry.token_expiry = datetime.utcnow() + timedelta(seconds=expires_in)
+    # token_entry.token_expiry = datetime.utcnow() + timedelta(seconds=expires_in)
+    token_entry.token_expiry = datetime.now(timezone.utc) + timedelta(seconds=expires_in)
 
     try:
         db.session.commit()
