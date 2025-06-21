@@ -60,7 +60,7 @@ def init_app():
     def load_user(user_id):
         return User.query.get(int(user_id))
     
-    # Generate Key
+    # # Generate Key
     # from cryptography.fernet import Fernet
     # key = Fernet.generate_key()
     # print(key)

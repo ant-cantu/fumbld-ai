@@ -167,8 +167,6 @@ def yahoo_callback():
 
     # Get Secret Key
     app_key = current_app.config.get("SECRET_KEY").encode()
-    print(f"[DEBUG]: App Key: {app_key}")
-    print(f"Type of key is: {type(app_key)}")
 
     # The two 'if' checks are not really needed due to the 'login_required' decorator
     # Fetch user_id by session
