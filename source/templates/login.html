@@ -57,7 +57,7 @@
                         {{ form.username(
                             size=30,
                             class="form-control" if not username_error else "form-control is-invalid",
-                            placeholder=username_error if username_error else "Enter username"
+                            placeholder=username_error if username_error
                         ) }}
                     </div>
 
@@ -68,7 +68,7 @@
                         {{ form.password(
                             size=30, 
                             class="form-control" if not error_message else "form-control is-invalid", 
-                            placeholder=error_message if error_message else "Enter password"
+                            placeholder=error_message if error_message
                         ) }}
                     </div>
 

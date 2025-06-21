@@ -74,22 +74,8 @@ body {
 }
 
 /* Login Menu */
-/* .logo-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 10px;
-
-    #logo-img {
-        width: 125px;
-        height: auto;
-    }
-} */
-
 .menu-container {
     background-color:white;
-    /* border: 5px solid black; */
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -104,7 +90,6 @@ body {
 }
 
 .menu-container .menu-form-container form {
-    /* border: 5px solid red; */
     display: flex;
     flex-direction: column;
     margin: 0;
@@ -116,7 +101,6 @@ body {
 }
 
 .menu-container .menu-container-header {
-    /* border: 5px solid red; */
     text-align: center;
 }
 
@@ -127,7 +111,12 @@ body {
 
 .menu-container .form-control {
     width: 25rem;
-    /* border: 5px solid violet; */
+    transition: 0.3s;
+}
+
+.menu-container .form-control:focus {
+    border: 1.5px solid #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 .menu-container .menu-container-lower {
