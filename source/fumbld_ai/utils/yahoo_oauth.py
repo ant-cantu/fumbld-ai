@@ -6,7 +6,7 @@ from requests_oauthlib import OAuth2Session
 from types import SimpleNamespace
 import binascii, requests, os
 from .extensions import db 
-from .decorators import login_required
+from flask_login import login_required, current_user
 
 # Yahoo Blueprint to handle Flask routes
 yahoo_bp = Blueprint('yahoo', __name__, template_folder='templates')
@@ -47,9 +47,9 @@ def yahoo_api_connect():
     from ..models import User
 
     # Get user_id from session
-    user_id = session.get('user_id')
+    user_id = current_user.id
     if not user_id:
-        return redirect(url_for('handle_login'))
+        return redirect(url_for('main.handle_login'))
 
     # Retrieve Yahoo Credentials
     consumer_key = current_app.config.get('YAHOO_CONSUMER_KEY')

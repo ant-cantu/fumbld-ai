@@ -4,6 +4,13 @@ from fumbld_ai.utils import db
 from dotenv import load_dotenv # Development Stage ONLY
 from fumbld_ai.routes import main_bp
 from fumbld_ai.utils import yahoo_bp
+from fumbld_ai.models import User
+from flask_login import LoginManager
+
+# TO-DO --------------------------------------
+# 6/21/25
+# Update all database querys to current_user
+# -------------------------------------------
 
 def init_app():
     # Load environment variables
@@ -40,6 +47,19 @@ def init_app():
         print("[CRITICAL] OpenAI Key not configured correctly.")
         print('[CRITICAL] Terminating Application')
         return
+    
+    # Testing Login Manager
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+
+    login_manager.login_view = "main.account_login"
+    login_manager.login_message = "You must be logged in to access this page."
+    login_manager.login_message_category = "warning"
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
+    # ------------------------------------
 
     # Initialize SQLAlchemy
     db.init_app(app)

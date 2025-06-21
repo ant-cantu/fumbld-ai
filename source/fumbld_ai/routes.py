@@ -1,56 +1,55 @@
-from flask import render_template, Blueprint, session, flash, redirect, url_for
+from flask import render_template, Blueprint, session, flash, redirect, url_for, request, abort
 import pytz, datetime
 from .yahoo_fantasy import get_roster, get_opp_roster
-from .utils import login_required, db
+from .utils import db, is_safe_url
 from .models import User
 from .forms import LoginForm, RegistrationForm
+from flask_login import current_user, login_user, logout_user, login_required
 
 main_bp = Blueprint('main', __name__, template_folder='templates')
 
 # Defining Root Page
 @main_bp.route('/')
 def home():
-    message = f"Welcome to Gridiron AI"
-    return render_template("index.html", message=message)
+    return render_template("index.html")
 
 # User Dashboard
 @main_bp.route("/dashboard")
 @login_required
 def dashboard():
     # If user is not logged in, redirect to login page
-    if 'user_id' not in session:
-        flash("You need to be logged in to view this page.", "error")
-        return redirect(url_for('main.account_login'))
+    # if 'user_id' not in session:
+    #     flash("You need to be logged in to view this page.", "error")
+    #     return redirect(url_for('main.account_login'))
 
     # Get the logged in user by user ID
-    query_user = User.query.filter_by(id=session['user_id']).first()
+    #query_user = User.query.filter_by(id=session['user_id']).first()
 
     # Get date for last login
-    if not query_user.last_login:
-        last_login = query_user.now_login.strftime("%m-%d-%y %I:%M:%S")
-    elif query_user.last_login:
-        last_login = query_user.last_login.strftime("%m-%d-%y %I:%M:%S")
+    if not current_user.last_login:
+        last_login = current_user.now_login.strftime("%m-%d-%y %I:%M:%S")
+    elif current_user.last_login:
+        last_login = current_user.last_login.strftime("%m-%d-%y %I:%M:%S")
         
         # ** Need to figure out where to store the last login, so we can display it before its updated to the current time **
         utc_now = datetime.datetime.now(pytz.utc)
         pacific_tmz = pytz.timezone("America/Los_Angeles")
         pacific_now = utc_now.astimezone(pacific_tmz)
-        query_user.last_login = pacific_now
+        current_user.last_login = pacific_now
 
     # Yahoo Sports
-    team_roster = []
-    if not query_user or not query_user.yahoo_token or not query_user.yahoo_token.access_token:
+    if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
         return render_template("dashboard.html",
-                            username=query_user.username,
+                            username=current_user.username,
                             last_login=last_login)
     else:
-        team_starters = get_roster(query_user)
-        opp_starters = get_opp_roster(query_user)
+        team_starters = get_roster(current_user)
+        opp_starters = get_opp_roster(current_user)
         # Testing
-        get_opp_roster(query_user)
+        get_opp_roster(current_user)
 
     return render_template("dashboard.html",
-                            username=query_user.username,
+                            username=current_user.username,
                             last_login=last_login,
                             user_team=team_starters,
                             opp_team=opp_starters)
@@ -100,10 +99,13 @@ def account_register():
             db.session.commit()
 
             # add new user to session and login
-            session['user_id'] = new_user.id
+            login_user(new_user)
+            next_page = request.args.get('next')
+            if next_page and not is_safe_url(next_page):
+                return abort(400)
 
-            print(f"New account created successfully for: {new_user.username} with ID: {new_user.id}")
-            return redirect(url_for('main.dashboard'))
+            print(f"New account created successfully for: {current_user.username} with ID: {current_user.id}")
+            return redirect(next_page or url_for('main.dashboard'))
         except Exception as e:
             # Rollback changes made to database incase of error
             db.session.rollback()
@@ -118,10 +120,8 @@ def account_login():
 
     form = LoginForm()
 
-    # Check if user is logged in already
-    if 'user_id' in session:
-        print("[DEBUG LOG] User is logged in already.")
-        flash("You are already logged in.", "info")
+    # User is already logged in
+    if current_user.is_authenticated:
         return redirect(url_for('main.dashboard'))
 
     # Check if forms have valid information
@@ -134,16 +134,19 @@ def account_login():
 
         # If user was not found
         if not query_user:
-            flash("Username was not found!", "error")
+            #form.username.validators[0].message = "Invalid login"
             return render_template("login.html", form=form)
         
         # Check if the password matches
         if query_user.check_password(raw_password):
-            flash("Successfully logged in!", "success")
             print(f"[DEBUG LOG] Login was successful. User ID: {query_user.id}")
             
             # Add login session to browser
-            session['user_id'] = query_user.id
+            #session['user_id'] = query_user.id
+            login_user(query_user, remember=form.remember.data)
+            next_page = request.args.get('next')
+            if next_page and not is_safe_url(next_page):
+                return abort(400)
 
             # ** Need to figure out where to store the last login, so we can display it before its updated to the current time **
             # update 'last login' date to now in database
@@ -159,7 +162,7 @@ def account_login():
                 db.session.rollback()
                 print(f"[DEBUG LOG] There was an internal error: {e}")
             finally:
-                return redirect(url_for('main.dashboard'))
+                return redirect(next_page or url_for('main.dashboard'))
         else:
             flash("You entered the wrong password!", "error")
             print("[DEBUG LOG] Login attempt failed.")
@@ -169,8 +172,8 @@ def account_login():
 
 # User Logout
 @main_bp.route('/logout')
+@login_required
 def handle_logout():
     # Remove user from session & redirect to login page
-    session.pop('user_id', None)
-    flash("You have been logged out." "info")
+    logout_user()
     return redirect(url_for('main.account_login'))
