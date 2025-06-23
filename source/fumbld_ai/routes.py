@@ -9,7 +9,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 main_bp = Blueprint('main', __name__, template_folder='templates')
 
 # Dev only
-block_api = True
+block_api = False
 
 # Defining Root Page
 @main_bp.route('/')

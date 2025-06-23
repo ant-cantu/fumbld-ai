@@ -46,22 +46,75 @@
         </div>
 
         <div class="main-container">
+            <!-- User Dashboard -->
             <div class="dashboard-container">
-                <h1>This is the dashboard</h1>
+                <div id="header">
+                    <p>Dashboard | Welcome {{ username }}</p>
+                </div>
+
+                <div id="content">
+                    Dashboard Content
+                </div>
             </div>
 
+            <!-- AI Recommendations -->
             <div class="ai-container">
-                <h1>AI Recommendation</h1>
+                <div id="header">
+                    <p>AI Recommendation</p>
+                </div>
+
+                <div id="content">
+                    AI Content
+                </div>
             </div>
 
+            <!-- Weekly Matchups -->
             <div class="matchup-container">
-                <h1>Matchup Container</h1>
+                <div id="header">
+                    <p>Weekly Matchup</p>
+                </div>
+
+                <div id="content">
+                    {% if user_team %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th colspan="4" class="main-header">Week 16</th>
+                            </tr>
+                            <tr>
+                                <th colspan="2" class="sub-header">Your Starters</th>
+                                <th colspan="2" class="sub-header">Opponent Starters</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in range(user_team|length) %}
+                                <tr>
+                                    <td class="position-label">{{ user_team[i].position }}</td>
+                                    <td class="player-name">{{ user_team[i].name }}</td>
+
+                                    <td class="position-label">{{ opp_team[i].position }}</td>
+                                    <td class="player-name">{{ opp_team[i].name }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                        <p>You are not authenticated in Yahoo!</p>
+                    {% endif %} 
+                </div>
             </div>
 
+            <!-- Player Rankings -->
             <div class="rankings-container">
-                <h1>Ranking Container</h1>
+                <div id="header">
+                    <p>Player Rankings</p>
+                </div>
+
+                <div id="content">
+                    Player Rankings
+                </div>
             </div>
-            
+
             <!-- Settings -->
             <div class="settings-container">
                 <div id="header">
@@ -74,36 +127,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- {% if user_team %}
-        <h1>Week 16</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th colspan="4" class="main-header">Week 16</th>
-                </tr>
-                <tr>
-                    <th colspan="2" class="sub-header">Your Starters</th>
-                    <th colspan="2" class="sub-header">Opponent Starters</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for i in range(user_team|length) %}
-                    <tr>
-                        <td class="position-label">{{ user_team[i].position }}</td>
-                        <td class="player-name">{{ user_team[i].name }}</td>
-
-                        <td class="position-label">{{ opp_team[i].position }}</td>
-                        <td class="player-name">{{ opp_team[i].name }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-            <p>You are not authenticated in Yahoo!</p>
-        {% endif %} -->
-
-        
     </main>
     
     <!-- Footer -->
