@@ -3,53 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gridiron AI</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            background-color: #fcfcfc;
-        }
-        table {
-            border-collapse: collapse;
-            width: 800px;
-            margin: auto;
-            border: 2px solid #a9a9a9;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        th, td {
-            border: 1px solid #d3d3d3;
-            padding: 12px;
-            text-align: center;
-        }
-        .main-header {
-            font-size: 1.5em;
-            font-weight: bold;
-            background-color: #e9e9e9;
-        }
-        .sub-header {
-            font-size: 1.2em;
-            font-weight: bold;
-            background-color: #f3f3f3;
-        }
-        .position-label {
-            font-weight: bold;
-            text-align: center;
-            width: 50px;
-            background-color: #fafafa;
-        }
-        .player-name {
-            text-align: center;
-        }
-    </style>
+    <title>Fumbld AI | Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 </head>
 <body>
+    <!-- Header -->
     <header>
-        <p>{{ username }}, last logged in {{ last_login }}</p>
-        <h1>Welcome to Gridiron AI, <b>{{ username }}</b></h1>
+        <!-- Nav Menu -->
+        <nav class="nav-bar">
+            <button class="hamburer-button" id="hamburgerButton">&#9776;</button>
+            <a href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='img/fumbld-small-logo.png') }}" alt="fumbld-ai Logo"></a>
+            <div class="nav-links" id="navLinks">
+                <ul>
+                    <li><a href="{{ url_for('main.home') }}">Home</a></li>
+                    <li><a href="{{ url_for('main.home') }}">About</a></li>
+                    <li><a href="/register" role="button" style="color: green;">Register</a></li>
+                    <li><a href="/logout" role="button">Log Out</a></li>
+                </ul>
+            </div>
+        </nav>
+        <!-- End Nav Section-->
     </header>
-    {% with messages = get_flashed_messages(category_filter=["error"]) %}
+    <!-- End Header -->
+
+    <!-- {% with messages = get_flashed_messages(category_filter=["error"]) %}
         {% if messages %}
             <div class="flash-error">
                 {% for message in messages %}
@@ -57,19 +34,48 @@
                 {% endfor %}
             </div>
         {% endif %}
-    {% endwith %}
-    <main>
-        <!--
-        <ul>
-            {% if roster %}
-                {% for player in roster %}
-                    <li>{{ player }}</li>
-                {% endfor %}
-            {% endif %}
-        </ul>
-         -->
+    {% endwith %} -->
 
-        {% if user_team %}
+    <main>
+        <div class="user-nav-container">
+            <div id="dashboard"><span id="user-nav-link">Dashboard</span></div>
+            <div id="ai"><span id="user-nav-link">Recommendation</span></div>
+            <div id="matchups"><span id="user-nav-link">Matchups</span></div>
+            <div id="rankings"><span id="user-nav-link">Player Rankings</span></div>
+            <div id="settings"><span id="user-nav-link">Settings</span></div>
+        </div>
+
+        <div class="main-container">
+            <div class="dashboard-container">
+                <h1>This is the dashboard</h1>
+            </div>
+
+            <div class="ai-container">
+                <h1>AI Recommendation</h1>
+            </div>
+
+            <div class="matchup-container">
+                <h1>Matchup Container</h1>
+            </div>
+
+            <div class="rankings-container">
+                <h1>Ranking Container</h1>
+            </div>
+            
+            <!-- Settings -->
+            <div class="settings-container">
+                <div id="header">
+                    <p>Settings</p>
+                </div>
+
+                <div id="content">
+                    <a id="yahoo-link" href="/yahoo/authorize"><img id="yahoo-img" src="../static/img/assets/yahoo_button.png"></a>
+                    <p><a href="/logout">Click here to logout.</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- {% if user_team %}
         <h1>Week 16</h1>
         <table>
             <thead>
@@ -95,13 +101,29 @@
         </table>
         {% else %}
             <p>You are not authenticated in Yahoo!</p>
-        {% endif %}
+        {% endif %} -->
 
-        <p><a href="/yahoo/authorize">Connect to Yahoo</a></p>
-        <p><a href="/logout">Click here to logout.</a></p>
+        
     </main>
+    
+    <!-- Footer -->
     <footer>
-        <p>&copy; 2024 Gridiron AI</p>
+        <div class="footer-container">
+            <div class="footer-nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Register</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-bottom">
+                <p>Copyright&copy; 2025 <span class="footer-design">Fumbld </span>AI</p>
+            </div>
+        </div>
     </footer>
+    <!-- End Footer -->
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 </body>
 </html>

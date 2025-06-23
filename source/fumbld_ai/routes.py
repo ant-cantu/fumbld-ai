@@ -8,6 +8,9 @@ from flask_login import current_user, login_user, logout_user, login_required
 
 main_bp = Blueprint('main', __name__, template_folder='templates')
 
+# Dev only
+block_api = True
+
 # Defining Root Page
 @main_bp.route('/')
 def home():
@@ -29,14 +32,20 @@ def dashboard():
         pacific_now = utc_now.astimezone(pacific_tmz)
         current_user.last_login = pacific_now
 
-    # Yahoo Sports
+    # Check if user is connected to Yahoo Sports
     if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
         return render_template("dashboard.html",
                             username=current_user.username,
                             last_login=last_login)
     else:
-        team_starters = get_roster(current_user)
-        opp_starters = get_opp_roster(current_user)
+        if block_api is False:
+            print("allowing api calls")
+            team_starters = get_roster(current_user)
+            opp_starters = get_opp_roster(current_user)
+        else:
+            print("blocking api calls")
+            team_starters = [{"position": "QB", "name": "John"}]
+            opp_starters = [{"position": "QB", "name": "John"}]
 
     return render_template("dashboard.html",
                             username=current_user.username,
@@ -48,6 +57,9 @@ def dashboard():
 @main_bp.route('/register', methods=['GET', 'POST'])
 def account_register():
     from .models import User
+
+    if current_user.is_authenticated:
+       return redirect(url_for('main.dashboard'))
 
     # Create an object of RegistrationForm
     form = RegistrationForm()

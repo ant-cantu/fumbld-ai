@@ -1,0 +1,242 @@
+@import 'https://fonts.googleapis.com/css?family=Montserrat:300, 400, 700&display=swap';
+
+html {
+    font-family: 'Montserrat', sans-serif;
+    height: 100%;
+}
+
+body {
+    background-color: #f9fafb !important; /* Override Bootstrap */
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+    justify-content: space-between;
+    gap: 5px;
+}
+
+/* Navigation Menu */
+.nav-bar {
+    background: radial-gradient(circle at center, #0f172a 0%, #0a0f1e 60%, #060913 100%);
+    /* width: inherit; */
+    display: flex;
+    padding: 1% 6%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-bar button {
+    display: none;
+}
+
+.nav-bar img {
+    width: 125px;
+} 
+
+.nav-bar .nav-links {
+    flex: 1;
+    text-align: right;
+    font-size: larger;
+}
+
+.nav-bar ul {
+    margin: 0;
+    padding: 0;
+}
+
+.nav-bar ul li {
+    list-style: none;
+    display: inline-block;
+    padding: 8px 12px;
+    position: relative;
+}
+
+.nav-bar a {
+    text-decoration: none;
+    font-size: 20px;
+    color: white;
+}
+
+.nav-bar .nav-links ul li::after {
+    content: '';
+    width: 0%;
+    height: 2px;
+    background-color: #74b9ff;
+    display: block;
+    margin: auto;
+    transition: .3s;
+}
+
+.nav-bar .nav-links ul li:hover::after {
+    width: 100%;
+}
+
+/* Main Content */
+main {
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    gap: 5px;
+}
+
+    /* Left Nav Bar */
+    .user-nav-container {
+        display: flex;
+        flex-direction: column;
+        width: 12.5rem;
+        height: 100%;
+        border-right: 2px solid black;
+        gap: 25px;
+    }
+
+    .user-nav-container #dashboard,
+    #ai,
+    #matchups,
+    #rankings,
+    #settings {
+        width: 100%;
+        border-bottom: 1px solid black;
+        cursor: pointer;
+    }
+
+    .user-nav-container #user-nav-link {
+        padding-left: 5px;
+    }
+
+    .user-nav-container #user-nav-link:hover {
+        font-weight: 600;
+    }
+
+    /* Main Container */
+    .main-container {
+        width: 100%;
+    }
+        /* Dashboard Container */
+        .dashboard-container {
+            height: 100%;
+            width: 100%;
+            display: flex;
+        }
+
+        /* AI Container */
+        .ai-container {
+            height: 100%;
+            width: 100%;
+            display: none;
+        }
+
+        /* Matchup Container */
+        .matchup-container {
+            height: 100%;
+            width: 100%;
+            display: none;
+        }
+
+        /* Rankings Container */
+        .rankings-container {
+            height: 100%;
+            width: 100%;
+            display: none;
+        }
+
+        /* Settings Container */
+        .settings-container {
+            /* display: flex; */
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            display: none;
+        }
+
+        .settings-container #header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid black;
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        .settings-container #header p {
+            font-weight: 900;
+            font-size: 36px;
+            padding-bottom: 0;
+            padding-top: 0;
+            margin-bottom: 0;
+            margin-top: 5px;
+        }
+
+        .settings-container #content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+        }
+
+        /* Connect to Yahoo button */
+        .settings-container #content #yahoo-img {
+            width: 16rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+            border-radius: 36px;
+
+            &:hover {
+                transform: translateY(-2px) scale(1.03);
+                box-shadow: 0 8px 24px 0 rgba(15, 23, 42, 0.22);
+            }
+        }
+
+/* Footer Style */
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #111;
+    padding: 10px 20px;
+    margin: 0 auto;
+}
+
+.footer-container .footer-nav ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    gap: 10px;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-container .footer-nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.3em;
+    opacity: 0.7;
+    transition: 0.5s;
+}
+
+.footer-container .footer-nav ul li a:hover {
+    opacity: 1;
+    color: #74b9ff;
+    transition: 0.3s;
+}
+
+.footer-container .footer-bottom p {
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-design {
+    color: #74b9ff;
+    font-weight: 400;
+    margin: 0px 5px;
+}
