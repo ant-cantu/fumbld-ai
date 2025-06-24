@@ -1,10 +1,11 @@
-from flask import render_template, Blueprint, session, flash, redirect, url_for, request, abort
+from flask import render_template, Blueprint, flash, redirect, url_for, request, abort, jsonify
 import pytz, datetime
-from .yahoo_fantasy import get_roster, get_opp_roster
+from .yahoo_fantasy import yahoo_get_roster, yahoo_get_opp_roster, yahoo_get_leagues
 from .utils import db, is_safe_url
 from .models import User
 from .forms import LoginForm, RegistrationForm
 from flask_login import current_user, login_user, logout_user, login_required
+
 
 main_bp = Blueprint('main', __name__, template_folder='templates')
 
@@ -32,26 +33,45 @@ def dashboard():
         pacific_now = utc_now.astimezone(pacific_tmz)
         current_user.last_login = pacific_now
 
-    # Check if user is connected to Yahoo Sports
-    if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
-        return render_template("dashboard.html",
-                            username=current_user.username,
-                            last_login=last_login)
-    else:
-        if block_api is False:
-            print("allowing api calls")
-            team_starters = get_roster(current_user)
-            opp_starters = get_opp_roster(current_user)
-        else:
-            print("blocking api calls")
-            team_starters = [{"position": "QB", "name": "John"}]
-            opp_starters = [{"position": "QB", "name": "John"}]
-
     return render_template("dashboard.html",
                             username=current_user.username,
-                            last_login=last_login,
-                            user_team=team_starters,
-                            opp_team=opp_starters)
+                            last_login=last_login)#,
+                            #user_team=team_starters,
+                            #opp_team=opp_starters)
+
+@main_bp.route('/fetch/yahoo/roster', methods=['GET'])
+@login_required
+def get_roster():
+    if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
+        abort(403)
+
+    league_id = request.args.get('league-id', '')
+
+    # Debug
+    print(yahoo_get_roster(league_id))
+
+    return jsonify(yahoo_get_roster(league_id)), 201
+
+@main_bp.route('/fetch/yahoo/leagues', methods=['GET'])
+@login_required
+def get_leagues():
+    if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
+        abort(403)
+
+    # /fetch/yahoo/leagues?year=2025
+    year = request.args.get('year', '')
+
+    # Debug
+    print(yahoo_get_leagues(year))
+
+    return jsonify(yahoo_get_leagues(year)), 201
+
+    
+
+@main_bp.errorhandler(403)
+def forbidden_error(error):
+    return render_template("403.html"), 403
+
     
 # User Registration
 @main_bp.route('/register', methods=['GET', 'POST'])

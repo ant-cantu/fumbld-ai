@@ -118,49 +118,11 @@ main {
         width: 100%;
     }
 
-        /* Dashboard Container */
-        
-
         /* AI Container */
        
 
         /* Matchup Container */
-        .matchup-container #content table {
-            border-collapse: collapse;
-            width: 800px;
-            margin: auto;
-            border: 2px solid #a9a9a9;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .matchup-container #content th, td {
-            border: 1px solid #d3d3d3;
-            padding: 12px;
-            text-align: center;
-        }
-
-        .matchup-container #content .main-header {
-            font-size: 1.5em;
-            font-weight: bold;
-            background-color: #e9e9e9;
-        }
-
-        .matchup-container #content .sub-header {
-            font-size: 1.2em;
-            font-weight: bold;
-            background-color: #f3f3f3;
-        }
-
-        .matchup-container #content .position-label {
-            font-weight: bold;
-            text-align: center;
-            width: 50px;
-            background-color: #fafafa;
-        }
-
-        .matchup-container #content .player-name {
-            text-align: center;
-        }
+        
 
         /* Rankings Container */
 

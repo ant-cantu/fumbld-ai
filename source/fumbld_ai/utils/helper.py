@@ -21,4 +21,6 @@ class TokenEncryptor:
     
     def decrypt(self, encrypted_token):
         return self.fernet.decrypt(encrypted_token)
+    
+
         

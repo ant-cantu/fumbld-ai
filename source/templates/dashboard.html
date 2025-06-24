@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fumbld AI | Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard/dashboard.css') }}">
 </head>
 <body>
     <!-- Header -->
@@ -53,7 +54,48 @@
                 </div>
 
                 <div id="content">
-                    Dashboard Content
+                    <div class="selections">
+                        <select id="year">
+                            <!-- 2023/2024 will be removed when the season starts -->
+                            <option value="2023">2023 (Removed Soon)</option>
+                            <option value="2024">2024 (Removed Soon)</option>
+                            <option value="2025">2025</option>
+                        </select>
+
+                        <select id="leagues">
+                            <option value="">--Select an option--</option>  
+                        </select>
+
+                        <button id="refresh">Refresh Data</button>
+                    </div>
+
+                    <div class="roster">
+                        <div class="starters">
+                            <table id="starters">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2" class="sub-header">Starters</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="starter-players">
+                                    <!-- Filled via API -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="bench">
+                            <table id="bench">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2" class="sub-header">Bench</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bench-players">
+                                        <!-- Filled via API -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
