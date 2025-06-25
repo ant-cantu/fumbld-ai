@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fumbld AI | Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/recommendations.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/matchups.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/rankings.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/settings.css') }}">
 </head>
 <body>
     <!-- Header -->
@@ -39,11 +43,13 @@
 
     <main>
         <div class="user-nav-container">
-            <div id="dashboard"><span id="user-nav-link">Dashboard</span></div>
-            <div id="ai"><span id="user-nav-link">Recommendation</span></div>
-            <div id="matchups"><span id="user-nav-link">Matchups</span></div>
-            <div id="rankings"><span id="user-nav-link">Player Rankings</span></div>
-            <div id="settings"><span id="user-nav-link">Settings</span></div>
+            <div id="sub-container">
+                <div id="dashboard" class="active"><span id="user-nav-link">Dashboard</span></div>
+                <div id="ai"><span id="user-nav-link"><span id="ai-text">AI</span> Recommendation</span></div>
+                <div id="matchups"><span id="user-nav-link">Matchups</span></div>
+                <div id="rankings"><span id="user-nav-link">Player Rankings</span></div>
+                <div id="settings"><span id="user-nav-link">Settings</span></div>
+            </div>
         </div>
 
         <div class="main-container">
@@ -74,7 +80,7 @@
                             <table id="starters">
                                 <thead>
                                     <tr>
-                                        <th colspan="2" class="sub-header">Starters</th>
+                                        <th colspan="3" class="sub-header">Starters</th>
                                     </tr>
                                 </thead>
                                 <tbody id="starter-players">
@@ -87,7 +93,7 @@
                             <table id="bench">
                                 <thead>
                                     <tr>
-                                        <th colspan="2" class="sub-header">Bench</th>
+                                        <th colspan="3" class="sub-header">Bench</th>
                                     </tr>
                                 </thead>
                                 <tbody id="bench-players">
@@ -174,6 +180,14 @@
     <!-- Footer -->
     <footer>
         <div class="footer-container">
+            <!-- <div class="footer-nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Register</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div> -->
             <div class="footer-bottom">
                 <p>Copyright&copy; 2025 <span class="footer-design">Fumbld </span>AI</p>
             </div>

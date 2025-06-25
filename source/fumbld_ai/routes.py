@@ -1,6 +1,6 @@
 from flask import render_template, Blueprint, flash, redirect, url_for, request, abort, jsonify
 import pytz, datetime
-from .yahoo_fantasy import yahoo_get_roster, yahoo_get_opp_roster, yahoo_get_leagues
+from .yahoo_fantasy import yahoo_get_roster, yahoo_get_opp_roster, yahoo_get_leagues, yahoo_refresh_roster
 from .utils import db, is_safe_url
 from .models import User
 from .forms import LoginForm, RegistrationForm
@@ -45,10 +45,11 @@ def get_roster():
     if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
         abort(403)
 
+    # /fetch/yahoo/roster?league_id=423.l.1215322
     league_id = request.args.get('league-id', '')
 
     # Debug
-    print(yahoo_get_roster(league_id))
+    # print(yahoo_get_roster(league_id))
 
     return jsonify(yahoo_get_roster(league_id)), 201
 
@@ -62,10 +63,20 @@ def get_leagues():
     year = request.args.get('year', '')
 
     # Debug
-    print(yahoo_get_leagues(year))
+    # print(yahoo_get_leagues(year))
 
     return jsonify(yahoo_get_leagues(year)), 201
 
+@main_bp.route('/fetch/yahoo/refresh', methods=['GET'])
+@login_required
+def refresh_roster():
+    if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
+        abort(403)
+
+    league_id = request.args.get('league_id', '')
+    yahoo_refresh_roster(league_id)
+
+    return jsonify({"status": "success", "message": f"Roster refreshed for league: {league_id}"})
     
 
 @main_bp.errorhandler(403)

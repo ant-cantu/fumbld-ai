@@ -1,7 +1,7 @@
 # In gridiron_ai/__init__.py
 
 # models.py
-from .models import User, YahooToken, Roster
+from .models import User, YahooToken, YahooRoster
 
 # forms.py
 from .forms import LoginForm, RegistrationForm

@@ -6,7 +6,7 @@ html {
 }
 
 body {
-    background-color: #f9fafb !important; /* Override Bootstrap */
+    /* background-color: #f9fafb !important; Override Bootstrap */
     display: flex;
     flex-direction: column;
     margin: 0;
@@ -15,6 +15,14 @@ body {
     width: 100vw;
     justify-content: space-between;
     gap: 5px;
+    /* background: linear-gradient(135deg,
+            #11182b 0%,
+            #0e1425 40%,
+            #0b1121 70%,
+            #070d1b 100%
+    ); */
+    background-color: #1F3C63;
+    color: white;
 }
 
 /* Navigation Menu */
@@ -77,7 +85,8 @@ body {
 main {
     display: flex;
     justify-content: space-evenly;
-    flex-direction: row;
+    align-items: center;
+    /* flex-direction: row; */
     height: 100%;
     width: 100%;
     margin: 0;
@@ -85,38 +94,68 @@ main {
     gap: 5px;
 }
 
-    /* Left Nav Bar */
-    .user-nav-container {
-        display: flex;
-        flex-direction: column;
-        width: 12.5rem;
-        height: 100%;
-        border-right: 2px solid black;
-        gap: 25px;
-    }
+/* Left Nav Bar */
+.user-nav-container {
+    width: 12.5rem;
+    height: 90%;
+    border-radius: 10px;
+    background: radial-gradient(circle at center, #0f172a 0%, #0a0f1e 60%, #060913 100%);
+    color: white;
+    font-size: 16px;
+    font-weight: bolder;
+}
 
-    .user-nav-container #dashboard,
-    #ai,
-    #matchups,
-    #rankings,
-    #settings {
-        width: 100%;
-        border-bottom: 1px solid black;
-        cursor: pointer;
-    }
+.user-nav-container #sub-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 10px;
+    height: 100%;
+    padding-top: 16px;
+    padding-left: 10px;
+}
 
-    .user-nav-container #user-nav-link {
-        padding-left: 5px;
-    }
+.user-nav-container #dashboard,
+#ai,
+#matchups,
+#rankings,
+#settings {
+    display: flex;
+    /* justify-content: center; */
+    align-items: center;
+    height: 4rem;
+    width: 100%;
+    cursor: pointer;
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+    transition: 0.3s;
+}
 
-    .user-nav-container #user-nav-link:hover {
-        font-weight: 600;
-    }
+.user-nav-container #dashboard:hover,
+#ai:hover,
+#matchups:hover,
+#rankings:hover,
+#settings:hover {
+    background-color: #1F3C63;
+}
 
-    /* Main Container */
-    .main-container {
-        width: 100%;
-    }
+.user-nav-container #dashboard.active,
+#ai.active,
+#matchups.active,
+#rankings.active,
+#settings.active {
+    background-color: #1F3C63;
+}
+
+.user-nav-container #user-nav-link {
+    padding-left: 10px;
+}
+
+/* Main Container */
+.main-container {
+    height: 90%;
+    width: 80%;
+}
 
         /* AI Container */
        
@@ -126,79 +165,58 @@ main {
 
         /* Rankings Container */
 
-        /* Settings Container */
-
-        /* Connect to Yahoo button */
-        .settings-container #content #yahoo-img {
-            width: 16rem;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-            border-radius: 36px;
-
-            &:hover {
-                transform: translateY(-2px) scale(1.03);
-                box-shadow: 0 8px 24px 0 rgba(15, 23, 42, 0.22);
-            }
-        }
-
-/* Main */
-main {
-    background: linear-gradient(135deg,
-            #11182b 0%,
-            #0e1425 40%,
-            #0b1121 70%,
-            #070d1b 100%
-    );
-    color: white;
         
-}
-/* Dashboard */
-.dashboard-intro {
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-/* Content */
-.selections {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.2rem;
-    font-size: 1rem;
-    align-items: center;
-    justify-content: flex-start;
-    margin: 1rem 0;
-}
-#year, #leagues {
-    padding: 0.5rem 1rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background-color: #fff;
-    font-weight: 500;
-    min-width: 150px;
-    /* appearance: none; */
-    color: black;
-}
-
-#refresh {
-    background-color: #74b9ff;
-    color: black;
-    padding: .5rem 1.2rem;
-    text-decoration: none;
-    border: 2px solid black;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-#refresh:hover {
-    color:#74b9ff;
-    background: black;
-}
-
-/* Left Dashboard Menu */
 
 /* Footer Style */
-footer {
+.footer-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    background-color: #111;
+    padding: 10px 20px;
+    margin: 0 auto;
+}
+
+/* .footer-container .footer-nav ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    gap: 10px;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-container .footer-nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.3em;
+    opacity: 0.7;
+    transition: 0.5s;
+}
+
+.footer-container .footer-nav ul li a:hover {
+    opacity: 1;
+    color: #74b9ff;
+    transition: 0.3s;
+} */
+
+.footer-container .footer-bottom p {
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-design {
+    color: #74b9ff;
+    font-weight: 400;
+    margin: 0px 5px;
+}
+
+/* footer {
     background-color: #111;
 }
 
@@ -229,7 +247,7 @@ footer {
     color: #74b9ff;
     font-weight: 400;
     margin: 0px 5px;
-}
+} */
 
 /* - - - Global Style - - - */
 .dashboard-container,
@@ -242,6 +260,9 @@ footer {
     height: 100%;
     width: 100%;
     display: none;
+    background-color: #fff !important;
+    color: black;
+    border-radius: 16px;
 }
 
 .dashboard-container {

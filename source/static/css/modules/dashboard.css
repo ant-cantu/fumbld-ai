@@ -1,0 +1,76 @@
+/* Dashboard Container */
+.dashboard-container {
+    background-color: #fff !important;
+    color: black;
+    border-radius: 16px;
+}
+
+.dashboard-container #content {
+    display: flex;
+    justify-content: flex-start;
+    gap: 25px;
+}
+
+.dashboard-container #content .roster {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.dashboard-container table {
+    border: 1px solid black;
+    text-align: center;
+}
+
+.dashboard-container tr, th, td {
+    border: 1px solid black;
+    padding: 10px;
+}
+
+/* Dashboard */
+.dashboard-intro {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Content */
+.selections {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    font-size: 1rem;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 1rem 0;
+}
+
+#year, #leagues {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    font-weight: 500;
+    min-width: 150px;
+    /* appearance: none; */
+    color: black;
+}
+
+#refresh {
+    background-color: #74b9ff;
+    color: black;
+    padding: .5rem 1.2rem;
+    text-decoration: none;
+    border: 2px solid black;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#refresh:hover {
+    color:#74b9ff;
+    background: black;
+}
+
+/* Left Dashboard Menu */

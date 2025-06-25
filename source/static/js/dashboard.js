@@ -18,31 +18,43 @@ function hideAllMenus() {
     matchups.style.display = "none";
     rankings.style.display = "none";
     settings.style.display = "none";
+
+    dashboardBtn.classList.remove("active");
+    aiBtn.classList.remove("active");
+    matchupBtn.classList.remove("active");
+    rankingBtn.classList.remove("active");
+    settingsBtn.classList.remove("active");
 }
 
 dashboardBtn.addEventListener("click", () => {
     hideAllMenus();
     dashboard.style.display = "flex";
+    // dashboardBtn.style.background = "#1F3C63";
+    dashboardBtn.classList.add("active");
 });
 
 aiBtn.addEventListener("click", () => {
     hideAllMenus();
     ai.style.display = "flex";
+    aiBtn.classList.add("active");
 });
 
 matchupBtn.addEventListener("click", () => {
     hideAllMenus();
     matchups.style.display = "flex";
+    matchupBtn.classList.add("active");
 });
 
 rankingBtn.addEventListener("click", () => {
     hideAllMenus();
     rankings.style.display = "flex";
+    rankingBtn.classList.add("active");
 });
 
 settingsBtn.addEventListener("click", () => {
     hideAllMenus();
     settings.style.display = "flex";
+    settingsBtn.classList.add("active");
 });
 
 // --------------------------------------
@@ -92,6 +104,17 @@ function fetch_leagues(year) {
         })
 }
 
+function yahoo_refresh(league_id) {
+    if(league_id == "")
+        return
+
+    fetch('/fetch/yahoo/refresh?league_id=' + league_id)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.message);
+        });
+};
+
 function fetch_roster(league_id) {
     // Clear table first
     startersTable.innerHTML = '';
@@ -101,13 +124,25 @@ function fetch_roster(league_id) {
         .then(response => response.json())
         .then(data => {
             data.forEach(player => {
+                if(player.url.startsWith("https://https://")) {
+                    player.url = player.url.replace("https://https://", "https://");
+                }
+
                 const newRow = document.createElement('tr');
+                const newHeadshot = document.createElement('td');
                 const newPlayer = document.createElement('td');
                 const newPos = document.createElement('td');
+
+                const headshotImg = document.createElement('img');
+                headshotImg.src = player.url;
+                headshotImg.alt = player.name + " headshot image.";
+                headshotImg.height = 50;
+                newHeadshot.appendChild(headshotImg);
 
                 newPlayer.textContent = player.name;
                 newPos.textContent = player.position;
 
+                newRow.appendChild(newHeadshot);
                 newRow.appendChild(newPlayer);
                 newRow.appendChild(newPos);
 
@@ -131,10 +166,15 @@ yearMenu.addEventListener("change", () => {
     fetch_leagues(selectedYear);
 });
 
+leagueMenu.addEventListener("change", () => {
+    const selectedLeague = leagueMenu.value;
+    fetch_roster(selectedLeague);
+})
+
 refreshBtn.addEventListener("click", () => {
     const league_id = leagueMenu.value;
     if(league_id != '') {
-        fetch_roster(league_id);
+        yahoo_refresh(league_id);
         return;
     }
     else
