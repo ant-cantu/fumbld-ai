@@ -140,47 +140,89 @@ main {
             }
         }
 
-/* Footer Style */
-.footer-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #111;
-    padding: 10px 20px;
-    margin: 0 auto;
-}
-
-.footer-container .footer-nav ul {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    list-style: none;
-    gap: 10px;
-    padding: 0;
-    margin: 0;
-}
-
-.footer-container .footer-nav ul li a {
+/* Main */
+main {
+    background: linear-gradient(135deg,
+            #11182b 0%,
+            #0e1425 40%,
+            #0b1121 70%,
+            #070d1b 100%
+    );
     color: white;
+        
+}
+/* Dashboard */
+.dashboard-intro {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Content */
+.selections {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    font-size: 1rem;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 1rem 0;
+}
+#year, #leagues {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    font-weight: 500;
+    min-width: 150px;
+    /* appearance: none; */
+    color: black;
+}
+
+#refresh {
+    background-color: #74b9ff;
+    color: black;
+    padding: .5rem 1.2rem;
     text-decoration: none;
-    font-size: 1.3em;
-    opacity: 0.7;
-    transition: 0.5s;
+    border: 2px solid black;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+#refresh:hover {
+    color:#74b9ff;
+    background: black;
 }
 
-.footer-container .footer-nav ul li a:hover {
-    opacity: 1;
-    color: #74b9ff;
-    transition: 0.3s;
+/* Left Dashboard Menu */
+
+/* Footer Style */
+footer {
+    background-color: #111;
 }
 
-.footer-container .footer-bottom p {
-    color: white;
+.footer-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 24px;
+    gap: 20px;
+}
+
+.footer-bottom {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0;
-    margin: 0;
+    width: 75%;
+    margin: 0 auto;
+    padding: 10px;
+    background: #000;
+    color: #fff;
+    text-align: center;
+}
+
+.footer-bottom p {
+    color: white;
 }
 
 .footer-design {
