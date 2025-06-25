@@ -50,7 +50,7 @@
             <!-- User Dashboard -->
             <div class="dashboard-container">
                 <div id="header">
-                    <p>Dashboard | Welcome {{ username }}</p>
+                    <p class="dashboard-intro">Dashboard | Welcome <span style="color: #75a2cf; ">{{ username }}</span></p>
                 </div>
 
                 <div id="content">
@@ -65,8 +65,8 @@
                         <select id="leagues">
                             <option value="">--Select an option--</option>  
                         </select>
-
-                        <button id="refresh">Refresh Data</button>
+                        <!-- Changed from <button> to <a> -->
+                        <a href="#" type="button" id="refresh">Refresh</a>
                     </div>
 
                     <div class="roster">
@@ -174,20 +174,13 @@
     <!-- Footer -->
     <footer>
         <div class="footer-container">
-            <div class="footer-nav">
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Register</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
-            </div>
             <div class="footer-bottom">
                 <p>Copyright&copy; 2025 <span class="footer-design">Fumbld </span>AI</p>
             </div>
         </div>
     </footer>
     <!-- End Footer -->
+
 
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 </body>
