@@ -45,7 +45,7 @@
     margin: 1rem 0;
 }
 
-#year, #leagues {
+#leagues {
     padding: 0.5rem 1rem;
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -57,7 +57,7 @@
 }
 
 #refresh {
-    background-color: #74b9ff;
+    background-color: #207ad4;
     color: black;
     padding: .5rem 1.2rem;
     text-decoration: none;

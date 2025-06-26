@@ -2,109 +2,137 @@
 import yahoo_fantasy_api as yfa
 from .utils import yahoo_api_connect, db
 from flask_login import current_user
-from .models import YahooRoster
+from .models import YahooRoster, UserLeagues
 
-# Things TO-DO 6/24/25
-# Limit API Calls
-# Store user leagues in database?
+def yahoo_set_leagues():
+    years = [2024] # The year we are pulling leagues from
+    starting_positions = {'QB', 'WR', 'RB', 'K', 'TE', 'W/R/T', 'DEF', 'BN'}
+    league_ids = []
 
-def yahoo_get_leagues(year):
-    # Connect to the Yahoo API to make a request
-    auth_handler = yahoo_api_connect()
+    # Query the users leagues
+    query_leagues = UserLeagues.query.filter_by(
+        user_id=current_user.id
+    ).all()
 
-    # Create an object of yahoo_fantasy_api
-    gm = yfa.Game(auth_handler, 'nfl')
+    if not query_leagues:
+        # Connect to the Yahoo API to make a request
+        auth_handler = yahoo_api_connect()
 
-    # Generate a list of league ID's associated with the user
-    leagues = gm.league_ids(year=year)
+        # Create an object of yahoo_fantasy_api
+        gm = yfa.Game(auth_handler, 'nfl')
 
-    league_name = []
-    for league in leagues:
-        # Retrieve league info by league ID
-        lg = gm.to_league(league)
+        # Generate a list of league ID's associated with the user
+        for year in years:
+            leagues = gm.league_ids(year=year)
 
-        # Retrieve league settings which includes the name of the league
-        lg_info = lg.settings()
+            for league in leagues:
+                # Add league id to list of league ids, used for rosters
+                league_ids.append(league)
 
-        # Append league name as a dictionary
-        league_name.append({"id": league, "league_name": lg_info['name']})
-    
-    return league_name
+                # Retrieve league info by league ID
+                lg = gm.to_league(league)
 
-def yahoo_refresh_roster(league_id):
+                # Retrieve league settings which includes the name of the league
+                lg_info = lg.settings()
+
+                # Create new entry for UserLeagues database
+                new_league = UserLeagues("Yahoo", league, lg_info['name'], user=current_user)
+
+                try:
+                    db.session.add(new_league)
+                    db.session.commit()
+                    print(f"[LOG]: New league added to database for User ID: {current_user.id}, League Name: {lg_info['name']}, ID: {league}")
+                except Exception as e:
+                    db.session.rollback()
+                    print(f"[LOG][ERROR]: Unable to save new league to database")
+        
+        # Get users rosters for each league
+        for league_id in league_ids:
+            league = gm.to_league(league_id)
+            team = league.to_team(league.team_key())
+            roster = team.roster()
+
+            # Get player name and position
+            team_data = []
+            player_ids = []
+            for player in roster:
+                if player['selected_position'] in starting_positions:
+                    name = player['name']
+                    position = player['selected_position']
+                    player_id = player['player_id']
+                    team_data.append({'position': position, 'name': name})
+
+                    # Append player id to 'player_ids' list, used to get headshot image url
+                    player_ids.append(player_id)
+            
+            
+            # Get Player Headshot
+            player_details = league.player_details(player_ids)
+            headshot_urls = []
+            for details in player_details:
+                url = details['headshot']
+                full_url = url['url']
+                parsed_url = "https://" + full_url.split("/https://")[-1]
+                headshot_urls.append(parsed_url)
+            
+            # Add headshot image url to 'team_data' dictionary
+            # final outcome: {'position': position, 'name': name, 'url': url}
+            for player, url in zip(team_data, headshot_urls):
+                player['url'] = url
+
+            # Add team to users database
+            new_roster = YahooRoster(league_id, team_data, user=current_user)
+
+            try:
+                db.session.add(new_roster)
+                db.session.commit()
+                print("[LOG][DEBUG]: Success Team Added To Database!")
+            except Exception as e:
+                db.session.rollback()
+                print(f"[ERROR]: {e}")
+
+def yahoo_refresh():
     try:
-        # Delete the selected league (team)
-        print(f"[DEBUG]: LeagueID: {league_id} has been deleted.")
-        YahooRoster.query.filter_by(user_id=current_user.id, yahoo_league_id=league_id).delete()
+        # Delete users league data from database
+        YahooRoster.query.filter_by(user_id=current_user.id).delete()
+        UserLeagues.query.filter_by(user_id=current_user.id).delete()
         db.session.commit()
 
-        # Call Yahoo API to get current roster
-        yahoo_get_roster(league_id)
-    except Exception as e:
-        print(f"[ERROR]: The database encountered an error: {e}")
+        print(f"[LOG][DEBUG]: 'User ID: {current_user.id}' leagues has been deleted.")
 
+        # Call Yahoo API to setup users leagues
+        yahoo_set_leagues()
+    except Exception as e:
+        db.session.rollback()
+        print(f"[LOG][ERROR]: The database encountered an error: {e}")
+
+def yahoo_get_league():
+    """
+    Retrieves each of the users league id and names from the database
+
+    Returns:
+        Returns league_id and league_name from database in a dictionary format
+    """
+    league_name = []
+    query_leagues = UserLeagues.query.filter_by(user_id=current_user.id).all()
+    for league in query_leagues:
+        league_name.append({"id": league.league_id, "league_name": league.league_name})
+
+    return league_name
 
 def yahoo_get_roster(league_id):
-    starting_positions = {'QB', 'WR', 'RB', 'K', 'TE', 'W/R/T', 'DEF', 'BN'}
-
     query_team = YahooRoster.query.filter_by(
         user_id=current_user.id,
         yahoo_league_id=league_id
     ).first()
 
     if query_team is None:
-        print("[DEBUG]: No team found, calling Yahoo API!")
-
-        # Connect to the yahoo API to make a request
-        auth_handler = yahoo_api_connect()
-
-        # Pass the authenticated object to the yahoo_fantasy_api Game class
-        gm = yfa.Game(auth_handler, 'nfl')
-        
-        league = gm.to_league(league_id)
-        team = league.to_team(league.team_key())
-        roster = team.roster()
-
-        # Get player name and position
-        team_data = []
-        player_ids = []
-        for player in roster:
-            if player['selected_position'] in starting_positions:
-                name = player['name']
-                position = player['selected_position']
-                player_id = player['player_id']
-                team_data.append({'position': position, 'name': name})
-                player_ids.append(player_id)
-        
-        
-        # Get Player Headshot
-        player_details = league.player_details(player_ids)
-        headshot_urls = []
-        for details in player_details:
-            url = details['headshot']
-            full_url = url['url']
-            parsed_url = "https://" + full_url.split("/https://")[-1]
-            headshot_urls.append(parsed_url)
-        
-        for player, url in zip(team_data, headshot_urls):
-            player['url'] = url
-
-        # Add team to users database
-        new_roster = YahooRoster(league_id, team_data, user=current_user)
-
-        try:
-            db.session.add(new_roster)
-            db.session.commit()
-            print("[DEBUG]: Success Team Added To Database!")
-        except Exception as e:
-            db.session.rollback()
-            print(f"[ERROR]: {e}")
-        
-        return new_roster.yahoo_roster
+        print(f"[ERROR]: League ID: {league_id} does not exist for User ID: {current_user.id}")
     else:
-        print("EXISTING TEAM FOUND IN DATABASE")
         return query_team.yahoo_roster
 
+# This needs to be refactored
+# Create a database to save this information to
 def yahoo_get_opp_roster(user):
     print(f"Pulling opponents roster for user: {user.username}") # Debug
 

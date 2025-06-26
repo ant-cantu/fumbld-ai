@@ -7,11 +7,6 @@ from fumbld_ai.utils import yahoo_bp
 from fumbld_ai.models import User
 from flask_login import LoginManager
 
-# TO-DO --------------------------------------
-# 6/21/25
-# Update all database querys to current_user
-# -------------------------------------------
-
 def init_app():
     # Load environment variables
     load_dotenv() # <- Development Stage ONLY

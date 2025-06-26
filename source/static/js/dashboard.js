@@ -59,7 +59,6 @@ settingsBtn.addEventListener("click", () => {
 
 // --------------------------------------
 
-const yearMenu = document.querySelector("#year");
 const leagueMenu = document.querySelector("#leagues");
 const refreshBtn = document.querySelector("#refresh");
 
@@ -82,9 +81,9 @@ function create_placeholder(status) {
     leagueMenu.appendChild(placeholder);
 }
 
-function fetch_leagues(year) {
+function fetch_leagues() {
     // Make a call to our API, returns users leagues
-    fetch('fetch/yahoo/leagues?year=' + year)
+    fetch('fetch/yahoo/leagues')
         .then(response => {
             create_placeholder("loading");
             return response.json();
@@ -104,11 +103,8 @@ function fetch_leagues(year) {
         })
 }
 
-function yahoo_refresh(league_id) {
-    if(league_id == "")
-        return
-
-    fetch('/fetch/yahoo/refresh?league_id=' + league_id)
+function yahoo_refresh() {
+    fetch('/fetch/yahoo/refresh')
         .then(response => response.json())
         .then(data => {
             console.log(data.message);
@@ -156,32 +152,17 @@ function fetch_roster(league_id) {
 
 // Page is finished loading
 document.addEventListener('DOMContentLoaded', () => {
-    const selectedYear = yearMenu.value;
-    fetch_leagues(selectedYear);
+    fetch_leagues();
 });
 
-// Year drop down was changed
-yearMenu.addEventListener("change", () => {
-    const selectedYear = yearMenu.value;
-    fetch_leagues(selectedYear);
-});
-
+// League drop down is changed
 leagueMenu.addEventListener("change", () => {
     const selectedLeague = leagueMenu.value;
     fetch_roster(selectedLeague);
 })
 
 refreshBtn.addEventListener("click", () => {
-    const league_id = leagueMenu.value;
-    if(league_id != '') {
-        yahoo_refresh(league_id);
-        return;
-    }
-    else
-    {
-        // Report an error to the user here
-    }
-    
+    yahoo_refresh(league_id);
 });
 
 
