@@ -45,7 +45,7 @@
         <div class="user-nav-container">
             <div id="sub-container">
                 <div id="dashboard" class="active"><span id="user-nav-link">Dashboard</span></div>
-                <div id="ai"><span id="user-nav-link"><span id="ai-text">AI</span> Recommendation</span></div>
+                <div id="ai"><span id="user-nav-link"><span id="ai-text">AI</span> Insights</span></div>
                 <div id="matchups"><span id="user-nav-link">Matchups</span></div>
                 <div id="rankings"><span id="user-nav-link">Player Rankings</span></div>
                 <div id="settings"><span id="user-nav-link">Settings</span></div>
@@ -101,12 +101,33 @@
             <!-- AI Recommendations -->
             <div class="ai-container">
                 <div id="header">
-                    <p>AI Recommendation</p>
+                    <p>AI Insights</p>
                 </div>
 
                 <div id="content">
-                    AI Content
+                    {% if username %} <!-- team_data and user_data variables not working here -->
+                    <a href="#" type="button" id="insight-btn">Get AI Insights</a>
+
+                    <div class="recommendations">
+                        <table id="recommendations">
+                            <thead>
+                                <tr>
+                                    <th colspan="6" class="sub-header">AI Recommendation</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recommended-players">
+                                <!-- Filled via AI -->
+                            </tbody>
+                        </table> 
+                    </div>
+                    <div id="ai-response">
+                        <p>AI explanation would go here</p>
+                    </div>
+                    {% else %}
+                        <p>You are not authenticated in Yahoo!</p>
+                    {% endif %}
                 </div>
+
             </div>
 
             <!-- Weekly Matchups -->
@@ -116,7 +137,7 @@
                 </div>
 
                 <div id="content">
-                    {% if user_team %}
+                    {% if username %} <!-- Changed from user_team due to error -->
                     <table>
                         <thead>
                             <tr>
@@ -173,14 +194,6 @@
     <!-- Footer -->
     <footer>
         <div class="footer-container">
-            <!-- <div class="footer-nav">
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Register</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
-            </div> -->
             <div class="footer-bottom">
                 <p>Copyright&copy; 2025 <span class="footer-design">Fumbld </span>AI</p>
             </div>
