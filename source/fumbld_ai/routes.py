@@ -2,15 +2,11 @@ from flask import render_template, Blueprint, flash, redirect, url_for, request,
 import pytz, datetime
 from .yahoo_fantasy import yahoo_get_roster, yahoo_get_opp_roster, yahoo_get_league, yahoo_refresh
 from .utils import db, is_safe_url
-from .models import User
 from .forms import LoginForm, RegistrationForm
 from flask_login import current_user, login_user, logout_user, login_required
 
 
 main_bp = Blueprint('main', __name__, template_folder='templates')
-
-# Dev only
-block_api = False
 
 # Defining Root Page
 @main_bp.route('/')

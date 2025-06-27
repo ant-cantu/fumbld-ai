@@ -120,6 +120,8 @@ function fetch_roster(league_id) {
         .then(response => response.json())
         .then(data => {
             data.forEach(player => {
+
+                // Fix bad URLs
                 if(player.url.startsWith("https://https://")) {
                     player.url = player.url.replace("https://https://", "https://");
                 }
@@ -162,7 +164,7 @@ leagueMenu.addEventListener("change", () => {
 })
 
 refreshBtn.addEventListener("click", () => {
-    yahoo_refresh(league_id);
+    yahoo_refresh();
 });
 
 

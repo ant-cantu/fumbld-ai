@@ -2,15 +2,18 @@
 import yahoo_fantasy_api as yfa
 from .utils import yahoo_api_connect, db
 from flask_login import current_user
-from .models import YahooRoster, UserLeagues
+from .models import YahooLeague
 
 def yahoo_set_leagues():
     years = [2024] # The year we are pulling leagues from
     starting_positions = {'QB', 'WR', 'RB', 'K', 'TE', 'W/R/T', 'DEF', 'BN'}
+
     league_ids = []
+    league_names = []
+    league_teams = {}
 
     # Query the users leagues
-    query_leagues = UserLeagues.query.filter_by(
+    query_leagues = YahooLeague.query.filter_by(
         user_id=current_user.id
     ).all()
 
@@ -35,18 +38,10 @@ def yahoo_set_leagues():
                 # Retrieve league settings which includes the name of the league
                 lg_info = lg.settings()
 
-                # Create new entry for UserLeagues database
-                new_league = UserLeagues("Yahoo", league, lg_info['name'], user=current_user)
-
-                try:
-                    db.session.add(new_league)
-                    db.session.commit()
-                    print(f"[LOG]: New league added to database for User ID: {current_user.id}, League Name: {lg_info['name']}, ID: {league}")
-                except Exception as e:
-                    db.session.rollback()
-                    print(f"[LOG][ERROR]: Unable to save new league to database")
+                # Add league name to the league names list, used for database entry
+                league_names.append(lg_info['name'])
         
-        # Get users rosters for each league
+        # Get users rosters for each league and save all data to database
         for league_id in league_ids:
             league = gm.to_league(league_id)
             team = league.to_team(league.team_key())
@@ -60,11 +55,11 @@ def yahoo_set_leagues():
                     name = player['name']
                     position = player['selected_position']
                     player_id = player['player_id']
+
                     team_data.append({'position': position, 'name': name})
 
                     # Append player id to 'player_ids' list, used to get headshot image url
                     player_ids.append(player_id)
-            
             
             # Get Player Headshot
             player_details = league.player_details(player_ids)
@@ -80,22 +75,25 @@ def yahoo_set_leagues():
             for player, url in zip(team_data, headshot_urls):
                 player['url'] = url
 
-            # Add team to users database
-            new_roster = YahooRoster(league_id, team_data, user=current_user)
+            league_teams[league_id] = team_data
+    
+    for x in range(len(league_ids)):
+        add_league = YahooLeague(league_ids[x], league_names[x], league_teams[league_ids[x]], user=current_user)
+        # print(f"[DEBUG TEAM DATA]\n\n{league_teams[league_ids[x]]}\n\n")
 
-            try:
-                db.session.add(new_roster)
-                db.session.commit()
-                print("[LOG][DEBUG]: Success Team Added To Database!")
-            except Exception as e:
-                db.session.rollback()
-                print(f"[ERROR]: {e}")
+        try:
+            db.session.add(add_league)
+            db.session.commit()
+            print(f"[LOG]: 'user_id: {current_user.id}' 'username: {current_user.username}' successfully added 'league_id: {league_ids[x]} to database.")
+        except Exception as e:
+            db.session.rollback()
+            print(f"[LOG][ERROR]: Unable to save data to database: {e}")
+
 
 def yahoo_refresh():
     try:
         # Delete users league data from database
-        YahooRoster.query.filter_by(user_id=current_user.id).delete()
-        UserLeagues.query.filter_by(user_id=current_user.id).delete()
+        YahooLeague.query.filter_by(user_id=current_user.id).delete()
         db.session.commit()
 
         print(f"[LOG][DEBUG]: 'User ID: {current_user.id}' leagues has been deleted.")
@@ -114,14 +112,15 @@ def yahoo_get_league():
         Returns league_id and league_name from database in a dictionary format
     """
     league_name = []
-    query_leagues = UserLeagues.query.filter_by(user_id=current_user.id).all()
+    # query_leagues = UserLeagues.query.filter_by(user_id=current_user.id).all()
+    query_leagues = YahooLeague.query.filter_by(user_id=current_user.id).all()
     for league in query_leagues:
-        league_name.append({"id": league.league_id, "league_name": league.league_name})
+        league_name.append({"id": league.yahoo_league_id, "league_name": league.yahoo_league_name})
 
     return league_name
 
 def yahoo_get_roster(league_id):
-    query_team = YahooRoster.query.filter_by(
+    query_team = YahooLeague.query.filter_by(
         user_id=current_user.id,
         yahoo_league_id=league_id
     ).first()

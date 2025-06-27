@@ -1,14 +1,9 @@
 /* Dashboard Container */
-.dashboard-container {
-    background-color: #fff !important;
-    color: black;
-    border-radius: 16px;
-}
-
 .dashboard-container #content {
     display: flex;
     justify-content: flex-start;
     gap: 25px;
+    overflow-y: auto;
 }
 
 .dashboard-container #content .roster {
@@ -58,10 +53,9 @@
 
 #refresh {
     background-color: #207ad4;
-    color: black;
+    color: white;
     padding: .5rem 1.2rem;
     text-decoration: none;
-    border: 2px solid black;
     border-radius: 6px;
     font-weight: 600;
     cursor: pointer;
@@ -74,3 +68,27 @@
 }
 
 /* Left Dashboard Menu */
+table {
+    background-color: #fff;
+    border-radius: 16px;
+    table-layout: fixed;
+}
+
+th {
+    border: 1px solid pink;
+}
+
+tr {
+    border: 1px solid red;
+}
+
+td { 
+    border: 1px solid blue;
+    margin: 0;
+    padding: 5px;
+}
+
+tbody {
+    border: 1px solid purple;
+}
+

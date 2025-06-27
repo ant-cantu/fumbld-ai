@@ -6,7 +6,6 @@ html {
 }
 
 body {
-    /* background-color: #f9fafb !important; Override Bootstrap */
     display: flex;
     flex-direction: column;
     margin: 0;
@@ -15,12 +14,6 @@ body {
     width: 100vw;
     justify-content: space-between;
     gap: 5px;
-    /* background: linear-gradient(135deg,
-            #11182b 0%,
-            #0e1425 40%,
-            #0b1121 70%,
-            #070d1b 100%
-    ); */
     background-color: #1F3C63;
     color: white;
 }
@@ -86,7 +79,6 @@ main {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    /* flex-direction: row; */
     height: 100%;
     width: 100%;
     margin: 0;
@@ -97,7 +89,7 @@ main {
 /* Left Nav Bar */
 .user-nav-container {
     width: 12.5rem;
-    height: 90%;
+    height: 80vh;
     border-radius: 10px;
     background: radial-gradient(circle at center, #0f172a 0%, #0a0f1e 60%, #060913 100%);
     color: white;
@@ -121,7 +113,6 @@ main {
 #rankings,
 #settings {
     display: flex;
-    /* justify-content: center; */
     align-items: center;
     height: 4rem;
     width: 100%;
@@ -153,19 +144,9 @@ main {
 
 /* Main Container */
 .main-container {
-    height: 90%;
+    height: 80vh;
     width: 80%;
-}
-
-        /* AI Container */
-       
-
-        /* Matchup Container */
-        
-
-        /* Rankings Container */
-
-        
+} 
 
 /* Footer Style */
 .footer-container {
@@ -176,30 +157,6 @@ main {
     padding: 10px 20px;
     margin: 0 auto;
 }
-
-/* .footer-container .footer-nav ul {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    list-style: none;
-    gap: 10px;
-    padding: 0;
-    margin: 0;
-}
-
-.footer-container .footer-nav ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 1.3em;
-    opacity: 0.7;
-    transition: 0.5s;
-}
-
-.footer-container .footer-nav ul li a:hover {
-    opacity: 1;
-    color: #74b9ff;
-    transition: 0.3s;
-} */
 
 .footer-container .footer-bottom p {
     color: white;
@@ -216,48 +173,15 @@ main {
     margin: 0px 5px;
 }
 
-/* footer {
-    background-color: #111;
-}
-
-.footer-container {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 24px;
-    gap: 20px;
-}
-
-.footer-bottom {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 75%;
-    margin: 0 auto;
-    padding: 10px;
-    background: #000;
-    color: #fff;
-    text-align: center;
-}
-
-.footer-bottom p {
-    color: white;
-}
-
-.footer-design {
-    color: #74b9ff;
-    font-weight: 400;
-    margin: 0px 5px;
-} */
-
 /* - - - Global Style - - - */
 .dashboard-container,
 .ai-container,
 .matchup-container,
 .rankings-container,
 .settings-container {
-    /* display: flex */
     flex-direction: column;
     height: 100%;
+    min-height: 0;
     width: 100%;
     display: none;
     background-color: #fff !important;

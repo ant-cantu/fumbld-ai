@@ -17,7 +17,7 @@ def init_app():
     # DB File Location
     # THIS IS FOR DEV ONLY, PRODUCTION WILL BE MOVED TO A MORE SECURE DATABASE
     basedir = os.path.abspath(os.path.dirname(__file__))
-    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///" + os.path.join(basedir, "gridiron.db")
+    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///" + os.path.join(basedir, "fumbld.db")
 
     # Disable Modification Warnings
     app.config['SQLALCHEMY_TRACK_MODIFICATION'] = False
@@ -53,7 +53,8 @@ def init_app():
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        return db.session.get(User, int(user_id))
+        # return User.query.get(int(user_id))
     
     # # Generate Key
     # from cryptography.fernet import Fernet
