@@ -1,16 +1,12 @@
 from flask import render_template, Blueprint, flash, redirect, url_for, request, abort, jsonify
 import pytz, datetime
-from .yahoo_fantasy import yahoo_get_roster, yahoo_get_opp_roster, yahoo_get_leagues
+from .yahoo_fantasy import yahoo_get_roster, yahoo_get_opp_roster, yahoo_get_league, yahoo_refresh
 from .utils import db, is_safe_url
-from .models import User
 from .forms import LoginForm, RegistrationForm
 from flask_login import current_user, login_user, logout_user, login_required
 
 
 main_bp = Blueprint('main', __name__, template_folder='templates')
-
-# Dev only
-block_api = False
 
 # Defining Root Page
 @main_bp.route('/')
@@ -38,40 +34,6 @@ def dashboard():
                             last_login=last_login)#,
                             #user_team=team_starters,
                             #opp_team=opp_starters)
-
-@main_bp.route('/fetch/yahoo/roster', methods=['GET'])
-@login_required
-def get_roster():
-    if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
-        abort(403)
-
-    league_id = request.args.get('league-id', '')
-
-    # Debug
-    print(yahoo_get_roster(league_id))
-
-    return jsonify(yahoo_get_roster(league_id)), 201
-
-@main_bp.route('/fetch/yahoo/leagues', methods=['GET'])
-@login_required
-def get_leagues():
-    if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
-        abort(403)
-
-    # /fetch/yahoo/leagues?year=2025
-    year = request.args.get('year', '')
-
-    # Debug
-    print(yahoo_get_leagues(year))
-
-    return jsonify(yahoo_get_leagues(year)), 201
-
-    
-
-@main_bp.errorhandler(403)
-def forbidden_error(error):
-    return render_template("403.html"), 403
-
     
 # User Registration
 @main_bp.route('/register', methods=['GET', 'POST'])
@@ -199,3 +161,40 @@ def handle_logout():
     # Remove user from session & redirect to login page
     logout_user()
     return redirect(url_for('main.account_login'))
+
+# ------------------------------------------------------------------------
+# Fumbld AI API
+
+@main_bp.route('/fetch/yahoo/roster', methods=['GET'])
+@login_required
+def get_roster():
+    if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
+        abort(403)
+
+    # /fetch/yahoo/roster?league_id=423.l.1215322
+    league_id = request.args.get('league-id', '')
+
+    return jsonify(yahoo_get_roster(league_id)), 201
+
+@main_bp.route('/fetch/yahoo/leagues', methods=['GET'])
+@login_required
+def get_leagues():
+    if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
+        abort(403)
+
+    return jsonify(yahoo_get_league()), 201
+
+@main_bp.route('/fetch/yahoo/refresh', methods=['GET'])
+@login_required
+def refresh_roster():
+    if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
+        abort(403)
+
+    # Delete all yahoo related entries in the database and refresh
+    yahoo_refresh()
+
+    return jsonify({"status": "success", "message": f"Roster refreshed for user id: {current_user.id}"})
+
+@main_bp.errorhandler(403)
+def forbidden_error(error):
+    return render_template("/errors/403.html"), 403

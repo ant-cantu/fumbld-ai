@@ -254,4 +254,8 @@ def yahoo_callback():
         # ----> Print for now, adding logger later <----
         print(f"Failed to save Yahoo token to database: {e}")
         db.session.rollback()
+
+    from ..yahoo_fantasy import yahoo_refresh
+    yahoo_refresh()
+
     return redirect(url_for('main.dashboard'))

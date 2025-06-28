@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fumbld AI | Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/recommendations.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/matchups.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/rankings.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/settings.css') }}">
 </head>
 <body>
     <!-- Header -->
@@ -39,34 +43,29 @@
 
     <main>
         <div class="user-nav-container">
-            <div id="dashboard"><span id="user-nav-link">Dashboard</span></div>
-            <div id="ai"><span id="user-nav-link">Recommendation</span></div>
-            <div id="matchups"><span id="user-nav-link">Matchups</span></div>
-            <div id="rankings"><span id="user-nav-link">Player Rankings</span></div>
-            <div id="settings"><span id="user-nav-link">Settings</span></div>
+            <div id="sub-container">
+                <div id="dashboard" class="active"><span id="user-nav-link">Dashboard</span></div>
+                <div id="ai"><span id="user-nav-link"><span id="ai-text">AI</span> Insights</span></div>
+                <div id="matchups"><span id="user-nav-link">Matchups</span></div>
+                <div id="rankings"><span id="user-nav-link">Player Rankings</span></div>
+                <div id="settings"><span id="user-nav-link">Settings</span></div>
+            </div>
         </div>
 
         <div class="main-container">
             <!-- User Dashboard -->
             <div class="dashboard-container">
                 <div id="header">
-                    <p>Dashboard | Welcome {{ username }}</p>
+                    <p class="dashboard-intro">Dashboard | Welcome <span style="color: #75a2cf; ">{{ username }}</span></p>
                 </div>
 
                 <div id="content">
                     <div class="selections">
-                        <select id="year">
-                            <!-- 2023/2024 will be removed when the season starts -->
-                            <option value="2023">2023 (Removed Soon)</option>
-                            <option value="2024">2024 (Removed Soon)</option>
-                            <option value="2025">2025</option>
-                        </select>
-
                         <select id="leagues">
                             <option value="">--Select an option--</option>  
                         </select>
-
-                        <button id="refresh">Refresh Data</button>
+                        <!-- Changed from <button> to <a> -->
+                        <a href="#" type="button" id="refresh">Refresh</a>
                     </div>
 
                     <div class="roster">
@@ -74,7 +73,7 @@
                             <table id="starters">
                                 <thead>
                                     <tr>
-                                        <th colspan="2" class="sub-header">Starters</th>
+                                        <th colspan="6" class="sub-header">Starters</th>
                                     </tr>
                                 </thead>
                                 <tbody id="starter-players">
@@ -87,7 +86,7 @@
                             <table id="bench">
                                 <thead>
                                     <tr>
-                                        <th colspan="2" class="sub-header">Bench</th>
+                                        <th colspan="3" class="sub-header">Bench</th>
                                     </tr>
                                 </thead>
                                 <tbody id="bench-players">
@@ -102,12 +101,33 @@
             <!-- AI Recommendations -->
             <div class="ai-container">
                 <div id="header">
-                    <p>AI Recommendation</p>
+                    <p>AI Insights</p>
                 </div>
 
                 <div id="content">
-                    AI Content
+                    {% if username %} <!-- team_data and user_data variables not working here -->
+                    <a href="#" type="button" id="insight-btn">Get AI Insights</a>
+
+                    <div class="recommendations">
+                        <table id="recommendations">
+                            <thead>
+                                <tr>
+                                    <th colspan="6" class="sub-header">AI Recommendation</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recommended-players">
+                                <!-- Filled via AI -->
+                            </tbody>
+                        </table> 
+                    </div>
+                    <div id="ai-response">
+                        <p>AI explanation would go here</p>
+                    </div>
+                    {% else %}
+                        <p>You are not authenticated in Yahoo!</p>
+                    {% endif %}
                 </div>
+
             </div>
 
             <!-- Weekly Matchups -->
@@ -117,7 +137,7 @@
                 </div>
 
                 <div id="content">
-                    {% if user_team %}
+                    {% if username %} <!-- Changed from user_team due to error -->
                     <table>
                         <thead>
                             <tr>
@@ -174,20 +194,13 @@
     <!-- Footer -->
     <footer>
         <div class="footer-container">
-            <div class="footer-nav">
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Register</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
-            </div>
             <div class="footer-bottom">
                 <p>Copyright&copy; 2025 <span class="footer-design">Fumbld </span>AI</p>
             </div>
         </div>
     </footer>
     <!-- End Footer -->
+
 
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 </body>

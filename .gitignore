@@ -8,4 +8,4 @@ venv/
 
 # Sensitive Configs
 .env
-source/gridiron.db
+source/fumbld.db

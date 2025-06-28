@@ -3,6 +3,7 @@ from .utils import db
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
 from flask_login import UserMixin
+from sqlalchemy import JSON
 
 class User(UserMixin, db.Model):
     __tablename__ = "users"
@@ -19,7 +20,7 @@ class User(UserMixin, db.Model):
     now_login = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))
 
     # Relationship with Roster
-    roster = db.relationship('Roster', backref='team', lazy=True, cascade="all, delete-orphan")
+    yahoo_leagues = db.relationship('YahooLeague', back_populates='user', lazy=True, cascade="all, delete-orphan")
 
     # Relationship to the YahooToken table
     # 'uselist=False' makes this a one-to-one relationship from the User side
@@ -49,27 +50,6 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return f"<user {self.username}>"
 
-# Probably get rid of this
-class Roster(db.Model):
-    __tablename__ = "roster"
-
-    # ID Column (Primary Key)
-    id = db.Column(db.Integer, primary_key=True)
-    # Store roster information in this table
-    sleeper_id = db.Column(db.String(30), unique=True, nullable=False)
-    league_id = db.Column(db.String(30), unique=True, nullable=True)
-    season = db.Column(db.DateTime, nullable=False) 
-    
-    # Foreign key defintion
-    # (Integer ID, users.id refers to 'id' in users table, must not be empty)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) 
-
-    def __init__(self, sleeper_id, league_id, season, user_id):
-        self.sleeper_id = sleeper_id
-        self.league_id = league_id
-        self.season = season
-        self.user_id = user_id
-
 # Save Yahoo! credentials
 class YahooToken(db.Model):
     __tablename__ = 'yahoo_tokens'
@@ -94,3 +74,30 @@ class YahooToken(db.Model):
 
     def __repr__(self):
         return f'<YahooToken for User ID: {self.user_id}>'
+    
+# Table for Yahoo! Sports data
+class YahooLeague(db.Model):
+    __tablename__ = "yahoo_league"
+
+    # ID Column (Primary Key)
+    id = db.Column(db.Integer, primary_key=True)
+
+    # Store roster information in this table
+    yahoo_league_id = db.Column(db.String(20), unique=True, nullable=False)
+    yahoo_league_name = db.Column(db.String(45), unique=False, nullable=False)
+    yahoo_roster = db.Column(JSON)
+    
+    # Foreign key defintion
+    # (Integer ID, users.id refers to 'id' in users table, must not be empty)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) 
+
+    user = db.relationship("User", back_populates="yahoo_leagues")
+
+    def __init__(self, yahoo_league_id, yahoo_league_name, yahoo_roster, user=None):
+        self.yahoo_league_id = yahoo_league_id
+        self.yahoo_league_name = yahoo_league_name
+        self.yahoo_roster = yahoo_roster
+        self.user = user
+
+    def __repr__(self):
+        return f"{self.yahoo_roster}"

@@ -6,7 +6,6 @@ html {
 }
 
 body {
-    background-color: #f9fafb !important; /* Override Bootstrap */
     display: flex;
     flex-direction: column;
     margin: 0;
@@ -15,6 +14,8 @@ body {
     width: 100vw;
     justify-content: space-between;
     gap: 5px;
+    background-color: #1F3C63;
+    color: white;
 }
 
 /* Navigation Menu */
@@ -77,7 +78,7 @@ body {
 main {
     display: flex;
     justify-content: space-evenly;
-    flex-direction: row;
+    align-items: center;
     height: 100%;
     width: 100%;
     margin: 0;
@@ -85,93 +86,76 @@ main {
     gap: 5px;
 }
 
-    /* Left Nav Bar */
-    .user-nav-container {
-        display: flex;
-        flex-direction: column;
-        width: 12.5rem;
-        height: 100%;
-        border-right: 2px solid black;
-        gap: 25px;
-    }
+/* Left Nav Bar */
+.user-nav-container {
+    width: 12.5rem;
+    height: 80vh;
+    border-radius: 10px;
+    background: radial-gradient(circle at center, #0f172a 0%, #0a0f1e 60%, #060913 100%);
+    color: white;
+    font-size: 16px;
+    font-weight: bolder;
+}
 
-    .user-nav-container #dashboard,
-    #ai,
-    #matchups,
-    #rankings,
-    #settings {
-        width: 100%;
-        border-bottom: 1px solid black;
-        cursor: pointer;
-    }
+.user-nav-container #sub-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 10px;
+    height: 100%;
+    padding-top: 16px;
+    padding-left: 10px;
+}
 
-    .user-nav-container #user-nav-link {
-        padding-left: 5px;
-    }
+.user-nav-container #dashboard,
+#ai,
+#matchups,
+#rankings,
+#settings {
+    display: flex;
+    align-items: center;
+    height: 4rem;
+    width: 100%;
+    cursor: pointer;
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+    transition: 0.3s;
+}
 
-    .user-nav-container #user-nav-link:hover {
-        font-weight: 600;
-    }
+.user-nav-container #dashboard:hover,
+#ai:hover,
+#matchups:hover,
+#rankings:hover,
+#settings:hover {
+    background-color: #1F3C63;
+}
 
-    /* Main Container */
-    .main-container {
-        width: 100%;
-    }
+.user-nav-container #dashboard.active,
+#ai.active,
+#matchups.active,
+#rankings.active,
+#settings.active {
+    background-color: #1F3C63;
+}
 
-        /* AI Container */
-       
+.user-nav-container #user-nav-link {
+    padding-left: 10px;
+}
 
-        /* Matchup Container */
-        
-
-        /* Rankings Container */
-
-        /* Settings Container */
-
-        /* Connect to Yahoo button */
-        .settings-container #content #yahoo-img {
-            width: 16rem;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-            border-radius: 36px;
-
-            &:hover {
-                transform: translateY(-2px) scale(1.03);
-                box-shadow: 0 8px 24px 0 rgba(15, 23, 42, 0.22);
-            }
-        }
+/* Main Container */
+.main-container {
+    height: 80vh;
+    width: 80%;
+} 
 
 /* Footer Style */
 .footer-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     background-color: #111;
     padding: 10px 20px;
     margin: 0 auto;
-}
-
-.footer-container .footer-nav ul {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    list-style: none;
-    gap: 10px;
-    padding: 0;
-    margin: 0;
-}
-
-.footer-container .footer-nav ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 1.3em;
-    opacity: 0.7;
-    transition: 0.5s;
-}
-
-.footer-container .footer-nav ul li a:hover {
-    opacity: 1;
-    color: #74b9ff;
-    transition: 0.3s;
 }
 
 .footer-container .footer-bottom p {
@@ -195,11 +179,14 @@ main {
 .matchup-container,
 .rankings-container,
 .settings-container {
-    /* display: flex */
     flex-direction: column;
     height: 100%;
+    min-height: 0;
     width: 100%;
     display: none;
+    background-color: #fff !important;
+    color: black;
+    border-radius: 16px;
 }
 
 .dashboard-container {

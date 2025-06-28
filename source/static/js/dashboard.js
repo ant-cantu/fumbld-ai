@@ -18,36 +18,47 @@ function hideAllMenus() {
     matchups.style.display = "none";
     rankings.style.display = "none";
     settings.style.display = "none";
+
+    dashboardBtn.classList.remove("active");
+    aiBtn.classList.remove("active");
+    matchupBtn.classList.remove("active");
+    rankingBtn.classList.remove("active");
+    settingsBtn.classList.remove("active");
 }
 
 dashboardBtn.addEventListener("click", () => {
     hideAllMenus();
     dashboard.style.display = "flex";
+    // dashboardBtn.style.background = "#1F3C63";
+    dashboardBtn.classList.add("active");
 });
 
 aiBtn.addEventListener("click", () => {
     hideAllMenus();
     ai.style.display = "flex";
+    aiBtn.classList.add("active");
 });
 
 matchupBtn.addEventListener("click", () => {
     hideAllMenus();
     matchups.style.display = "flex";
+    matchupBtn.classList.add("active");
 });
 
 rankingBtn.addEventListener("click", () => {
     hideAllMenus();
     rankings.style.display = "flex";
+    rankingBtn.classList.add("active");
 });
 
 settingsBtn.addEventListener("click", () => {
     hideAllMenus();
     settings.style.display = "flex";
+    settingsBtn.classList.add("active");
 });
 
 // --------------------------------------
 
-const yearMenu = document.querySelector("#year");
 const leagueMenu = document.querySelector("#leagues");
 const refreshBtn = document.querySelector("#refresh");
 
@@ -70,9 +81,9 @@ function create_placeholder(status) {
     leagueMenu.appendChild(placeholder);
 }
 
-function fetch_leagues(year) {
+function fetch_leagues() {
     // Make a call to our API, returns users leagues
-    fetch('fetch/yahoo/leagues?year=' + year)
+    fetch('fetch/yahoo/leagues')
         .then(response => {
             create_placeholder("loading");
             return response.json();
@@ -92,6 +103,14 @@ function fetch_leagues(year) {
         })
 }
 
+function yahoo_refresh() {
+    fetch('/fetch/yahoo/refresh')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.message);
+        });
+};
+
 function fetch_roster(league_id) {
     // Clear table first
     startersTable.innerHTML = '';
@@ -101,13 +120,27 @@ function fetch_roster(league_id) {
         .then(response => response.json())
         .then(data => {
             data.forEach(player => {
+
+                // Fix bad URLs
+                if(player.url.startsWith("https://https://")) {
+                    player.url = player.url.replace("https://https://", "https://");
+                }
+
                 const newRow = document.createElement('tr');
+                const newHeadshot = document.createElement('td');
                 const newPlayer = document.createElement('td');
                 const newPos = document.createElement('td');
+
+                const headshotImg = document.createElement('img');
+                headshotImg.src = player.url;
+                headshotImg.alt = player.name + " headshot image.";
+                headshotImg.height = 50;
+                newHeadshot.appendChild(headshotImg);
 
                 newPlayer.textContent = player.name;
                 newPos.textContent = player.position;
 
+                newRow.appendChild(newHeadshot);
                 newRow.appendChild(newPlayer);
                 newRow.appendChild(newPos);
 
@@ -121,27 +154,17 @@ function fetch_roster(league_id) {
 
 // Page is finished loading
 document.addEventListener('DOMContentLoaded', () => {
-    const selectedYear = yearMenu.value;
-    fetch_leagues(selectedYear);
+    fetch_leagues();
 });
 
-// Year drop down was changed
-yearMenu.addEventListener("change", () => {
-    const selectedYear = yearMenu.value;
-    fetch_leagues(selectedYear);
-});
+// League drop down is changed
+leagueMenu.addEventListener("change", () => {
+    const selectedLeague = leagueMenu.value;
+    fetch_roster(selectedLeague);
+})
 
 refreshBtn.addEventListener("click", () => {
-    const league_id = leagueMenu.value;
-    if(league_id != '') {
-        fetch_roster(league_id);
-        return;
-    }
-    else
-    {
-        // Report an error to the user here
-    }
-    
+    yahoo_refresh();
 });
 
 
