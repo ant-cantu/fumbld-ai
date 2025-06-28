@@ -19,7 +19,7 @@ stats to provide personalized start/sit recommendations each week.
 
 ## Getting Started
 
-This is a will be a web application.
+This will be a web application.
 
 ## Usage
 
