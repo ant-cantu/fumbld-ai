@@ -1,7 +1,7 @@
 # Fumbld AI
 
 <p align="center">
-<img src="https://github.com/ant-cantu/gridiron-ai/blob/main/DraftMind%20Full%20Logo.png?raw=true" height="50%" width="75%">
+<img src="https://github.com/ant-cantu/fumbld-ai/blob/main/source/static/img/fumbld-small-logo.png?raw=true" height="50%" width="75%">
 </p>
 
 ## About Fumbld AI
