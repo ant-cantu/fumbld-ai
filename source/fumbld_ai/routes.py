@@ -189,14 +189,22 @@ def get_ai_rec():
     import re
 
     # Extrct the JSON block between --- markers in gpt response
+    # --- three dashes in string
+    # \s* match any whitespace
+    # (\[.*?\]) match and capture a json style list inside of [ ]
     json_match = re.search(r"---\s*(\[.*?\])\s*---", gpt_response, re.DOTALL)
     if json_match:
+        # return the captured group
         json_part = json_match.group(1)
+        # parse the json string into a dictionary
         players = json.loads(json_part)
     else:
         return jsonify({'error': 'There was an error making an AI call.'})
     
     # Extract the reason text in gpt response
+    # start search starting with reason:
+    # \s* optional whitespace after reason
+    # (.*) capture group that grabs everything after the optional whitespace
     reason_match = re.search(r"Reason:\s*(.*)", gpt_response, re.DOTALL)
     if reason_match:
         reason = reason_match.group(1).strip()
