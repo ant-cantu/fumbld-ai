@@ -1,7 +1,13 @@
 /* Dashboard Container */
+.dashboard-container #header {
+    justify-content: space-between;
+}
+
 .dashboard-container #content {
     display: flex;
-    justify-content: flex-start;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
     gap: 25px;
     overflow-y: auto;
 }
@@ -23,20 +29,20 @@
 }
 
 /* Dashboard */
-.dashboard-intro {
+/* .dashboard-intro {
     text-align: center;
     margin-left: auto;
     margin-right: auto;
-}
+} */
 
 /* Content */
 .selections {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.2rem;
+    /* display: flex; */
+    /* flex-wrap: wrap; */
+    /* gap: 1.2rem; */
     font-size: 1rem;
-    align-items: center;
-    justify-content: flex-start;
+    /* align-items: center; */
+    /* justify-content: flex-start; */
     margin: 1rem 0;
 }
 
@@ -96,4 +102,66 @@ tbody {
     border: 1px solid black;
     padding: 5px;
     margin: 0;
+}
+
+.hideondesktop {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    .hideonmobile {
+        display: none;
+    }
+
+    .mobile-nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 25px;
+    }
+    /* figure out content height */
+    .dashboard-container {
+        border-radius: 0;
+        height: 100vh;
+        width: 100vw;
+        background-color: transparent !important;
+        font-weight: 700;
+    }
+    .dashboard-container #content {
+        /* min-height: 100vh; */
+        display: flex;
+        flex-direction: column;
+        background-color: transparent;
+        gap: 0;
+    }
+    .dashboard-container img {
+        border-radius: 50%;
+    }
+    .dashboard-container #leagues {
+        background-color: transparent;
+        border: none;
+        border-bottom: 1px solid black;
+    }
+
+    .starters table,
+    .bench table {
+        background-color: transparent;
+        width: 100%;
+        table-layout: fixed;
+        border: none;
+        border-spacing: 0;
+    }
+
+    .starters td,
+    .bench td {
+        border: none;
+    }
+
+    .bench td {
+        background-color: #004181;
+    }
+
+    #starter-players {
+        /* width: 100vw; */
+    }
 }

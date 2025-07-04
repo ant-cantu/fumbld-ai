@@ -1,7 +1,7 @@
 from flask import render_template, Blueprint, flash, redirect, url_for, request, abort, jsonify
 import pytz, datetime
 from .yahoo_fantasy import yahoo_get_roster, yahoo_get_opp_roster, yahoo_get_league, yahoo_refresh
-from .utils import db, is_safe_url
+from .utils import db, is_safe_url, gpt_call
 from .forms import LoginForm, RegistrationForm
 from flask_login import current_user, login_user, logout_user, login_required
 
@@ -164,6 +164,57 @@ def handle_logout():
 
 # ------------------------------------------------------------------------
 # Fumbld AI API
+@main_bp.route('/fetch/ai/recommendation', methods=['GET'])
+@login_required
+def get_ai_rec():
+    league_id = request.args.get('league-id', '')
+    # print(league_id)
+    current_roster = yahoo_get_roster(league_id)
+    
+    parsed_roster = []
+    parsed_url = []
+    for roster in current_roster:
+        parsed_roster.append({
+            'n': roster['name'],
+            'p': roster['position']
+        })
+
+        parsed_url.append({
+            'name': roster['name'],
+            'url': roster['url']
+        })
+    
+    gpt_response = gpt_call(parsed_roster)
+    import json
+    import re
+
+    # Extrct the JSON block between --- markers in gpt response
+    json_match = re.search(r"---\s*(\[.*?\])\s*---", gpt_response, re.DOTALL)
+    if json_match:
+        json_part = json_match.group(1)
+        players = json.loads(json_part)
+    else:
+        return jsonify({'error': 'There was an error making an AI call.'})
+    
+    # Extract the reason text in gpt response
+    reason_match = re.search(r"Reason:\s*(.*)", gpt_response, re.DOTALL)
+    if reason_match:
+        reason = reason_match.group(1).strip()
+    else:
+        return jsonify({'error': 'There was an error making an AI call.'})
+    
+    # print(reason)
+    for player in players:
+        for urls in parsed_url:
+            if player['name'] == urls['name']:
+                player['url'] = urls['url']
+
+    response = {
+        'players': players,
+        'reason': reason
+    }
+
+    return jsonify(response), 201
 
 @main_bp.route('/fetch/yahoo/roster', methods=['GET'])
 @login_required
@@ -171,7 +222,7 @@ def get_roster():
     if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
         abort(403)
 
-    # /fetch/yahoo/roster?league_id=423.l.1215322
+    # /fetch/yahoo/roster?league-id=423.l.1215322
     league_id = request.args.get('league-id', '')
 
     return jsonify(yahoo_get_roster(league_id)), 201

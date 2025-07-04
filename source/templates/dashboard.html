@@ -15,7 +15,7 @@
     <!-- Header -->
     <header>
         <!-- Nav Menu -->
-        <nav class="nav-bar">
+        <nav class="nav-bar hideonmobile">
             <button class="hamburer-button" id="hamburgerButton">&#9776;</button>
             <a href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='img/fumbld-small-logo.png') }}" alt="fumbld-ai Logo"></a>
             <div class="nav-links" id="navLinks">
@@ -42,7 +42,7 @@
     {% endwith %} -->
 
     <main>
-        <div class="user-nav-container">
+        <div class="user-nav-container hideonmobile">
             <div id="sub-container">
                 <div id="dashboard" class="active"><span id="user-nav-link">Dashboard</span></div>
                 <div id="ai"><span id="user-nav-link"><span id="ai-text">AI</span> Insights</span></div>
@@ -52,30 +52,42 @@
             </div>
         </div>
 
-        <div class="main-container">
+        <!-- <div class="main-container"> -->
             <!-- User Dashboard -->
             <div class="dashboard-container">
                 <div id="header">
-                    <p class="dashboard-intro">Dashboard | Welcome <span style="color: #75a2cf; ">{{ username }}</span></p>
-                </div>
+                    <p class="dashboard-intro hideonmobile">Dashboard | Welcome <span style="color: #75a2cf; ">{{ username }}</span></p>
 
-                <div id="content">
-                    <div class="selections">
+                    <!-- <div class="selections"> -->
                         <select id="leagues">
                             <option value="">--Select an option--</option>  
                         </select>
-                        <!-- Changed from <button> to <a> -->
-                        <a href="#" type="button" id="refresh">Refresh</a>
-                    </div>
+                    <!-- </div> -->
 
-                    <div class="roster">
+                    <!-- Mobile Top Nav -->
+                    <div class="mobile-nav hideondesktop">
+                        <div id="dashboard" class="active"><span id="user-nav-link">Dashboard</span></div>
+                        <div id="ai"><span id="user-nav-link"><span id="ai-text">AI</span> Insights</span></div>
+                        <div id="matchups"><span id="user-nav-link">Matchups</span></div>
+                        <div id="rankings"><span id="user-nav-link">Player Rankings</span></div>
+                        <div id="settings"><span id="user-nav-link">Settings</span></div>
+                    </div>
+                </div>
+
+                <div id="content">
+                    <!-- <div class="roster"> -->
                         <div class="starters">
-                            <table id="starters">
-                                <thead>
+                            <table>
+                                <colgroup>
+                                    <col style="width: 20%;">
+                                    <col style="width: 60%;">
+                                    <col style="width: 20%;">
+                                </colgroup>
+                                <!-- <thead>
                                     <tr>
                                         <th colspan="6" class="sub-header">Starters</th>
                                     </tr>
-                                </thead>
+                                </thead> -->
                                 <tbody id="starter-players">
                                     <!-- Filled via API -->
                                 </tbody>
@@ -83,18 +95,23 @@
                         </div>
 
                         <div class="bench">
-                            <table id="bench">
-                                <thead>
+                            <table>
+                                <colgroup>
+                                    <col style="width: 20%;">
+                                    <col style="width: 60%;">
+                                    <col style="width: 20%;">
+                                </colgroup>
+                                <!-- <thead>
                                     <tr>
                                         <th colspan="3" class="sub-header">Bench</th>
                                     </tr>
-                                </thead>
+                                </thead> -->
                                 <tbody id="bench-players">
                                         <!-- Filled via API -->
                                 </tbody>
                             </table>
                         </div>
-                    </div>
+                    <!-- </div> -->
                 </div>
             </div>
 
@@ -102,11 +119,29 @@
             <div class="ai-container">
                 <div id="header">
                     <p>AI Insights</p>
+                    <a href="#" type="button" id="insight-btn">Get AI Insights</a>
                 </div>
 
                 <div id="content">
-                    {% if username %} <!-- team_data and user_data variables not working here -->
-                    <a href="#" type="button" id="insight-btn">Get AI Insights</a>
+                    
+
+                    <div class="ai-starters">
+                        <table>
+                            <colgroup>
+                                <col style="width: 20%;">
+                                <col style="width: 60%;">
+                                <col style="width: 20%;">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th colspan="6" class="sub-header">Current Starters</th>
+                                </tr>
+                            </thead>
+                            <tbody id="starter-players">
+                                <!-- Filled via API -->
+                            </tbody>
+                        </table>
+                    </div>
 
                     <div class="recommendations">
                         <table id="recommendations">
@@ -123,9 +158,6 @@
                     <div id="ai-response">
                         <p>AI explanation would go here</p>
                     </div>
-                    {% else %}
-                        <p>You are not authenticated in Yahoo!</p>
-                    {% endif %}
                 </div>
 
             </div>
@@ -185,15 +217,16 @@
 
                 <div id="content">
                     <a id="yahoo-link" href="/yahoo/authorize"><img id="yahoo-img" src="../static/img/assets/yahoo_button.png"></a>
+                    <a href="#" type="button" id="refresh">Refresh</a>
                     <p><a href="/logout">Click here to logout.</a></p>
                 </div>
             </div>
-        </div>
+        <!-- </div> -->
     </main>
     
     <!-- Footer -->
     <footer>
-        <div class="footer-container">
+        <div class="footer-container hideonmobile">
             <div class="footer-bottom">
                 <p>Copyright&copy; 2025 <span class="footer-design">Fumbld </span>AI</p>
             </div>

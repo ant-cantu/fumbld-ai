@@ -63,7 +63,7 @@ const leagueMenu = document.querySelector("#leagues");
 const refreshBtn = document.querySelector("#refresh");
 
 // Roster Tables
-const startersTable = document.querySelector("#starter-players");
+// const startersTable = document.querySelector("#starter-players");
 const benchTable = document.querySelector("#bench-players");
 
 function create_placeholder(status) {
@@ -109,11 +109,59 @@ function yahoo_refresh() {
         .then(data => {
             console.log(data.message);
         });
-};
+}
+
+const startersTable = document.querySelectorAll("#starter-players");
+const aiTable = document.querySelector("#recommended-players");
+
+function fetch_recommendation(league_id) {
+    aiTable.innerHTML = '';
+
+    fetch('/fetch/ai/recommendation?league-id=' + league_id)
+        .then(response => response.json())
+        .then(data => {
+            const players = data.players;
+            const reason = data.reason;
+
+            players.forEach(player => {
+                // Fix bad URLs
+                if(player.url.startsWith("https://https://")) {
+                    player.url = player.url.replace("https://https://", "https://");
+                }
+
+                const newRow = document.createElement('tr');
+                const newHeadshot = document.createElement('td');
+                const newPlayer = document.createElement('td');
+                const newPos = document.createElement('td');
+
+                const headshotImg = document.createElement('img');
+                headshotImg.src = player.url;
+                headshotImg.alt = player.name + " headshot image.";
+                headshotImg.height = 50;
+                newHeadshot.appendChild(headshotImg);
+
+                newPlayer.textContent = player.name;
+                newPos.textContent = player.position;
+
+                newRow.appendChild(newHeadshot);
+                newRow.appendChild(newPlayer);
+                newRow.appendChild(newPos);
+
+                aiTable.appendChild(newRow);
+            });
+            
+            const reasonContainer = document.querySelector("#ai-response");
+            reasonContainer.innerHTML = '';
+            reasonContainer.innerHTML = `<p>${reason}</p>`;
+        });
+}
 
 function fetch_roster(league_id) {
     // Clear table first
-    startersTable.innerHTML = '';
+    startersTable.forEach(table => {
+        table.innerHTML = '';
+    });
+    // startersTable.innerHTML = '';
     benchTable.innerHTML = '';
 
     fetch('/fetch/yahoo/roster?league-id=' + league_id)
@@ -144,8 +192,12 @@ function fetch_roster(league_id) {
                 newRow.appendChild(newPlayer);
                 newRow.appendChild(newPos);
 
-                if(player.position != 'BN')
-                    startersTable.appendChild(newRow);
+                if(player.position != 'BN') {
+                    startersTable.forEach(table => {
+                        table.appendChild(newRow.cloneNode(true));
+                    });
+                    // startersTable.appendChild(newRow);
+                }
                 else 
                     benchTable.appendChild(newRow);
             })
@@ -166,5 +218,10 @@ leagueMenu.addEventListener("change", () => {
 refreshBtn.addEventListener("click", () => {
     yahoo_refresh();
 });
+
+const insightBtn = document.querySelector("#insight-btn");
+insightBtn.addEventListener("click", () => {
+    fetch_recommendation(leagueMenu.value);
+})
 
 

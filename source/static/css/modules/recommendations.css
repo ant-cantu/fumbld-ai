@@ -8,8 +8,13 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
-
 #insight-btn:hover {
     color:#74b9ff;
     background: black;
+}
+
+.ai-container #content {
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: row;
 }
