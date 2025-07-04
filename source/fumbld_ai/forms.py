@@ -43,3 +43,22 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Login")
 
     remember = BooleanField("Remember Me")
+
+# '/change-password' form
+class ChangePasswordForm(FlaskForm):
+    current_password = PasswordField("Current Password", validators=[
+        DataRequired(message="Current password is required."),
+        Length(min=6, message="Password must be at least 6 characters long.")
+    ])
+
+    new_password = PasswordField("New Password", validators=[
+        DataRequired(message="New password is required."),
+        Length(min=6, message="Password must be at least 6 characters long.")
+    ])
+
+    confirm_new_password = PasswordField("Confirm New Password", validators=[
+        DataRequired(message="Please confirm your new password"),
+        EqualTo('new_password', message="Passwords must match")
+    ])
+
+    submit = SubmitField("Change Password")
