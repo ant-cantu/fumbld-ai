@@ -43,6 +43,9 @@ def init_app():
         print('[CRITICAL] Terminating Application')
         return
     
+    # Google reCaptcha Key
+    app.config['GOOGLE_CAPTCHA_KEY'] = os.environ.get('GOOGLE_CAPTCHA_KEY')
+    
     # TLogin Manager
     login_manager = LoginManager()
     login_manager.init_app(app)
