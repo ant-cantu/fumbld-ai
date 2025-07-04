@@ -1,12 +1,31 @@
-from flask import render_template, Blueprint, flash, redirect, url_for, request, abort, jsonify
+from flask import render_template, Blueprint, flash, redirect, url_for, request, abort, jsonify, current_app
 import pytz, datetime
-from .yahoo_fantasy import yahoo_get_roster, yahoo_get_opp_roster, yahoo_get_league, yahoo_refresh
+from .yahoo_fantasy import yahoo_get_roster, yahoo_get_league, yahoo_refresh
 from .utils import db, is_safe_url, gpt_call
 from .forms import LoginForm, RegistrationForm, ChangePasswordForm
 from flask_login import current_user, login_user, logout_user, login_required
+import requests
 
 
 main_bp = Blueprint('main', __name__, template_folder='templates')
+
+# Google reCaptcha
+def verify_recaptcha():
+    recaptcha_response = request.form.get('g-recaptcha-response')
+    secret_key = current_app.config.get('GOOGLE_CAPTCHA_KEY')
+
+    payload = {
+        'secret': secret_key,
+        'response': recaptcha_response
+    }
+
+    response = requests.post('https://www.google.com/recaptcha/api/siteverify', data=payload)
+    result = response.json()
+
+    if result.get('success'):
+        return True
+    else:
+        return False
 
 # Defining Root Page
 @main_bp.route('/')
@@ -48,53 +67,56 @@ def account_register():
 
     # If everything passes validation on forms
     if form.validate_on_submit():
-        userName = form.username.data
-        userEmail = form.email.data
-        password = form.password.data
+        if verify_recaptcha():
+            userName = form.username.data
+            userEmail = form.email.data
+            password = form.password.data
 
-        # Check for existing user
-        # SQL Equivalent: SELECT * FROM user WHERE username = '<username>' LIMIT 1;
-        existing_user = User.query.filter_by(username=userName).first()
-        if existing_user:
-            flash("The username already exists, please choose another.", "error")
-            return render_template("registration.html", form=form)
-        
-        # Check if existing email
-        exisiting_email = User.query.filter_by(email=userEmail).first()
-        if exisiting_email:
-            flash("This email is already registered!", "error")
-            return render_template("registration.html", form=form)
+            # Check for existing user
+            # SQL Equivalent: SELECT * FROM user WHERE username = '<username>' LIMIT 1;
+            existing_user = User.query.filter_by(username=userName).first()
+            if existing_user:
+                flash("The username already exists, please choose another.", "error")
+                return render_template("registration.html", form=form)
+            
+            # Check if existing email
+            exisiting_email = User.query.filter_by(email=userEmail).first()
+            if exisiting_email:
+                flash("This email is already registered!", "error")
+                return render_template("registration.html", form=form)
 
-        # Pass user name, email and hash from forms and store into DB
-        new_user = User(username=userName, email=userEmail)
-        new_user.set_password(password)
+            # Pass user name, email and hash from forms and store into DB
+            new_user = User(username=userName, email=userEmail)
+            new_user.set_password(password)
 
-        utc_now = datetime.datetime.now(pytz.utc)
-        pacific_tmz = pytz.timezone("America/Los_Angeles")
-        pacific_now = utc_now.astimezone(pacific_tmz)
-        new_user.last_login = pacific_now
-        new_user.date_registered = pacific_now
-        new_user.now_login = pacific_now
+            utc_now = datetime.datetime.now(pytz.utc)
+            pacific_tmz = pytz.timezone("America/Los_Angeles")
+            pacific_now = utc_now.astimezone(pacific_tmz)
+            new_user.last_login = pacific_now
+            new_user.date_registered = pacific_now
+            new_user.now_login = pacific_now
 
-        try:
-            # Add new_user to session query
-            db.session.add(new_user)
-            # Save the changes to the database
-            db.session.commit()
+            try:
+                # Add new_user to session query
+                db.session.add(new_user)
+                # Save the changes to the database
+                db.session.commit()
 
-            # add new user to session and login
-            login_user(new_user)
-            next_page = request.args.get('next')
-            if next_page and not is_safe_url(next_page):
-                return abort(400)
+                # add new user to session and login
+                login_user(new_user)
+                next_page = request.args.get('next')
+                if next_page and not is_safe_url(next_page):
+                    return abort(400)
 
-            print(f"New account created successfully for: {current_user.username} with ID: {current_user.id}")
-            return redirect(next_page or url_for('main.dashboard'))
-        except Exception as e:
-            # Rollback changes made to database incase of error
-            db.session.rollback()
-            flash("There was an internal error with creating the account.", "error")
-            return render_template("registration.html", form=form)
+                print(f"New account created successfully for: {current_user.username} with ID: {current_user.id}")
+                return redirect(next_page or url_for('main.dashboard'))
+            except Exception as e:
+                # Rollback changes made to database incase of error
+                db.session.rollback()
+                flash("There was an internal error with creating the account.", "error")
+                return render_template("registration.html", form=form)
+        else:
+            print("Google reCaptcha was not verified!")
     return render_template("registration.html", form=form)
         
 # User Login
@@ -110,47 +132,50 @@ def account_login():
 
     # Check if forms have valid information
     if form.validate_on_submit():
-        userName = form.username.data
-        raw_password = form.password.data
+        if verify_recaptcha():
+            userName = form.username.data
+            raw_password = form.password.data
 
-        # Find the user in the database
-        query_user = User.query.filter_by(username=userName).first()
+            # Find the user in the database
+            query_user = User.query.filter_by(username=userName).first()
 
-        # If user was not found
-        if not query_user:
-            #form.username.validators[0].message = "Invalid login"
-            return render_template("login.html", form=form)
-        
-        # Check if the password matches
-        if query_user.check_password(raw_password):
-            print(f"[DEBUG LOG] Login was successful. User ID: {query_user.id}")
+            # If user was not found
+            if not query_user:
+                #form.username.validators[0].message = "Invalid login"
+                return render_template("login.html", form=form)
             
-            # Add login session to browser
-            #session['user_id'] = query_user.id
-            login_user(query_user, remember=form.remember.data)
-            next_page = request.args.get('next')
-            if next_page and not is_safe_url(next_page):
-                return abort(400)
+            # Check if the password matches
+            if query_user.check_password(raw_password):
+                print(f"[DEBUG LOG] Login was successful. User ID: {query_user.id}")
+                
+                # Add login session to browser
+                #session['user_id'] = query_user.id
+                login_user(query_user, remember=form.remember.data)
+                next_page = request.args.get('next')
+                if next_page and not is_safe_url(next_page):
+                    return abort(400)
 
-            # ** Need to figure out where to store the last login, so we can display it before its updated to the current time **
-            # update 'last login' date to now in database
-            utc_now = datetime.datetime.now(pytz.utc)
-            pacific_tmz = pytz.timezone("America/Los_Angeles")
-            pacific_now = utc_now.astimezone(pacific_tmz)
-            query_user.now_login = pacific_now
+                # ** Need to figure out where to store the last login, so we can display it before its updated to the current time **
+                # update 'last login' date to now in database
+                utc_now = datetime.datetime.now(pytz.utc)
+                pacific_tmz = pytz.timezone("America/Los_Angeles")
+                pacific_now = utc_now.astimezone(pacific_tmz)
+                query_user.now_login = pacific_now
 
-            try:
-                db.session.commit()
-                print(f"[DEBUG LOG] Successfully updated database for '{query_user.username}' time logged in: {query_user.last_login}")
-            except Exception as e:
-                db.session.rollback()
-                print(f"[DEBUG LOG] There was an internal error: {e}")
-            finally:
-                return redirect(next_page or url_for('main.dashboard'))
+                try:
+                    db.session.commit()
+                    print(f"[DEBUG LOG] Successfully updated database for '{query_user.username}' time logged in: {query_user.last_login}")
+                except Exception as e:
+                    db.session.rollback()
+                    print(f"[DEBUG LOG] There was an internal error: {e}")
+                finally:
+                    return redirect(next_page or url_for('main.dashboard'))
+            else:
+                flash("You entered the wrong password!", "error")
+                print("[DEBUG LOG] Login attempt failed.")
+                return render_template("login.html", form=form)
         else:
-            flash("You entered the wrong password!", "error")
-            print("[DEBUG LOG] Login attempt failed.")
-            return render_template("login.html", form=form)
+            print("reCaptcha was not verified!")
         
     return render_template("login.html", form=form)
 
