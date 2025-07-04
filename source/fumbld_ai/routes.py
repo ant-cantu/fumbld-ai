@@ -2,7 +2,7 @@ from flask import render_template, Blueprint, flash, redirect, url_for, request,
 import pytz, datetime
 from .yahoo_fantasy import yahoo_get_roster, yahoo_get_opp_roster, yahoo_get_league, yahoo_refresh
 from .utils import db, is_safe_url, gpt_call
-from .forms import LoginForm, RegistrationForm
+from .forms import LoginForm, RegistrationForm, ChangePasswordForm
 from flask_login import current_user, login_user, logout_user, login_required
 
 
@@ -161,6 +161,28 @@ def handle_logout():
     # Remove user from session & redirect to login page
     logout_user()
     return redirect(url_for('main.account_login'))
+
+# User Change Password
+@main_bp.route('/dashboard/changepassword', methods=['POST'])
+@login_required
+def change_password():
+    from .models import User
+    from .forms import ChangePasswordForm
+    from werkzeug.security import check_password_hash, generate_password_hash
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        # Verify user's current password is known
+        if not check_password_hash(current_user.password_hash, form.current_password.data):
+            flash("Password is incorrect.  Please try again.", "error")
+            return render_template("changepassword.html", form=form)
+        
+        # Prevent identical passwords
+
+        # Update the password
+
+        # Store new password hash in database
+
+    
 
 # ------------------------------------------------------------------------
 # Fumbld AI API
