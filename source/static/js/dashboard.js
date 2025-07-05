@@ -224,4 +224,20 @@ insightBtn.addEventListener("click", () => {
     fetch_recommendation(leagueMenu.value);
 })
 
+// Password reset button
+const passResetBtn = document.querySelector("#passResetBtn")
+passResetBtn.addEventListener("click", () => {
+    fetch("/functions/changepassword")
+        .then(response = response.json())
+        .then(data => {
+            if(data.success) {
+                console.log(data.success);
+            } else {
+                console.log(data.error);
+            }
+        });
+});
+
+
+
 

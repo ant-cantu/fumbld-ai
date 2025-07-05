@@ -33,9 +33,10 @@ def home():
     return render_template("index.html")
 
 # User Dashboard
-@main_bp.route("/dashboard")
+@main_bp.route("/dashboard", methods=['GET', 'POST'])
 @login_required
 def dashboard():
+    from .models import User
     # Get date for last login
     if not current_user.last_login:
         last_login = current_user.now_login.strftime("%m-%d-%y %I:%M:%S")
@@ -47,12 +48,13 @@ def dashboard():
         pacific_tmz = pytz.timezone("America/Los_Angeles")
         pacific_now = utc_now.astimezone(pacific_tmz)
         current_user.last_login = pacific_now
+    
+    pass_reset_form = ChangePasswordForm()
 
     return render_template("dashboard.html",
                             username=current_user.username,
-                            last_login=last_login)#,
-                            #user_team=team_starters,
-                            #opp_team=opp_starters)
+                            last_login=last_login,
+                            pass_reset=pass_reset_form)
     
 # User Registration
 @main_bp.route('/register', methods=['GET', 'POST'])
@@ -187,28 +189,6 @@ def handle_logout():
     logout_user()
     return redirect(url_for('main.account_login'))
 
-# User Change Password
-@main_bp.route('/dashboard/changepassword', methods=['POST'])
-@login_required
-def change_password():
-    from .models import User
-    from .forms import ChangePasswordForm
-    from werkzeug.security import check_password_hash, generate_password_hash
-    form = ChangePasswordForm()
-    if form.validate_on_submit():
-        # Verify user's current password is known
-        if not check_password_hash(current_user.password_hash, form.current_password.data):
-            flash("Password is incorrect.  Please try again.", "error")
-            return render_template("changepassword.html", form=form)
-        
-        # Prevent identical passwords
-
-        # Update the password
-
-        # Store new password hash in database
-
-    
-
 # ------------------------------------------------------------------------
 # Fumbld AI API
 @main_bp.route('/fetch/ai/recommendation', methods=['GET'])
@@ -304,3 +284,30 @@ def refresh_roster():
 @main_bp.errorhandler(403)
 def forbidden_error(error):
     return render_template("/errors/403.html"), 403
+
+# ------------------------------------------------------------
+# Backend Function Calls
+
+# User Change Password
+@main_bp.route('/functions/changepassword', methods=['POST'])
+@login_required
+def change_password():
+    from .models import User
+
+    pass_reset_form = ChangePasswordForm()
+    if pass_reset_form.validate_on_submit():
+        print("called?")
+        curr_password = pass_reset_form.current_password.data
+        new_password = pass_reset_form.new_password.data
+
+        query_user = User.query.filter_by(id=current_user.id).first()
+        if query_user.check_password(curr_password):
+            # Password was correct, continue
+            query_user.set_password(new_password)
+            try:
+                db.session.commit()
+                return jsonify({"success": "Your password has been changed."}), 201
+            except:
+                return jsonify({"error": "There was an error writing to the database."}), 201
+        else:
+            return jsonify({"error": "Unable to change password, try again."}), 201
