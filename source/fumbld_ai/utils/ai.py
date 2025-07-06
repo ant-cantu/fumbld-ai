@@ -46,7 +46,7 @@ fantasy_week = 17
 # ]
 
 # Each player includes name (n), position (p), injury status (s), projected points (pp), opponent (o), opponent rank vs position (or)
-fantasy_year = 2024
+# fantasy_year = 2024
 
 # gpt_instructions = (
 #     f"You are a fantasy football expert. It is Week {fantasy_week}. "
@@ -76,9 +76,9 @@ fantasy_year = 2024
 # )
 
 gpt_instructions = (
-    f"You are a fantasy football expert. It's Week {fantasy_week}. "
+    f"You are a fantasy football expert. Let's say it's Week 17 of the 2024 season. "
     #"Below are two rosters: the user's full team and their opponent's starters. "
-    "Below is the user's full fantasy football roster"
+    "Below is the user's full fantasy football roster."
     #"Each player includes projected points, opponent rank, and injury status.\n\n"
     #"Each player includes name (n), position (p), injury status (s), projected points (pp), opponent (o), opponent rank vs position (or)\n\n"
     "Each player includes name (n), position (p)\n\n"
@@ -88,8 +88,10 @@ gpt_instructions = (
 
     "Choose 1 starter per position: QB, RB, RB, WR, WR, TE, D/S/T, K, DEF.\n"
     "The D/S/T position can be a WR, RB or TE. "
+    "You can include bench players as well as long as their real position matches one of the available positions."
     # "Your recommendation of players the user should start is based on all player stats. Break ties by upside/risk"
     "Prioritize projected points, matchup rank, and health. Break ties by upside/risk.\n"
+    "Only compare players to the current week of the season. "
     "Do NOT makeup or guess information.\n\n"
 
     "Respond only in the format:\n"

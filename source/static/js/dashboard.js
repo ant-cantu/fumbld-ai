@@ -12,6 +12,11 @@ const matchups = document.querySelector(".matchup-container");
 const rankings = document.querySelector(".rankings-container");
 const settings = document.querySelector(".settings-container");
 
+// Modal Container
+const modalPopUp = document.querySelector(".modalPopUp");
+const modalContent = document.querySelector("#modalContent");
+const modalCloseBtn = document.querySelector("#modalClose");
+
 function hideAllMenus() {
     dashboard.style.display = "none";
     ai.style.display = "none";
@@ -63,7 +68,7 @@ const leagueMenu = document.querySelector("#leagues");
 const refreshBtn = document.querySelector("#refresh");
 
 // Roster Tables
-// const startersTable = document.querySelector("#starter-players");
+const startersTable = document.querySelectorAll("#starter-players");
 const benchTable = document.querySelector("#bench-players");
 
 function create_placeholder(status) {
@@ -100,59 +105,6 @@ function fetch_leagues() {
 
             leagueMenu.selectedIndex = 1;
             fetch_roster(leagueMenu.value);
-        })
-}
-
-function yahoo_refresh() {
-    fetch('/fetch/yahoo/refresh')
-        .then(response => response.json())
-        .then(data => {
-            console.log(data.message);
-        });
-}
-
-const startersTable = document.querySelectorAll("#starter-players");
-const aiTable = document.querySelector("#recommended-players");
-
-function fetch_recommendation(league_id) {
-    aiTable.innerHTML = '';
-
-    fetch('/fetch/ai/recommendation?league-id=' + league_id)
-        .then(response => response.json())
-        .then(data => {
-            const players = data.players;
-            const reason = data.reason;
-
-            players.forEach(player => {
-                // Fix bad URLs
-                if(player.url.startsWith("https://https://")) {
-                    player.url = player.url.replace("https://https://", "https://");
-                }
-
-                const newRow = document.createElement('tr');
-                const newHeadshot = document.createElement('td');
-                const newPlayer = document.createElement('td');
-                const newPos = document.createElement('td');
-
-                const headshotImg = document.createElement('img');
-                headshotImg.src = player.url;
-                headshotImg.alt = player.name + " headshot image.";
-                headshotImg.height = 50;
-                newHeadshot.appendChild(headshotImg);
-
-                newPlayer.textContent = player.name;
-                newPos.textContent = player.position;
-
-                newRow.appendChild(newHeadshot);
-                newRow.appendChild(newPlayer);
-                newRow.appendChild(newPos);
-
-                aiTable.appendChild(newRow);
-            });
-            
-            const reasonContainer = document.querySelector("#ai-response");
-            reasonContainer.innerHTML = '';
-            reasonContainer.innerHTML = `<p>${reason}</p>`;
         });
 }
 
@@ -200,7 +152,7 @@ function fetch_roster(league_id) {
                 }
                 else 
                     benchTable.appendChild(newRow);
-            })
+            });
         });
 }
 
@@ -213,31 +165,27 @@ document.addEventListener('DOMContentLoaded', () => {
 leagueMenu.addEventListener("change", () => {
     const selectedLeague = leagueMenu.value;
     fetch_roster(selectedLeague);
-})
-
-refreshBtn.addEventListener("click", () => {
-    yahoo_refresh();
-});
-
-const insightBtn = document.querySelector("#insight-btn");
-insightBtn.addEventListener("click", () => {
-    fetch_recommendation(leagueMenu.value);
-})
-
-// Password reset button
-const passResetBtn = document.querySelector("#passResetBtn")
-passResetBtn.addEventListener("click", () => {
-    fetch("/functions/changepassword")
-        .then(response = response.json())
-        .then(data => {
-            if(data.success) {
-                console.log(data.success);
-            } else {
-                console.log(data.error);
-            }
-        });
 });
 
 
+
+// --- Dashboard Modal ---
+//
+
+// Message to pass to the modal
+function modal(message) {
+    modalContent.innerHTML = '';
+    modalContent.innerHTML = message;
+    modalPopUp.style.display = "flex";
+}
+
+// Close modal button
+modalCloseBtn.addEventListener("click", () => {
+    modalContent.innerHTML = '';
+    modalPopUp.style.display = "none";
+});
+
+// Expose function globally
+window.modal = modal;
 
 

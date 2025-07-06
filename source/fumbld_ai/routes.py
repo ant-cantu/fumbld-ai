@@ -238,7 +238,7 @@ def get_ai_rec():
     else:
         return jsonify({'error': 'There was an error making an AI call.'})
     
-    # print(reason)
+    # Add URL back into AI response
     for player in players:
         for urls in parsed_url:
             if player['name'] == urls['name']:
@@ -275,11 +275,16 @@ def get_leagues():
 def refresh_roster():
     if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
         abort(403)
+        # Log a warning here, user should not be able to access this without being authenticated with yahoo.
+        return jsonify({"error": "There was an error refreshing your Yahoo! data. Try reauthenticating yourself with Yahoo!"})
 
-    # Delete all yahoo related entries in the database and refresh
-    yahoo_refresh()
-
-    return jsonify({"status": "success", "message": f"Roster refreshed for user id: {current_user.id}"})
+    try:
+        # Delete all yahoo related entries in the database and refresh
+        yahoo_refresh()
+        return jsonify({"success": "Yahoo! Sports refresh has comepleted. Thanks for waiting! 🏈🏆"})
+    except:
+        # Log error here <---------------
+        return jsonify({"error": "There was an error refreshing your Yahoo! data. Please submit an error report."})
 
 @main_bp.errorhandler(403)
 def forbidden_error(error):
@@ -310,4 +315,6 @@ def change_password():
             except:
                 return jsonify({"error": "There was an error writing to the database."}), 201
         else:
-            return jsonify({"error": "Unable to change password, try again."}), 201
+            return jsonify({"error": "Current password entered was not correct."}), 201
+    else:
+        return jsonify({"error": "Password in confirmation form does not patch new password."}), 201

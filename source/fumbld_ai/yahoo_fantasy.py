@@ -84,7 +84,7 @@ def yahoo_set_leagues():
         try:
             db.session.add(add_league)
             db.session.commit()
-            print(f"[LOG]: 'user_id: {current_user.id}' 'username: {current_user.username}' successfully added 'league_id: {league_ids[x]} to database.")
+            print(f"[LOG]: 'user_id: {current_user.id}' 'username: {current_user.username}' successfully added 'league_id: {league_ids[x]} to database from Yahoo! Sports API.")
         except Exception as e:
             db.session.rollback()
             print(f"[LOG][ERROR]: Unable to save data to database: {e}")
@@ -96,7 +96,7 @@ def yahoo_refresh():
         YahooLeague.query.filter_by(user_id=current_user.id).delete()
         db.session.commit()
 
-        print(f"[LOG][DEBUG]: 'User ID: {current_user.id}' leagues has been deleted.")
+        print(f"[LOG][DEBUG]: 'User ID: {current_user.id}' leagues have been deleted.")
 
         # Call Yahoo API to setup users leagues
         yahoo_set_leagues()

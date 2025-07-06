@@ -1,0 +1,43 @@
+#insight-btn {
+    background-color: #207ad4;
+    color: white;
+    padding: .5rem 1.2rem;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+#insight-btn:hover {
+    background-color: #004181;
+}
+
+.ai-container #content {
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: row;
+}
+
+#ai-sub-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+#ai-response {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    border: 1px solid black;
+    padding: 5px 5px 0 5px;
+    margin: 0;
+    width: 425px;
+    height: 400px;
+    box-shadow: 0 4px 16px rgba(32, 122, 212, 0.15);
+    /* border-radius: 16px; */
+}
+#ai-response p {
+    padding: 0;
+    margin: 0;
+}
