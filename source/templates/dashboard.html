@@ -10,7 +10,7 @@
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/dashboard.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/recommendations.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/ai.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/matchups.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/rankings.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/settings.css') }}">
@@ -24,10 +24,9 @@
             <a href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='img/fumbld-small-logo.png') }}" alt="fumbld-ai Logo"></a>
             <div class="nav-links" id="navLinks">
                 <ul>
-                    <li><a href="{{ url_for('main.home') }}">Home</a></li>
-                    <li><a href="{{ url_for('main.home') }}">About</a></li>
-                    <li><a href="/register" role="button" style="color: green;">Register</a></li>
-                    <li><a href="/logout" role="button">Log Out</a></li>
+                    <li><a href="{{ url_for('main.dashboard') }}">Home</a></li>
+                    <li><a href="{{ url_for('main.dashboard') }}">About</a></li>
+                    <li><a href="/logout" role="button" style="color: #207ad4;">Log Out</a></li>
                 </ul>
             </div>
         </nav>
@@ -56,32 +55,32 @@
             </div>
         </div>
 
+        <!-- Mobile Top Nav -->
+        <div class="mobile-nav hideondesktop">
+            <div id="dashboard" class="active"><span id="user-nav-link">Dashboard</span></div>
+            <div id="ai"><span id="user-nav-link"><span id="ai-text">AI</span> Insights</span></div>
+            <div id="matchups"><span id="user-nav-link">Matchups</span></div>
+            <div id="rankings"><span id="user-nav-link">Player Rankings</span></div>
+            <div id="settings"><span id="user-nav-link">Settings</span></div>
+        </div>
+
         <!-- <div class="main-container"> -->
             <!-- User Dashboard -->
             <div class="dashboard-container">
                 <div id="header">
                     <p class="dashboard-intro hideonmobile">Dashboard | Welcome <span style="color: #75a2cf; ">{{ username }}</span></p>
-
-                    <!-- <div class="selections"> -->
-                        <select id="leagues">
-                            <option value="">--Select an option--</option>  
-                        </select>
-                    <!-- </div> -->
-
-                    <!-- Mobile Top Nav -->
-                    <div class="mobile-nav hideondesktop">
-                        <div id="dashboard" class="active"><span id="user-nav-link">Dashboard</span></div>
-                        <div id="ai"><span id="user-nav-link"><span id="ai-text">AI</span> Insights</span></div>
-                        <div id="matchups"><span id="user-nav-link">Matchups</span></div>
-                        <div id="rankings"><span id="user-nav-link">Player Rankings</span></div>
-                        <div id="settings"><span id="user-nav-link">Settings</span></div>
-                    </div>
                 </div>
 
                 <div id="content">
-                    <!-- <div class="roster"> -->
+                    <div class="selections">
+                        <select id="leagues">
+                            <option value="">--Select an option--</option>  
+                        </select>
+                    </div>
+
+                    <div class="roster">
                         <div class="starters">
-                            <table>
+                            <table class="table table-striped table-borderless table-sm">
                                 <colgroup>
                                     <col style="width: 20%;">
                                     <col style="width: 60%;">
@@ -99,7 +98,7 @@
                         </div>
 
                         <div class="bench">
-                            <table>
+                            <table class="table table-striped table-borderless">
                                 <colgroup>
                                     <col style="width: 20%;">
                                     <col style="width: 60%;">
@@ -115,7 +114,7 @@
                                 </tbody>
                             </table>
                         </div>
-                    <!-- </div> -->
+                    </div>
                 </div>
             </div>
 
@@ -123,14 +122,13 @@
             <div class="ai-container">
                 <div id="header">
                     <p>AI Insights</p>
-                    <a href="#" type="button" id="insight-btn">Get AI Insights</a>
                 </div>
 
                 <div id="content">
                     
 
                     <div class="ai-starters">
-                        <table>
+                        <table class="table table-striped table-borderless>
                             <colgroup>
                                 <col style="width: 20%;">
                                 <col style="width: 60%;">
@@ -148,23 +146,79 @@
                     </div>
 
                     <div class="recommendations">
-                        <table id="recommendations">
+                        <table id="recommendations" class="table table-striped table-borderless>
+                            <colgroup>
+                                <col style="width: 20%;">
+                                <col style="width: 60%;">
+                                <col style="width: 20%;">
+                            </colgroup>
                             <thead>
                                 <tr>
                                     <th colspan="6" class="sub-header">AI Recommendation</th>
                                 </tr>
                             </thead>
                             <!-- Double up on roster while developing -->
-                            <tbody id="starter-players">
+                            <tbody id="ai-players">
                                 <!-- Filled via AI -->
+                                <tr>
+                                    <td>IMG</td>
+                                    <td>NAME</td>
+                                    <td>POS</td>
+                                </tr>
+                                <tr>
+                                    <td>IMG</td>
+                                    <td>NAME</td>
+                                    <td>POS</td>
+                                </tr>
+                                <tr>
+                                    <td>IMG</td>
+                                    <td>NAME</td>
+                                    <td>POS</td>
+                                </tr>
+                                <tr>
+                                    <td>IMG</td>
+                                    <td>NAME</td>
+                                    <td>POS</td>
+                                </tr>
+                                <tr>
+                                    <td>IMG</td>
+                                    <td>NAME</td>
+                                    <td>POS</td>
+                                </tr>
+                                <tr>
+                                    <td>IMG</td>
+                                    <td>NAME</td>
+                                    <td>POS</td>
+                                </tr>
+                                <tr>
+                                    <td>IMG</td>
+                                    <td>NAME</td>
+                                    <td>POS</td>
+                                </tr>
+                                <tr>
+                                    <td>IMG</td>
+                                    <td>NAME</td>
+                                    <td>POS</td>
+                                </tr>
+                                <tr>
+                                    <td>IMG</td>
+                                    <td>NAME</td>
+                                    <td>POS</td>
+                                </tr>
                             </tbody>
                         </table> 
                     </div>
-                    <div id="ai-response">
-                        <div class="spinner-border" role="status">
-                            <span class="visually-hidden">Loading...</span>
+
+                    <div id="ai-sub-container">
+                        <div id="ai-response">
+                            <p><strong>Fumbld AI</strong>: Hello <strong>{{ username }}</strong>, press the 'Get AI Insight' button to get an AI recommendation.</p>
                         </div>
-                        <p>Sam Darnold is chosen as the starting QB due to Matthew Stafford's bench status and potential injury concerns. Saquon Barkley and D'Andre Swift are the top RB options, both having strong projected points and favorable matchups. Zay Flowers and Adam Thielen are the best available WRs, with Flowers offering upside and Thielen providing a steady target share. Jonnu Smith is the only active TE, making him the default choice. James Conner is selected for the D/S/T position due to his consistent workload and potential for touchdowns. Chase McLaughlin is the sole kicker, and the Los Angeles defense is the only option available, making them the default choice. Cooper Kupp's bench status and potential injury concerns keep him out of the starting lineup.</p>
+
+                        <a href="#" type="button" id="insight-btn">Get AI Insights</a>
+
+                        <div class="spinner-border" role="status" style="display: none;">
+                                <span class="visually-hidden">Loading...</span>
+                        </div>
                     </div>
                 </div>
 
@@ -177,32 +231,7 @@
                 </div>
 
                 <div id="content">
-                    {% if username %} <!-- Changed from user_team due to error -->
-                    <table>
-                        <thead>
-                            <tr>
-                                <th colspan="4" class="main-header">Week 16</th>
-                            </tr>
-                            <tr>
-                                <th colspan="2" class="sub-header">Your Starters</th>
-                                <th colspan="2" class="sub-header">Opponent Starters</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for i in range(user_team|length) %}
-                                <tr>
-                                    <td class="position-label">{{ user_team[i].position }}</td>
-                                    <td class="player-name">{{ user_team[i].name }}</td>
-
-                                    <td class="position-label">{{ opp_team[i].position }}</td>
-                                    <td class="player-name">{{ opp_team[i].name }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                    {% else %}
-                        <p>You are not authenticated in Yahoo!</p>
-                    {% endif %} 
+                    <p style="font-size: 26px; font-weight: 700;">Coming Soon</p>
                 </div>
             </div>
 
@@ -213,7 +242,7 @@
                 </div>
 
                 <div id="content">
-                    Player Rankings
+                    <p style="font-size: 26px; font-weight: 700;">Coming Soon</p>
                 </div>
             </div>
 
@@ -225,11 +254,11 @@
 
                 <div id="content">
                     <a id="yahoo-link" href="/yahoo/authorize"><img id="yahoo-img" src="../static/img/assets/yahoo_button.png"></a>
-                    <a href="#" type="button" id="refresh">Refresh</a>
+                    <a href="#" type="button" id="refresh">Refresh League Data</a>
                     <!-- Change Password -->
                      <a href="#" type=button id="change-password">Change Password</a>
-                     <div id="pass-reset-form">
-                        <form method="POST" action="{{ url_for('main.change_password') }}">
+                     <div id="pass-reset-container">
+                        <form id="pass-reset-form" method="POST" action="{{ url_for('main.change_password') }}">
                             {{ pass_reset.hidden_tag() }}
                             {{ pass_reset.current_password(placeholder="Current Password") }}
                             {{ pass_reset.new_password(placeholder="New Password") }}
@@ -253,8 +282,15 @@
     </footer>
     <!-- End Footer -->
 
+    <div class="modalPopUp" style="display: none;">
+        <div id="modalContent"></div>
+        <button id="modalClose">Close</button>
+    </div>
+
 
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ai.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
 
     <!-- Bootstrap -->
      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>

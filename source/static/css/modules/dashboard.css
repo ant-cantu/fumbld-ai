@@ -5,7 +5,7 @@
 
 .dashboard-container #content {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 25px;
@@ -18,7 +18,7 @@
     justify-content: space-evenly;
 }
 
-.dashboard-container table {
+/* .dashboard-container table {
     border: 1px solid black;
     text-align: center;
 }
@@ -26,7 +26,7 @@
 .dashboard-container tr, th, td {
     border: 1px solid black;
     padding: 10px;
-}
+} */
 
 /* Dashboard */
 /* .dashboard-intro {
@@ -67,14 +67,11 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
-
 #refresh:hover {
-    color:#74b9ff;
-    background: black;
+    background-color: #004181;
 }
 
-/* Left Dashboard Menu */
-table {
+/* table {
     background-color: #fff;
     border-radius: 16px;
     table-layout: fixed;
@@ -96,13 +93,7 @@ td {
 
 tbody {
     border: 1px solid purple;
-}
-
-#ai-response {
-    border: 1px solid black;
-    padding: 5px;
-    margin: 0;
-}
+} */
 
 .hideondesktop {
     display: none;
