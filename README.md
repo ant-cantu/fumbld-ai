@@ -38,9 +38,9 @@ Fumbld AI is a Flask web application that helps fantasy football managers make i
 ## The application follows a straightforward workflow:
 1. **User Authentication** – Manage user accounts and sessions with Flask‑Login.
 2. **Yahoo Integration** – Authorize access to your fantasy league using Yahoo's OAuth flow and store tokens securely with SQLAlchemy.
-3. **Roster Analysis** – Retrieve current league data and calculate relevant stats for each player on your team.
-4. **AI Recommendations** – Send the aggregated data to OpenAI's API to generate lineup advice in natural language.
-5. **Dashboard Display** – Present the AI's suggestions in a clean web interface built with Jinja templates and standard static assets.
+3. **Roster Analysis** – Retrieves current league data and stores roster information in the user’s database to reduce the number of API calls.
+4. **AI Recommendations** – Sends aggregated data to OpenAI’s API to generate lineup recommendations, displaying the suggested roster in a table along with the rationale behind each selection.
+5. **Dashboard Display** – Present the AI's suggestions in a clean web interface.
 
 ## Features
 - User registration and authentication using **Flask-Login**
@@ -50,6 +50,24 @@ Fumbld AI is a Flask web application that helps fantasy football managers make i
 - Google reCAPTCHA for form protection
 
 ## Source Code:
-> Source code available upon request.
+> To protect the source code, it is available upon request to prospective employers only.
 
 ## Preview
+
+### Home Page
+![image](https://github.com/user-attachments/assets/c39b7597-04f9-4ea6-9b97-aa6d7b28d643)
+
+### Login Page
+![image](https://github.com/user-attachments/assets/6dc2fd9a-1048-4e4a-b884-f43b13bb8c49)
+
+### Registration Page
+![image](https://github.com/user-attachments/assets/eb267dab-fc82-4a31-8703-8306256192ae)
+
+### Dashboard - Main
+![image](https://github.com/user-attachments/assets/2f2bd647-2a59-4665-8bc4-78fea9dddeb9)
+
+### Dashboard - Fumbld AI
+![image](https://github.com/user-attachments/assets/55f1e272-92f9-4539-bdab-34b0d9e18e28)
+
+### Dashboard - Settings (Work In Progress)
+![image](https://github.com/user-attachments/assets/7454ecff-2be9-46fb-9d0a-8c75fc13206f)
