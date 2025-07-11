@@ -3,7 +3,7 @@ from flask import Flask
 from fumbld_ai.utils import db, TokenEncryptor
 from dotenv import load_dotenv # Development Stage ONLY
 from fumbld_ai.routes import main_bp
-from fumbld_ai.utils import yahoo_bp, ai_bp
+from fumbld_ai.utils import yahoo_bp
 from fumbld_ai.models import User
 from flask_login import LoginManager
 
@@ -43,6 +43,9 @@ def init_app():
         print('[CRITICAL] Terminating Application')
         return
     
+    # Gemini Key
+    app.config['GEMINI_API_KEY'] = os.environ.get('GEMINI_API_KEY')
+    
     # Google reCaptcha Key
     app.config['GOOGLE_CAPTCHA_KEY'] = os.environ.get('GOOGLE_CAPTCHA_KEY')
     
@@ -71,7 +74,6 @@ def init_app():
         
     app.register_blueprint(main_bp)
     app.register_blueprint(yahoo_bp)
-    app.register_blueprint(ai_bp)
 
     return app
 

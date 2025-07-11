@@ -1,6 +1,7 @@
 // Password reset button
 const passResetBtn = document.querySelector("#passResetBtn");
 const passResetForm = document.querySelector("#pass-reset-form");
+//const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 function yahoo_refresh() {
     /**
@@ -10,23 +11,30 @@ function yahoo_refresh() {
      * @function
      * @returns {void}
      */
-    fetch('/fetch/yahoo/refresh')
-        .then(response => response.json())
-        .then(data => {
-            if(data.success) {
-                modal(data.success);
-            } else {
-                modal(data.error);
-            }
-            modalCloseBtn.style.display = "block";
-        });
+    //fetch('/fetch/yahoo/refresh')
+    fetch('/api/yahoo/leagues/refresh', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success) {
+            modal(data.success);
+        } else {
+            modal(data.error);
+        }
+        modalCloseBtn.style.display = "block";
+    });
 }
 
 passResetBtn.addEventListener("click", (e) => {
     e.preventDefault();
     const form = new FormData(passResetForm);
 
-    fetch("/functions/changepassword", {
+    //fetch("/functions/changepassword", {
+    fetch('/api/users/me/password', {
         method: "POST",
         body: form
     })

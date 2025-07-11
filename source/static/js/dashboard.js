@@ -88,7 +88,9 @@ function create_placeholder(status) {
 
 function fetch_leagues() {
     // Make a call to our API, returns users leagues
-    fetch('fetch/yahoo/leagues')
+    // fetch('fetch/yahoo/leagues')
+    // <provider> = yahoo
+    fetch('/api/yahoo/leagues')
         .then(response => {
             create_placeholder("loading");
             return response.json();
@@ -116,7 +118,8 @@ function fetch_roster(league_id) {
     // startersTable.innerHTML = '';
     benchTable.innerHTML = '';
 
-    fetch('/fetch/yahoo/roster?league-id=' + league_id)
+    // fetch('/fetch/yahoo/roster?league-id=' + league_id)
+    fetch('/api/yahoo/leagues/' + league_id + '/roster')
         .then(response => response.json())
         .then(data => {
             data.forEach(player => {

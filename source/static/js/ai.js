@@ -1,7 +1,9 @@
-const response = document.querySelector("#ai-response");    // AI Response Container
+const response = document.querySelector("#fumbld-response");    // AI Response Container
 const insightBtn = document.querySelector("#insight-btn");  // AI Insight Button
 const spinner = document.querySelector(".spinner-border");  // AI Loading Spinner
 const aiTable = document.querySelector("#ai-players");      // Table for AI recommended players
+const aiDiv = document.querySelector(".recommendations");   // Div container which holds AI table
+const aiText = document.querySelector("#fumbld-head");
 
 let charCount = 0;      // Character counter for AI response type effect
 let ai_response = "";   // This is set with the response from OpenAI
@@ -32,7 +34,8 @@ function fetch_recommendation(league_id) {
     aiTable.innerHTML = '';
     spinner.style.display = "block";
 
-    fetch('/fetch/ai/recommendation?league-id=' + league_id)
+    // fetch('/fetch/ai/recommendation?league-id=' + league_id)
+    fetch('/api/leagues/' + league_id + '/recommendations')
         .then(response => response.json())
         .then(data => {
             const players = data.players;
@@ -65,8 +68,10 @@ function fetch_recommendation(league_id) {
                 aiTable.appendChild(newRow);
             });
             
-            const reasonContainer = document.querySelector("#ai-response");
-            reasonContainer.innerHTML += "<p><strong>Fumbld AI</strong>: ";
+            aiDiv.style.display = "block";
+            aiText.style.display = "block";
+            //const reasonContainer = document.querySelector("#ai-response");
+            //reasonContainer.innerHTML += "<p><strong>Fumbld AI</strong>: ";
             //reasonContainer.innerHTML = '';
             //reasonContainer.innerHTML = `<p>${reason}</p>`;
             

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Fumbld AI | Dashboard</title>
     
     <!-- Bootstrap -->
@@ -128,7 +129,7 @@
                     
 
                     <div class="ai-starters">
-                        <table class="table table-striped table-borderless>
+                        <table class="table table-striped table-borderless">
                             <colgroup>
                                 <col style="width: 20%;">
                                 <col style="width: 60%;">
@@ -145,8 +146,8 @@
                         </table>
                     </div>
 
-                    <div class="recommendations">
-                        <table id="recommendations" class="table table-striped table-borderless>
+                    <div class="recommendations" style="display: none;">
+                        <table id="recommendations" class="table table-striped table-borderless">
                             <colgroup>
                                 <col style="width: 20%;">
                                 <col style="width: 60%;">
@@ -154,57 +155,11 @@
                             </colgroup>
                             <thead>
                                 <tr>
-                                    <th colspan="6" class="sub-header">AI Recommendation</th>
+                                    <th colspan="6" class="sub-header">Fumbld AI Recommendation</th>
                                 </tr>
                             </thead>
-                            <!-- Double up on roster while developing -->
                             <tbody id="ai-players">
                                 <!-- Filled via AI -->
-                                <tr>
-                                    <td>IMG</td>
-                                    <td>NAME</td>
-                                    <td>POS</td>
-                                </tr>
-                                <tr>
-                                    <td>IMG</td>
-                                    <td>NAME</td>
-                                    <td>POS</td>
-                                </tr>
-                                <tr>
-                                    <td>IMG</td>
-                                    <td>NAME</td>
-                                    <td>POS</td>
-                                </tr>
-                                <tr>
-                                    <td>IMG</td>
-                                    <td>NAME</td>
-                                    <td>POS</td>
-                                </tr>
-                                <tr>
-                                    <td>IMG</td>
-                                    <td>NAME</td>
-                                    <td>POS</td>
-                                </tr>
-                                <tr>
-                                    <td>IMG</td>
-                                    <td>NAME</td>
-                                    <td>POS</td>
-                                </tr>
-                                <tr>
-                                    <td>IMG</td>
-                                    <td>NAME</td>
-                                    <td>POS</td>
-                                </tr>
-                                <tr>
-                                    <td>IMG</td>
-                                    <td>NAME</td>
-                                    <td>POS</td>
-                                </tr>
-                                <tr>
-                                    <td>IMG</td>
-                                    <td>NAME</td>
-                                    <td>POS</td>
-                                </tr>
                             </tbody>
                         </table> 
                     </div>
@@ -212,9 +167,10 @@
                     <div id="ai-sub-container">
                         <div id="ai-response">
                             <p><strong>Fumbld AI</strong>: Hello <strong>{{ username }}</strong>, press the 'Get AI Insight' button to get an AI recommendation.</p>
+                            <p id="fumbld-head" style="display: none;"><strong>Fumbld AI</strong>: <span id="fumbld-response"></span></p>
                         </div>
 
-                        <a href="#" type="button" id="insight-btn">Get AI Insights</a>
+                        <a href="#" type="button" id="insight-btn">Get AI Insight</a>
 
                         <div class="spinner-border" role="status" style="display: none;">
                                 <span class="visually-hidden">Loading...</span>

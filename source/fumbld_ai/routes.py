@@ -1,7 +1,7 @@
 from flask import render_template, Blueprint, flash, redirect, url_for, request, abort, jsonify, current_app
 import pytz, datetime
 from .yahoo_fantasy import yahoo_get_roster, yahoo_get_league, yahoo_refresh
-from .utils import db, is_safe_url, gpt_call
+from .utils import db, is_safe_url, gpt_call, gemini_call
 from .forms import LoginForm, RegistrationForm, ChangePasswordForm
 from flask_login import current_user, login_user, logout_user, login_required
 import requests
@@ -191,13 +191,14 @@ def handle_logout():
 
 # ------------------------------------------------------------------------
 # Fumbld AI API
-@main_bp.route('/fetch/ai/recommendation', methods=['GET'])
+@main_bp.route('/api/leagues/<league_id>/recommendations', methods=['GET'])
 @login_required
-def get_ai_rec():
-    league_id = request.args.get('league-id', '')
+def get_ai_rec(league_id):
+    # league_id = request.args.get('league-id', '')
     # print(league_id)
     current_roster = yahoo_get_roster(league_id)
     
+    # Separate the URL from the player dictionary
     parsed_roster = []
     parsed_url = []
     for roster in current_roster:
@@ -211,7 +212,7 @@ def get_ai_rec():
             'url': roster['url']
         })
     
-    gpt_response = gpt_call(parsed_roster)
+    gpt_response = gemini_call(parsed_roster)
     import json
     import re
 
@@ -249,42 +250,46 @@ def get_ai_rec():
         'reason': reason
     }
 
+    # print(gemini_call(parsed_roster))
+
     return jsonify(response), 201
 
-@main_bp.route('/fetch/yahoo/roster', methods=['GET'])
+@main_bp.route('/api/<provider>/leagues/<league_id>/roster', methods=['GET'])
 @login_required
-def get_roster():
+def get_roster(provider, league_id):
     if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
         abort(403)
 
     # /fetch/yahoo/roster?league-id=423.l.1215322
-    league_id = request.args.get('league-id', '')
+    # league_id = request.args.get('league-id', '')
+    if provider == "yahoo":
+        return jsonify(yahoo_get_roster(league_id)), 201
 
-    return jsonify(yahoo_get_roster(league_id)), 201
-
-@main_bp.route('/fetch/yahoo/leagues', methods=['GET'])
+@main_bp.route('/api/<provider>/leagues', methods=['GET'])
 @login_required
-def get_leagues():
+def get_leagues(provider):
     if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
         abort(403)
 
-    return jsonify(yahoo_get_league()), 201
+    if provider == "yahoo":
+        return jsonify(yahoo_get_league()), 201
 
-@main_bp.route('/fetch/yahoo/refresh', methods=['GET'])
+@main_bp.route('/api/<provider>/leagues/refresh', methods=['POST'])
 @login_required
-def refresh_roster():
-    if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
-        abort(403)
-        # Log a warning here, user should not be able to access this without being authenticated with yahoo.
-        return jsonify({"error": "There was an error refreshing your Yahoo! data. Try reauthenticating yourself with Yahoo!"})
+def refresh_roster(provider):
+    if provider == "yahoo":
+        if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
+            abort(403)
+            # Log a warning here, user should not be able to access this without being authenticated with yahoo.
+            return jsonify({"error": "There was an error refreshing your Yahoo! data. Try reauthenticating yourself with Yahoo!"}), 403
 
-    try:
-        # Delete all yahoo related entries in the database and refresh
-        yahoo_refresh()
-        return jsonify({"success": "Yahoo! Sports refresh has comepleted. Thanks for waiting! 🏈🏆"})
-    except:
-        # Log error here <---------------
-        return jsonify({"error": "There was an error refreshing your Yahoo! data. Please submit an error report."})
+        try:
+            # Delete all yahoo related entries in the database and refresh
+            yahoo_refresh()
+            return jsonify({"success": "Yahoo! Sports refresh has comepleted. Thanks for waiting! 🏈🏆"}), 200
+        except:
+            # Log error here <---------------
+            return jsonify({"error": "There was an error refreshing your Yahoo! data. Please submit an error report."}), 500
 
 @main_bp.errorhandler(403)
 def forbidden_error(error):
@@ -294,14 +299,13 @@ def forbidden_error(error):
 # Backend Function Calls
 
 # User Change Password
-@main_bp.route('/functions/changepassword', methods=['POST'])
+@main_bp.route('/api/users/me/password', methods=['POST'])
 @login_required
 def change_password():
     from .models import User
 
     pass_reset_form = ChangePasswordForm()
     if pass_reset_form.validate_on_submit():
-        print("called?")
         curr_password = pass_reset_form.current_password.data
         new_password = pass_reset_form.new_password.data
 
@@ -311,10 +315,10 @@ def change_password():
             query_user.set_password(new_password)
             try:
                 db.session.commit()
-                return jsonify({"success": "Your password has been changed."}), 201
+                return jsonify({"success": "Your password has been changed."}), 200
             except:
-                return jsonify({"error": "There was an error writing to the database."}), 201
+                return jsonify({"error": "There was an error writing to the database."}), 500
         else:
-            return jsonify({"error": "Current password entered was not correct."}), 201
+            return jsonify({"error": "Current password entered was not correct."}), 403
     else:
-        return jsonify({"error": "Password in confirmation form does not patch new password."}), 201
+        return jsonify({"error": "Password in confirmation form does not patch new password."}), 400

@@ -10,4 +10,4 @@ from .yahoo_oauth import update_token_in_db, yahoo_bp, yahoo_api_connect
 from .helper import is_safe_url, TokenEncryptor
 
 # ai.py
-from .ai import ai_bp, gpt_call
+from .ai import gpt_call, gemini_call
