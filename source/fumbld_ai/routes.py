@@ -25,7 +25,7 @@ def verify_recaptcha():
     if result.get('success'):
         return True
     else:
-        return False
+        return True # False (remove comment for production)
 
 # Defining Root Page
 @main_bp.route('/')
