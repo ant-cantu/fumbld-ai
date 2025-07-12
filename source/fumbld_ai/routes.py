@@ -4,6 +4,7 @@ from .yahoo_fantasy import yahoo_get_roster, yahoo_get_league, yahoo_refresh
 from .utils import db, is_safe_url, gpt_call, gemini_call
 from .forms import LoginForm, RegistrationForm, ChangePasswordForm
 from flask_login import current_user, login_user, logout_user, login_required
+from .models import YahooToken
 import requests
 
 
@@ -49,12 +50,21 @@ def dashboard():
         pacific_now = utc_now.astimezone(pacific_tmz)
         current_user.last_login = pacific_now
     
+    # Password reset form
     pass_reset_form = ChangePasswordForm()
+
+    # Is user authenticated with Yahoo?
+    yahoo_query = YahooToken.query.filter_by(user_id=current_user.id)
+    if yahoo_query:
+        yahoo_auth = True
+    else:
+        yahoo_auth = False
 
     return render_template("dashboard.html",
                             username=current_user.username,
                             last_login=last_login,
-                            pass_reset=pass_reset_form)
+                            pass_reset=pass_reset_form,
+                            yahoo=yahoo_auth)
     
 # User Registration
 @main_bp.route('/register', methods=['GET', 'POST'])

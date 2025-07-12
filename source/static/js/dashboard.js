@@ -86,11 +86,11 @@ function create_placeholder(status) {
     leagueMenu.appendChild(placeholder);
 }
 
-function fetch_leagues() {
+function fetch_leagues(provider) {
     // Make a call to our API, returns users leagues
     // fetch('fetch/yahoo/leagues')
     // <provider> = yahoo
-    fetch('/api/yahoo/leagues')
+    fetch('/api/' + provider + '/leagues')
         .then(response => {
             create_placeholder("loading");
             return response.json();
@@ -161,13 +161,20 @@ function fetch_roster(league_id) {
 
 // Page is finished loading
 document.addEventListener('DOMContentLoaded', () => {
-    fetch_leagues();
+    //fetch_leagues();
 });
 
 // League drop down is changed
 leagueMenu.addEventListener("change", () => {
     const selectedLeague = leagueMenu.value;
     fetch_roster(selectedLeague);
+});
+
+const serviceDropDown = document.querySelector("#provider");
+serviceDropDown.addEventListener("change", () => {
+    if(serviceDropDown.value === "yahoo") {
+        fetch_leagues("yahoo");
+    }
 });
 
 

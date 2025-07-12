@@ -56,15 +56,6 @@
             </div>
         </div>
 
-        <!-- Mobile Top Nav -->
-        <div class="mobile-nav hideondesktop">
-            <div id="dashboard" class="active"><span id="user-nav-link">Dashboard</span></div>
-            <div id="ai"><span id="user-nav-link"><span id="ai-text">AI</span> Insights</span></div>
-            <div id="matchups"><span id="user-nav-link">Matchups</span></div>
-            <div id="rankings"><span id="user-nav-link">Player Rankings</span></div>
-            <div id="settings"><span id="user-nav-link">Settings</span></div>
-        </div>
-
         <!-- <div class="main-container"> -->
             <!-- User Dashboard -->
             <div class="dashboard-container">
@@ -74,6 +65,13 @@
 
                 <div id="content">
                     <div class="selections">
+                        <select id="provider">
+                            <option value="">--Select a service--</option>
+                            {% if yahoo %}
+                                <option value="yahoo">Yahoo! Sports</option>
+                            {% endif %}
+                        </select>
+
                         <select id="leagues">
                             <option value="">--Select an option--</option>  
                         </select>

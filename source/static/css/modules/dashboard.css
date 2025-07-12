@@ -46,7 +46,8 @@
     margin: 1rem 0;
 }
 
-#leagues {
+#leagues,
+#provider {
     padding: 0.5rem 1rem;
     border: 1px solid #ccc;
     border-radius: 6px;
