@@ -31,13 +31,39 @@ function fetch_recommendation(league_id) {
     * - Updates the AI response container with the reasoning for the recommendations.
     * - Triggers a typing animation for the AI response.
     */
-    aiTable.innerHTML = '';
-    spinner.style.display = "block";
+    if(league_id === "") {
+        modal("Please select a league from the dashboard module.")
+        return;
+    }
+
+    modal("Getting your recommendation, please wait...");
+    modalCloseBtn.style.display = "none";
 
     // fetch('/fetch/ai/recommendation?league-id=' + league_id)
     fetch('/api/leagues/' + league_id + '/recommendations')
-        .then(response => response.json())
+        .then(response => {
+            return response.json()
+        })
         .then(data => {
+            if(data.error) {
+                modal(data.error);
+                modalCloseBtn.style.display = "block";
+                spinner.style.display = "none";
+                return;
+            }
+
+            // Clear tables/text
+            aiDiv.style.display = "none";
+            response.innerHTML = "";
+            aiTable.innerHTML = "";
+            ai_response = "";
+            charCount = 0;
+
+            // Display success message and allow user to close modal
+            modal("Time to get that win! 🏈🏆");
+            spinner.style.display = "block";
+
+            // Grab data from backend
             const players = data.players;
             const reason = data.reason;
 
@@ -70,6 +96,7 @@ function fetch_recommendation(league_id) {
             
             aiDiv.style.display = "block";
             aiText.style.display = "block";
+            modalCloseBtn.style.display = "block";
             //const reasonContainer = document.querySelector("#ai-response");
             //reasonContainer.innerHTML += "<p><strong>Fumbld AI</strong>: ";
             //reasonContainer.innerHTML = '';
@@ -97,7 +124,6 @@ function typeIt() {
         setTimeout(typeIt, 10);
     }
     else {
-        response.innerHTML += "</p>";
         spinner.style.display = "none";
     }
 }

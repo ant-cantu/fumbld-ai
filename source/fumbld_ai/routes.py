@@ -1,10 +1,11 @@
 from flask import render_template, Blueprint, flash, redirect, url_for, request, abort, jsonify, current_app
 import pytz, datetime
 from .yahoo_fantasy import yahoo_get_roster, yahoo_get_league, yahoo_refresh
-from .utils import db, is_safe_url, gpt_call, gemini_call
+from .utils import db, is_safe_url, gpt_call, gemini_call, limiter
 from .forms import LoginForm, RegistrationForm, ChangePasswordForm
 from flask_login import current_user, login_user, logout_user, login_required
 from .models import YahooToken
+from flask_limiter import RateLimitExceeded
 import requests
 
 
@@ -206,63 +207,67 @@ def handle_logout():
 def get_ai_rec(league_id):
     # league_id = request.args.get('league-id', '')
     # print(league_id)
-    current_roster = yahoo_get_roster(league_id)
-    
-    # Separate the URL from the player dictionary
-    parsed_roster = []
-    parsed_url = []
-    for roster in current_roster:
-        parsed_roster.append({
-            'n': roster['name'],
-            'p': roster['position']
-        })
+    try:
+        with limiter.limit("1 per 2 minute"):
+            current_roster = yahoo_get_roster(league_id)
+            
+            # Separate the URL from the player dictionary
+            parsed_roster = []
+            parsed_url = []
+            for roster in current_roster:
+                parsed_roster.append({
+                    'n': roster['name'],
+                    'p': roster['position']
+                })
 
-        parsed_url.append({
-            'name': roster['name'],
-            'url': roster['url']
-        })
-    
-    gpt_response = gemini_call(parsed_roster)
-    import json
-    import re
+                parsed_url.append({
+                    'name': roster['name'],
+                    'url': roster['url']
+                })
+            
+            gpt_response = gemini_call(parsed_roster)
+            import json
+            import re
 
-    # Extrct the JSON block between --- markers in gpt response
-    # --- three dashes in string
-    # \s* match any whitespace
-    # (\[.*?\]) match and capture a json style list inside of [ ]
-    json_match = re.search(r"---\s*(\[.*?\])\s*---", gpt_response, re.DOTALL)
-    if json_match:
-        # return the captured group
-        json_part = json_match.group(1)
-        # parse the json string into a dictionary
-        players = json.loads(json_part)
-    else:
-        return jsonify({'error': 'There was an error making an AI call.'})
-    
-    # Extract the reason text in gpt response
-    # start search starting with reason:
-    # \s* optional whitespace after reason
-    # (.*) capture group that grabs everything after the optional whitespace
-    reason_match = re.search(r"Reason:\s*(.*)", gpt_response, re.DOTALL)
-    if reason_match:
-        reason = reason_match.group(1).strip()
-    else:
-        return jsonify({'error': 'There was an error making an AI call.'})
-    
-    # Add URL back into AI response
-    for player in players:
-        for urls in parsed_url:
-            if player['name'] == urls['name']:
-                player['url'] = urls['url']
+            # Extrct the JSON block between --- markers in gpt response
+            # --- three dashes in string
+            # \s* match any whitespace
+            # (\[.*?\]) match and capture a json style list inside of [ ]
+            json_match = re.search(r"---\s*(\[.*?\])\s*---", gpt_response, re.DOTALL)
+            if json_match:
+                # return the captured group
+                json_part = json_match.group(1)
+                # parse the json string into a dictionary
+                players = json.loads(json_part)
+            else:
+                return jsonify({'error': 'There was an error making an AI call.'})
+            
+            # Extract the reason text in gpt response
+            # start search starting with reason:
+            # \s* optional whitespace after reason
+            # (.*) capture group that grabs everything after the optional whitespace
+            reason_match = re.search(r"Reason:\s*(.*)", gpt_response, re.DOTALL)
+            if reason_match:
+                reason = reason_match.group(1).strip()
+            else:
+                return jsonify({'error': 'There was an error making an AI call.'})
+            
+            # Add URL back into AI response
+            for player in players:
+                for urls in parsed_url:
+                    if player['name'] == urls['name']:
+                        player['url'] = urls['url']
 
-    response = {
-        'players': players,
-        'reason': reason
-    }
+            response = {
+                'players': players,
+                'reason': reason
+            }
 
-    # print(gemini_call(parsed_roster))
+            # print(gemini_call(parsed_roster))
 
-    return jsonify(response), 201
+            return jsonify(response), 201
+    except RateLimitExceeded:
+        return jsonify({"error": "Please allow two minutes inbetween Fumbld AI calls."})
 
 @main_bp.route('/api/<provider>/leagues/<league_id>/roster', methods=['GET'])
 @login_required

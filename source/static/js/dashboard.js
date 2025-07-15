@@ -118,6 +118,14 @@ function fetch_roster(league_id) {
     // startersTable.innerHTML = '';
     benchTable.innerHTML = '';
 
+    // Clear tables/text
+    aiDiv.style.display = "none";
+    response.innerHTML = "";
+    aiTable.innerHTML = "";
+    aiText.style.display = "none";
+    ai_response = "";
+    charCount = 0;
+
     // fetch('/fetch/yahoo/roster?league-id=' + league_id)
     fetch('/api/yahoo/leagues/' + league_id + '/roster')
         .then(response => response.json())
@@ -174,9 +182,20 @@ const serviceDropDown = document.querySelector("#provider");
 serviceDropDown.addEventListener("change", () => {
     if(serviceDropDown.value === "yahoo") {
         fetch_leagues("yahoo");
+    } else if(serviceDropDown.value === "") {
+        // Clear league menu dropdown
+        leagueMenu.innerHTML = "";
+
+        // Add a default option to league menu
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = '--Select a league--';
+        leagueMenu.appendChild(defaultOption);
+
+        // Clear roster table
+        fetch_roster('');
     }
 });
-
 
 
 // --- Dashboard Modal ---
@@ -185,7 +204,7 @@ serviceDropDown.addEventListener("change", () => {
 // Message to pass to the modal
 function modal(message) {
     modalContent.innerHTML = '';
-    modalContent.innerHTML = message;
+    modalContent.textContent = message;
     modalPopUp.style.display = "flex";
 }
 
@@ -196,6 +215,6 @@ modalCloseBtn.addEventListener("click", () => {
 });
 
 // Expose function globally
-window.modal = modal;
+//window.modal = modal;
 
 

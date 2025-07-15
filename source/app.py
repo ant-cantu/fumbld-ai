@@ -1,11 +1,13 @@
 import os
 from flask import Flask
-from fumbld_ai.utils import db, TokenEncryptor
+from fumbld_ai.utils import db, TokenEncryptor, limiter
 from dotenv import load_dotenv # Development Stage ONLY
 from fumbld_ai.routes import main_bp
 from fumbld_ai.utils import yahoo_bp
 from fumbld_ai.models import User
 from flask_login import LoginManager
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 def init_app():
     # Load environment variables
@@ -66,6 +68,9 @@ def init_app():
     # from cryptography.fernet import Fernet
     # key = Fernet.generate_key()
     # print(key)
+    
+    # Initialize Flask-Limiter
+    limiter.init_app(app)
 
     # Initialize SQLAlchemy
     db.init_app(app)
