@@ -83,7 +83,7 @@ class YahooLeague(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     # Store roster information in this table
-    yahoo_league_id = db.Column(db.String(20), unique=True, nullable=False)
+    yahoo_league_id = db.Column(db.String(20), unique=False, nullable=False)
     yahoo_league_name = db.Column(db.String(45), unique=False, nullable=False)
     yahoo_roster = db.Column(JSON)
     
