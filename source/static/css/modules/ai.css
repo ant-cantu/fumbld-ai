@@ -16,12 +16,16 @@
 .ai-container {
     width: 100%;
     height: 100%;
+    margin: 2rem;
+    padding: 1rem;
 }
 
 .ai-container #content {
     display: flex;
     justify-content: space-evenly;
     flex-direction: row;
+
+  
 }
 
 #ai-sub-container {
@@ -48,3 +52,12 @@
     padding: 0;
     margin: 0;
 }
+
+.ai-starters {
+    margin-top: 1rem;
+}
+
+
+
+
+
