@@ -8,7 +8,7 @@ import binascii, requests, os
 from .extensions import db, limiter
 from flask_login import login_required, current_user
 from .helper import TokenEncryptor
-from flask_limiter import RateLimitExceeded
+from flask_limiter.errors import RateLimitExceeded
 
 # Yahoo Blueprint to handle Flask routes
 yahoo_bp = Blueprint('yahoo', __name__, template_folder='templates')
