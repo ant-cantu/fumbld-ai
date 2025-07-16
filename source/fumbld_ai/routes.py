@@ -5,7 +5,7 @@ from .utils import db, is_safe_url, gpt_call, gemini_call, limiter
 from .forms import LoginForm, RegistrationForm, ChangePasswordForm
 from flask_login import current_user, login_user, logout_user, login_required
 from .models import YahooToken
-from flask_limiter import RateLimitExceeded
+from flask_limiter.errors import RateLimitExceeded
 import requests
 
 
