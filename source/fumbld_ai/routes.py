@@ -308,7 +308,7 @@ def refresh_roster(provider):
                     # Log error here <---------------
                     return jsonify({"error": "There was an error refreshing your Yahoo! data. Please submit an error report."}), 500
     except RateLimitExceeded:
-        return jsonify({"error": "Please give one minute inbetween Yahoo refresh."})
+        return jsonify({"error": "Please give one minute in between Yahoo refresh."})
 
 @main_bp.errorhandler(403)
 def forbidden_error(error):
