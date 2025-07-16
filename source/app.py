@@ -6,8 +6,6 @@ from fumbld_ai.routes import main_bp
 from fumbld_ai.utils import yahoo_bp
 from fumbld_ai.models import User
 from flask_login import LoginManager
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 
 def init_app():
     # Load environment variables
@@ -85,4 +83,4 @@ def init_app():
 app = init_app()
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port="5000", debug=True)

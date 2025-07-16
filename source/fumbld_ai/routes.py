@@ -292,19 +292,23 @@ def get_leagues(provider):
 @main_bp.route('/api/<provider>/leagues/refresh', methods=['POST'])
 @login_required
 def refresh_roster(provider):
-    if provider == "yahoo":
-        if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
-            abort(403)
-            # Log a warning here, user should not be able to access this without being authenticated with yahoo.
-            return jsonify({"error": "There was an error refreshing your Yahoo! data. Try reauthenticating yourself with Yahoo!"}), 403
+    try:
+        with limiter.limit("1 per minute"):
+            if provider == "yahoo":
+                if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
+                    abort(403)
+                    # Log a warning here, user should not be able to access this without being authenticated with yahoo.
+                    return jsonify({"error": "There was an error refreshing your Yahoo! data. Try reauthenticating yourself with Yahoo!"}), 403
 
-        try:
-            # Delete all yahoo related entries in the database and refresh
-            yahoo_refresh()
-            return jsonify({"success": "Yahoo! Sports refresh has comepleted. Thanks for waiting! 🏈🏆"}), 200
-        except:
-            # Log error here <---------------
-            return jsonify({"error": "There was an error refreshing your Yahoo! data. Please submit an error report."}), 500
+                try:
+                    # Delete all yahoo related entries in the database and refresh
+                    yahoo_refresh()
+                    return jsonify({"success": "Yahoo! Sports refresh has comepleted. Thanks for waiting! 🏈🏆"}), 200
+                except:
+                    # Log error here <---------------
+                    return jsonify({"error": "There was an error refreshing your Yahoo! data. Please submit an error report."}), 500
+    except RateLimitExceeded:
+        return jsonify({"error": "Please give one minute inbetween Yahoo refresh."})
 
 @main_bp.errorhandler(403)
 def forbidden_error(error):
