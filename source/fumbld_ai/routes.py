@@ -208,7 +208,7 @@ def get_ai_rec(league_id):
     # league_id = request.args.get('league-id', '')
     # print(league_id)
     try:
-        with limiter.limit("1 per 2 minute"):
+        with limiter.limit("1 per 2 minutes"):
             current_roster = yahoo_get_roster(league_id)
             
             # Separate the URL from the player dictionary
