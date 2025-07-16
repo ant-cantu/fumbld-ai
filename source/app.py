@@ -1,6 +1,6 @@
 import os
 from flask import Flask
-from fumbld_ai.utils import db, TokenEncryptor
+from fumbld_ai.utils import db, TokenEncryptor, limiter
 from dotenv import load_dotenv # Development Stage ONLY
 from fumbld_ai.routes import main_bp
 from fumbld_ai.utils import yahoo_bp
@@ -66,6 +66,9 @@ def init_app():
     # from cryptography.fernet import Fernet
     # key = Fernet.generate_key()
     # print(key)
+    
+    # Initialize Flask-Limiter
+    limiter.init_app(app)
 
     # Initialize SQLAlchemy
     db.init_app(app)
@@ -80,4 +83,4 @@ def init_app():
 app = init_app()
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port="5000", debug=True)

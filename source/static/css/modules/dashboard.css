@@ -6,10 +6,12 @@
 .dashboard-container #content {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start; /* center */
     align-items: center;
     gap: 25px;
     overflow-y: auto;
+    flex: 1;
+    padding-top: 20px;
 }
 
 .dashboard-container #content .roster {

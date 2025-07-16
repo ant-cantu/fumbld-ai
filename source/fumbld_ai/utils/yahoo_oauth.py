@@ -1,13 +1,14 @@
 # yahoo_oauth
 from datetime import datetime, timedelta, timezone
-from flask import Blueprint, redirect, url_for, current_app, session,request
+from flask import Blueprint, redirect, url_for, current_app, session,request, jsonify
 from rauth import OAuth2Service
 from requests_oauthlib import OAuth2Session
 from types import SimpleNamespace
 import binascii, requests, os
-from .extensions import db 
+from .extensions import db, limiter
 from flask_login import login_required, current_user
 from .helper import TokenEncryptor
+from flask_limiter.errors import RateLimitExceeded
 
 # Yahoo Blueprint to handle Flask routes
 yahoo_bp = Blueprint('yahoo', __name__, template_folder='templates')
@@ -118,41 +119,46 @@ def yahoo_api_connect():
 @login_required
 def yahoo_authorize():
     """Redirects the user to Yahoo for authentication."""
-    #  ..models import User, YahooToken
-
-    # Get Yahoo API Keys
-    consumer_key = current_app.config.get('YAHOO_CONSUMER_KEY')
-    consumer_secret = current_app.config.get('YAHOO_CONSUMER_SECRET')
-    callback_url = url_for('yahoo.yahoo_callback', _external=True, _scheme='https')
-
-    # Make sure API keys are configured correct.
-    if not all([consumer_key, consumer_secret, callback_url]):
-        print("Yahoo API credentials are not properly configured.")
-        return redirect(url_for('main.dashboard'))
-    
     try:
-        # Create an OAuth2Service object to handle Yahoo API connection
-        yahoo_service = OAuth2Service(
-            name='yahoo',
-            client_id=consumer_key,
-            client_secret=consumer_secret,
-            access_token_url='https://api.login.yahoo.com/oauth2/get_token',
-            authorize_url='https://api.login.yahoo.com/oauth2/request_auth'
-        )
+        with limiter.limit("1 per hour"):
+            #  ..models import User, YahooToken
 
-        # Generate a random token
-        generated_state = binascii.hexlify(os.urandom(16)).decode()
-        session['yahoo_oauth_state'] = generated_state
-        
-        # Build OAuth URL 
-        auth_url = yahoo_service.get_authorize_url(
-            state=generated_state,
-            redirect_uri=callback_url,
-            response_type='code'
-        )
-    except Exception as e:
-        print(f"Yahoo Authorize Error: {e}")
-    return redirect(auth_url)
+            # Get Yahoo API Keys
+            consumer_key = current_app.config.get('YAHOO_CONSUMER_KEY')
+            consumer_secret = current_app.config.get('YAHOO_CONSUMER_SECRET')
+            callback_url = url_for('yahoo.yahoo_callback', _external=True, _scheme='https')
+
+            # Make sure API keys are configured correct.
+            if not all([consumer_key, consumer_secret, callback_url]):
+                print("Yahoo API credentials are not properly configured.")
+                return redirect(url_for('main.dashboard'))
+            
+            try:
+                # Create an OAuth2Service object to handle Yahoo API connection
+                yahoo_service = OAuth2Service(
+                    name='yahoo',
+                    client_id=consumer_key,
+                    client_secret=consumer_secret,
+                    access_token_url='https://api.login.yahoo.com/oauth2/get_token',
+                    authorize_url='https://api.login.yahoo.com/oauth2/request_auth'
+                )
+
+                # Generate a random token
+                generated_state = binascii.hexlify(os.urandom(16)).decode()
+                session['yahoo_oauth_state'] = generated_state
+                
+                # Build OAuth URL 
+                auth_url = yahoo_service.get_authorize_url(
+                    state=generated_state,
+                    redirect_uri=callback_url,
+                    response_type='code'
+                )
+            except Exception as e:
+                print(f"Yahoo Authorize Error: {e}")
+            return redirect(auth_url)
+    except RateLimitExceeded:
+        return jsonify({"error": "Please allow one hour in between Yahoo! authorization requests."})
+
 
 @yahoo_bp.route('/yahoo/callback')
 @login_required
