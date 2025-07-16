@@ -157,7 +157,7 @@ def yahoo_authorize():
                 print(f"Yahoo Authorize Error: {e}")
             return redirect(auth_url)
     except RateLimitExceeded:
-        return jsonify({"error": "Please allow one hour inbetween Yahoo! authorization requests."})
+        return jsonify({"error": "Please allow one hour in between Yahoo! authorization requests."})
 
 
 @yahoo_bp.route('/yahoo/callback')
