@@ -267,7 +267,7 @@ def get_ai_rec(league_id):
 
             return jsonify(response), 201
     except RateLimitExceeded:
-        return jsonify({"error": "Please allow two minutes inbetween Fumbld AI calls."})
+        return jsonify({"error": "Please allow two minutes in between Fumbld AI calls."})
 
 @main_bp.route('/api/<provider>/leagues/<league_id>/roster', methods=['GET'])
 @login_required
