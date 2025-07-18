@@ -9,6 +9,7 @@ from .extensions import db, limiter
 from flask_login import login_required, current_user
 from .helper import TokenEncryptor
 from flask_limiter.errors import RateLimitExceeded
+import base64
 
 # Yahoo Blueprint to handle Flask routes
 yahoo_bp = Blueprint('yahoo', __name__, template_folder='templates')
@@ -25,8 +26,8 @@ def update_token_in_db(user, token):
     crypt = TokenEncryptor(current_app.config.get("SECRET_KEY").encode())
 
     # Update database fields
-    user.yahoo_token.access_token = crypt.encrypt(token['access_token'].encode())
-    user.yahoo_token.refresh_token = crypt.encrypt(token['refresh_token'].encode())
+    user.yahoo_token.access_token = base64.b64encode(crypt.encrypt(token['access_token'].encode())).decode()
+    user.yahoo_token.refresh_token = base64.b64encode(crypt.encrypt(token['refresh_token'].encode())).decode()
     user.yahoo_token.token_type = token['token_type']
     
     # Calculate the new expiry time from the 'expires_in' field
@@ -50,21 +51,12 @@ def yahoo_api_connect():
 
     Returns: OAuth Handler
     """
-    # from ..models import User
-
-    # # Get user_id from session
-    # if not current_user.is_authenticated:
-    #     return redirect(url_for('main.handle_login'))
-
     # Retrieve Yahoo Credentials
     consumer_key = current_app.config.get('YAHOO_CONSUMER_KEY')
     consumer_secret = current_app.config.get('YAHOO_CONSUMER_SECRET')
 
     # Retrieve Secret Key
     app_key = current_app.config.get("SECRET_KEY").encode()
-
-    # Fetch the current user from the database using their user_id
-    # user = User.query.filter_by(id=user_id).first()
     
     def token_updater(token):
         # ----> Print for now, adding logger later <----
@@ -72,27 +64,33 @@ def yahoo_api_connect():
         update_token_in_db(current_user, token)
         # ----> Print for now, adding logger later <----
         print("--- Finished token_updater callback ---")
-
+    
     # Calculate token expiration
-    expires_in = (current_user.yahoo_token.token_expiry - datetime.utcnow()).total_seconds()
-    # expires_in = (current_user.yahoo_token.token_expiry - datetime.now(timezone.utc)).total_seconds()
+    expires_in = (current_user.yahoo_token.token_expiry - datetime.now(timezone.utc)).total_seconds()
 
-    # Prepare the token dictionary for OAuth2Session
-    # token_data = {
-    #     'access_token': user.yahoo_token.access_token,
-    #     'refresh_token': user.yahoo_token.refresh_token,
-    #     'token_type': user.yahoo_token.token_type,
-    #     'expires_in': expires_in
-    # }
-    # Cryptography
-    crypt = TokenEncryptor(app_key)
+    try:
+        # Cryptography
+        crypt = TokenEncryptor(app_key)
 
-    token_data = {
-        'access_token': crypt.decrypt(current_user.yahoo_token.access_token).decode(),
-        'refresh_token': crypt.decrypt(current_user.yahoo_token.refresh_token).decode(),
-        'token_type': current_user.yahoo_token.token_type,
-        'expires_in': expires_in
-    }
+        # Base64-decode before decrypting
+        encrypted_access_token = base64.b64decode(current_user.yahoo_token.access_token)
+        encrypted_refresh_token = base64.b64decode(current_user.yahoo_token.refresh_token)
+
+        access_token = crypt.decrypt(encrypted_access_token).decode()
+        refresh_token = crypt.decrypt(encrypted_refresh_token).decode()
+    except Exception as e:
+        print(f"[error] Unable to access tokens from database")
+        return None
+    
+    try:  
+        token_data = {
+            'access_token': access_token,
+            'refresh_token': refresh_token,
+            'token_type': current_user.yahoo_token.token_type,
+            'expires_in': expires_in
+        }
+    except Exception as e:
+        print(e)
 
     # The token endpoint for Yahoo Fantasy Sports
     token_url = 'https://api.login.yahoo.com/oauth2/get_token'
@@ -182,14 +180,6 @@ def yahoo_callback():
         print("User is not logged in.")
         return redirect(url_for('main.handle_login'))
     
-    # Fetch the current user from the database using their user_id
-    # user = User.query.filter_by(id=user_id).first()
-    # if not user:
-    #     # ----> Print for now, adding logger later <----
-    #     print("User was not found. Please log in again.")
-    #     session.pop('user_id', None)
-    #     return redirect(url_for('main.handle_login'))
-    
     # Get 'code' arg from url
     code = request.args.get('code')
 
@@ -235,7 +225,6 @@ def yahoo_callback():
         return redirect(url_for('main.dashboard'))
     
     # Access the users related YahooToken model
-    # token_entry = user.yahoo_token
     token_entry = current_user.yahoo_token
     if not token_entry:
         token_entry = YahooToken(user_id=current_user.id)
@@ -243,13 +232,14 @@ def yahoo_callback():
 
     # Cryptography
     crypt = TokenEncryptor(app_key)
+    access_token = base64.b64encode(crypt.encrypt(token_payload.get('access_token').encode())).decode()
+    refresh_token = base64.b64encode(crypt.encrypt(token_payload.get('refresh_token').encode())).decode()
 
     # Update users database with Yahoo's token
-    token_entry.access_token = crypt.encrypt(token_payload.get('access_token').encode())
-    token_entry.refresh_token = crypt.encrypt(token_payload.get('refresh_token').encode())
+    token_entry.access_token = access_token
+    token_entry.refresh_token = refresh_token
     token_entry.token_type = token_payload.get('token_type')
     expires_in = token_payload.get('expires_in', 3600)
-    # token_entry.token_expiry = datetime.utcnow() + timedelta(seconds=expires_in)
     token_entry.token_expiry = datetime.now(timezone.utc) + timedelta(seconds=expires_in)
 
     try:

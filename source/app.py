@@ -16,8 +16,9 @@ def init_app():
 
     # DB File Location
     # THIS IS FOR DEV ONLY, PRODUCTION WILL BE MOVED TO A MORE SECURE DATABASE
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///" + os.path.join(basedir, "fumbld.db")
+    # basedir = os.path.abspath(os.path.dirname(__file__))
+    # app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///" + os.path.join(basedir, "fumbld.db")
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 
     # Disable Modification Warnings
     app.config['SQLALCHEMY_TRACK_MODIFICATION'] = False
