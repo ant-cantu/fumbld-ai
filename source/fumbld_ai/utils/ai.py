@@ -41,17 +41,21 @@ instructions = (
 )
 
 def gemini_call(roster):
-    client = genai.Client(api_key=current_app.config.get('GEMINI_API_KEY'))
+    api_key = current_app.config.get("GEMINI_API_KEY")
+    client = genai.Client(api_key=api_key)
 
-    response = client.models.generate_content(
-        model=gemini_model,
-        contents=[f"Follow instructions. User's Roster:\n{roster}\n"],
-        config=types.GenerateContentConfig(
-            system_instruction=instructions,
-            temperature=0.2
+    try:
+        response = client.models.generate_content(
+            model=gemini_model,
+            contents=[f"Follow instructions. User's Roster:\n{roster}\n"],
+            config=types.GenerateContentConfig(
+                system_instruction=instructions,
+                temperature=0.2
+            )
         )
-    )
-    return response.text
+        return response.text
+    except Exception as e:
+        return {"error": "Gemini API call failed", "details": str(e)}
 
 def gpt_call(roster):
     api_key = current_app.config.get("OPENAI_KEY")

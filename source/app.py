@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from fumbld_ai.utils import db, TokenEncryptor, limiter
-from dotenv import load_dotenv # Development Stage ONLY
+# from dotenv import load_dotenv # Development Stage ONLY
 from fumbld_ai.routes import main_bp
 from fumbld_ai.utils import yahoo_bp
 from fumbld_ai.models import User
@@ -9,7 +9,7 @@ from flask_login import LoginManager
 
 def init_app():
     # Load environment variables
-    load_dotenv() # <- Development Stage ONLY
+    # load_dotenv() # <- Development Stage ONLY
 
     # Configure application
     app = Flask(__name__)
@@ -83,5 +83,5 @@ def init_app():
 
 app = init_app()
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port="5000", debug=True)
+# if __name__ == "__main__":
+#    app.run(host="0.0.0.0", port="5000", debug=True)
