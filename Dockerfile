@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY ./source /app
 
 # Set environment variables
-ENV PYTHONBUFFERED=1
+ENV PYTHONUNBUFFERED=1
 
 # Start with Gunicorn
 CMD ["gunicorn", "--workers=5", "--timeout=90", "--bind=0.0.0.0:8000", "app:app"]
