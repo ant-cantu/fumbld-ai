@@ -1,0 +1,19 @@
+# Ignore git
+.git
+.gitignore
+
+# Python trash
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual encironments
+venv/
+
+# Environment variables
+*.env
+source/.env
+
+# DB and build artifacts
+pgdata/
+*.db

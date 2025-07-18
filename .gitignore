@@ -1,4 +1,5 @@
 # .gitignore
+nginx/
 
 # Python Trash
 __pycache__/

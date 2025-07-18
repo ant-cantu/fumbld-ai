@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from fumbld_ai.utils import db, TokenEncryptor, limiter
-from dotenv import load_dotenv # Development Stage ONLY
+# from dotenv import load_dotenv # Development Stage ONLY
 from fumbld_ai.routes import main_bp
 from fumbld_ai.utils import yahoo_bp
 from fumbld_ai.models import User
@@ -9,15 +9,16 @@ from flask_login import LoginManager
 
 def init_app():
     # Load environment variables
-    load_dotenv() # <- Development Stage ONLY
+    # load_dotenv() # <- Development Stage ONLY
 
     # Configure application
     app = Flask(__name__)
 
     # DB File Location
     # THIS IS FOR DEV ONLY, PRODUCTION WILL BE MOVED TO A MORE SECURE DATABASE
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///" + os.path.join(basedir, "fumbld.db")
+    # basedir = os.path.abspath(os.path.dirname(__file__))
+    # app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///" + os.path.join(basedir, "fumbld.db")
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 
     # Disable Modification Warnings
     app.config['SQLALCHEMY_TRACK_MODIFICATION'] = False
@@ -82,5 +83,5 @@ def init_app():
 
 app = init_app()
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port="5000", debug=True)
+# if __name__ == "__main__":
+#    app.run(host="0.0.0.0", port="5000", debug=True)

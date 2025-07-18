@@ -63,10 +63,10 @@ class YahooToken(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
 
     # Yahoo OAuth fields
-    access_token = db.Column(db.String(1024), nullable=True)
-    refresh_token = db.Column(db.String(1024), nullable=True)
-    token_type = db.Column(db.String(50), nullable=True)
-    token_expiry = db.Column(db.DateTime, nullable=True)
+    access_token = db.Column(db.Text, nullable=True)
+    refresh_token = db.Column(db.Text, nullable=True)
+    token_type = db.Column(db.Text, nullable=True)
+    token_expiry = db.Column(db.DateTime(timezone=True), nullable=True)
 
     # Relationship back to the User table
     # 'back_populates' connects it to the 'yahoo_token' attribute in User
