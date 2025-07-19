@@ -51,11 +51,19 @@ def yahoo_set_leagues():
             team_data = []
             player_ids = []
             for player in roster:
+                # If player's position is one of the starting positons
                 if player['selected_position'] in starting_positions:
                     name = player['name']
                     position = player['selected_position']
+
+                    # Replace W/R/T with D/S/T
+                    if position == "W/R/T":
+                        position = "D/S/T"
+                    
+                    # Used for headshot image
                     player_id = player['player_id']
 
+                    # Append position and player names to 'team_data' list
                     team_data.append({'position': position, 'name': name})
 
                     # Append player id to 'player_ids' list, used to get headshot image url

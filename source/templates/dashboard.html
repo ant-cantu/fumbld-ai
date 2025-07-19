@@ -75,6 +75,8 @@
                         <select id="leagues">
                             <option value="">--Select a league--</option>  
                         </select>
+
+                        <a href="#" type="button" id="refresh">Refresh League Data</a>
                     </div>
 
                     <div class="roster">
@@ -113,13 +115,37 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                    <div id="content">
-                        <a id="yahoo-link" href="/yahoo/authorize"><img id="yahoo-img" src="../static/img/assets/yahoo_button.png"></a>
-                        <a href="#" type="button" id="refresh">Refresh League Data</a>
+
+                        <!-- Will fill this with python later.. need to find nfl team logos to use -->
+                        <div class="schedule">
+                            <table class="table table-striped table-borderless">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2">NFL Schedule - Week 1</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <ul>
+                                                <li>Baltimore Ravens</li>
+                                                <li>Kanas City Chiefs</li>
+                                            </ul>
+                                        </td>
+                                        <td>
+                                            <ul>
+                                                <li>Thu, Sep 5</li>
+                                                <li>8:20 PM ET</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
+            
             <!-- AI Recommendations -->
             <div class="ai-container">
                 <div id="header">
@@ -211,7 +237,6 @@
 
                 <div id="content">
                     <a id="yahoo-link" href="/yahoo/authorize"><img id="yahoo-img" src="../static/img/assets/yahoo_button.png"></a>
-                    <a href="#" type="button" id="refresh">Refresh League Data</a>
                     <!-- Change Password -->
                      <a href="#" type=button id="change-password">Change Password</a>
                      <div id="pass-reset-container">

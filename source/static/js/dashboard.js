@@ -170,6 +170,15 @@ function fetch_roster(league_id) {
 // Page is finished loading
 document.addEventListener('DOMContentLoaded', () => {
     //fetch_leagues();
+    for(let i = 0; i < serviceDropDown.length; i++) {
+        if(serviceDropDown[i].value === "yahoo") {
+            serviceDropDown.selectedIndex = i;
+            if(leagueMenu.length > 0) {
+                leagueMenu.selectedIndex = 1;
+            }
+            fetch_leagues("yahoo");
+        }
+    }
 });
 
 // League drop down is changed
