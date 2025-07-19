@@ -55,7 +55,7 @@ Fumbld AI is a Flask web application that helps fantasy football managers make i
 ## Preview
 
 ### Home Page
-![image](https://github.com/user-attachments/assets/c39b7597-04f9-4ea6-9b97-aa6d7b28d643)
+![image](https://github.com/user-attachments/assets/e3a126f3-9d89-4da2-95b5-ed2179e4b9ae)
 
 ### Login Page
 ![image](https://github.com/user-attachments/assets/6dc2fd9a-1048-4e4a-b884-f43b13bb8c49)
