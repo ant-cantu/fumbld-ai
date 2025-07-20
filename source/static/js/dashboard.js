@@ -62,6 +62,26 @@ settingsBtn.addEventListener("click", () => {
     settingsBtn.classList.add("active");
 });
 
+const mobileNav = document.querySelector("#select-nav");
+mobileNav.addEventListener('change', () => {
+    hideAllMenus()
+    switch(mobileNav.selectedIndex) {
+        case 0: dashboard.style.display = "flex"; break;
+        case 1: ai.style.display = "flex"; break;
+        case 2: matchups.style.display = "flex"; break;
+        case 3: rankings.style.display = "flex"; break;
+        case 4: settings.style.display = "flex"; break;
+    }
+});
+
+// Hamburger menu
+const hamburger = document.getElementById('hamburgerButton');
+const navLinks = document.getElementById('navLinks');
+
+hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('show');
+});
+
 // --------------------------------------
 
 const leagueMenu = document.querySelector("#leagues");
@@ -226,4 +246,14 @@ modalCloseBtn.addEventListener("click", () => {
 // Expose function globally
 //window.modal = modal;
 
+const sheet = document.getElementById('bottomSheet');
+const openBtn = document.getElementById('openSheet');
+const closeBtn = document.getElementById('closeSheet');
 
+openBtn.addEventListener('click', () => {
+    sheet.classList.add('open');
+});
+
+closeBtn.addEventListener('click', () => {
+    sheet.classList.remove('open');
+});
