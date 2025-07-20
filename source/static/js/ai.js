@@ -1,4 +1,5 @@
 const response = document.querySelector("#fumbld-response");    // AI Response Container
+const mobileResponse = document.querySelector("#fumbld-mobile-response");
 const insightBtn = document.querySelector("#insight-btn");  // AI Insight Button
 const spinner = document.querySelector(".spinner-border");  // AI Loading Spinner
 const aiTable = document.querySelector("#ai-players");      // Table for AI recommended players
@@ -103,11 +104,17 @@ function fetch_recommendation(league_id) {
             //reasonContainer.innerHTML = `<p>${reason}</p>`;
             
             ai_response = reason;
-            typeIt();
+
+            if(mobileInsightBtn.classList.contains("mobile-active")) {
+                sheet.classList.add('open');
+                typeIt(mobileResponse);
+            } else {
+                typeIt(response);
+            }
         });
 }
 
-function typeIt() {
+function typeIt(textContainer) {
     /**
     * Animates the display of the AI response by typing out each character one at a time.
     * Continues until the entire response has been displayed, then hides the spinner.
@@ -119,9 +126,9 @@ function typeIt() {
     * - spinner: {HTMLElement} The DOM element representing the loading spinner.
     */
     if (charCount < ai_response.length) {
-        response.innerHTML += ai_response[charCount];
+        textContainer.innerHTML += ai_response[charCount];
         charCount++;
-        setTimeout(typeIt, 10);
+        setTimeout(typeIt(textContainer), 10);
     }
     else {
         spinner.style.display = "none";
@@ -130,5 +137,12 @@ function typeIt() {
 
 // Insight button event handler
 insightBtn.addEventListener("click", () => {
+    fetch_recommendation(leagueMenu.value);
+});
+
+const mobileInsightBtn = document.querySelector("#mobile-insight-btn");
+mobileInsightBtn.addEventListener("click", () => {
+    alert("clicked... =)");
+    mobileInsightBtn.classList.add("mobile-active");
     fetch_recommendation(leagueMenu.value);
 });

@@ -1,0 +1,230 @@
+/* Responsive Design */
+@media (max-width: 1024px) {
+    html,
+    body {
+        max-width: 100vw;
+    }
+
+    .hideonmobile {
+        display: none;
+    }
+
+    .hideondesktop {
+        display: inherit;
+    }
+
+    main {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .mobile-nav {
+        width: 100%;
+        margin-top: 0;
+        padding-top: 0;
+        border: none;
+    }
+    .mobile-nav #select-nav {
+        width: 100vw;
+        height: 50px;
+        text-align: center;
+        font-weight: 900;
+        font-size: 1.5rem;
+    }
+
+    /* Hamburger Menu Navigation */
+    .nav-bar button {
+        background-color: transparent;
+        color: white;
+        font-weight: bolder;
+        border: none;
+        font-size: 2rem;
+        width: 3rem;
+        display: block;
+    }
+
+    .nav-bar .nav-links {
+        position: absolute;
+        top: 57px;
+        left: -200px;
+        width: 200px;
+        background-color: #444;
+        flex-direction: column;
+        border-radius: 5px;
+        padding: 10px 0;
+        transition: left 0.3s ease;
+        display: flex;
+        z-index: 1000;
+    }
+
+    .nav-bar ul li {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .nav-links.show {
+        left: 0px;
+    }
+
+    /* figure out content height */
+    /* dashboard module */
+    .dashboard-container {
+        border-radius: 0;
+        min-height: 100vh;
+        width: 100vw;
+        background-color: transparent !important;
+        font-weight: 700;
+        gap: 0;
+    }
+    .dashboard-container #content {
+        /* min-height: 100vh; */
+        display: flex;
+        flex-direction: column;
+        background-color: transparent;
+        gap: 0;
+    }
+    .dashboard-container img {
+        border-radius: 50%;
+    }
+    .dashboard-container #header {
+        display: none;
+    }
+
+    .dashboard-container #content .roster {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .starters table,
+    .bench table {
+        background-color: transparent;
+        width: 100%;
+        table-layout: fixed;
+        border: none;
+        border-spacing: 0;
+        text-align: center;
+    }
+
+    .starters td,
+    .bench td {
+        border: none;
+    }
+
+    .bench td {
+        background-color: #004181;
+    }
+
+    #starter-players td {
+        text-align: center;
+    }
+
+    .selections {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 0;
+    }
+    .selections #provider,
+    .selections #leagues {
+        width: 45%;
+    }
+    .selections #refresh {
+        width: 60%;
+        height: 50px;
+        text-align: center;
+    }
+
+    /* ai module */
+    .ai-container {
+        width: 100vw;
+        height: 100vh;
+        background-color: transparent !important;
+    }
+    .ai-container #header {
+        display: none;
+    }
+    .ai-container #content {
+        width: 100vw;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        left: 0;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    .ai-container #ai-sub-container {
+        position: fixed;
+        bottom: -100vh;
+        left: 0;
+        width: 100vw;
+        transition: 0.3s;
+    }
+    .ai-container .ai-active {
+        bottom: 0;
+    }
+
+    .ai-starters {
+        display: none;
+    }
+
+    .recommendations {
+        display: none;
+    }
+
+    .bottom-sheet {
+        position: fixed;
+        bottom: -100%;
+        left: 0;
+        width: 100%;
+        background: white;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+        transition: bottom 0.3s ease;
+        z-index: 1000;
+        border-radius: 20px 20px 0 0;
+    }
+    .bottom-sheet.open {
+        bottom: 0;
+        height: 50%
+    }
+    .sheet-content {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .close-btn {
+        text-align: right;
+        float: right;
+        font-size: 1.5rem;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .mobile-ai-response {
+        overflow-y: auto;
+    }
+
+    #mobile-insight-btn {
+        background-color: #004181;
+        color: white;
+        padding: .5rem 1.2rem;
+        
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    #mobile-insight-btn:hover {
+        background-color: #207ad4;
+    }
+}
