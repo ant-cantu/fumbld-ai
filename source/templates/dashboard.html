@@ -25,6 +25,15 @@
             <button class="hamburger-button" id="hamburgerButton">&#9776;</button>
             <a href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='img/fumbld-small-logo.png') }}" alt="fumbld-ai Logo"></a>
             <div class="nav-links" id="navLinks">
+                <div class="hideondesktop">
+                    <ul>
+                        <li><div id="dashboard" class="active"><span id="user-nav-link">Dashboard</span></div></li>
+                        <li><div id="ai"><span id="user-nav-link">Fumbld <span id="ai-text">AI</span></span></div></li>
+                        <li><div id="matchups"><span id="user-nav-link">Matchups</span></div></li>
+                        <li><div id="rankings"><span id="user-nav-link">Player Rankings</span></div></li>
+                        <li><div id="settings"><span id="user-nav-link">Settings</span></div></li>
+                    </ul>
+                </div>
                 <ul>
                     <li><a href="{{ url_for('main.dashboard') }}">Home</a></li>
                     <li><a href="{{ url_for('main.dashboard') }}">About</a></li>
@@ -50,21 +59,11 @@
         <div class="user-nav-container hideonmobile">
             <div id="sub-container">
                 <div id="dashboard" class="active"><span id="user-nav-link">Dashboard</span></div>
-                <div id="ai"><span id="user-nav-link"><span id="ai-text">AI</span> Insights</span></div>
+                <div id="ai"><span id="user-nav-link">Fumbld <span id="ai-text">AI</span></span></div>
                 <div id="matchups"><span id="user-nav-link">Matchups</span></div>
                 <div id="rankings"><span id="user-nav-link">Player Rankings</span></div>
                 <div id="settings"><span id="user-nav-link">Settings</span></div>
             </div>
-        </div>
-
-        <div class="mobile-nav hideondesktop">
-            <select id="select-nav">
-                <option>Dashboard</option>
-                <option>Fumbld AI</option>
-                <option>Matchups</option>
-                <option>Rankings</option>
-                <option>Settings</option>
-            </select>
         </div>
 
         <!-- <div class="main-container"> -->
@@ -164,7 +163,10 @@
                 </div>
 
                 <div id="content">
-                    <a href="#" type="button" id="mobile-insight-btn" class="hideondesktop">Get AI Insight</a>
+                    <div id="mobile-ai-buttons" class="hideondesktop">
+                        <a href="#" type="button" id="mobile-insight-btn">Ask Fumbld</a>
+                        <a href="#" type="button" id="openSheet" style="display: none;">Reason</a>
+                    </div>
 
                     <div class="ai-starters">
                         <table class="table table-striped table-borderless">
@@ -208,7 +210,7 @@
                             <p id="fumbld-head" style="display: none;"><strong>Fumbld AI</strong>: <span id="fumbld-response"></span></p>
                         </div>
 
-                        <a href="#" type="button" id="insight-btn">Get AI Insight</a>
+                        <a href="#" type="button" id="insight-btn">Ask Fumbld</a>
 
                         <div class="spinner-border" role="status" style="display: none;">
                                 <span class="visually-hidden">Loading...</span>
@@ -216,9 +218,7 @@
                     </div>
 
                     <!-- AI Insight Mobile -->
-                    <button id="openSheet">Open Bottom Sheet</button>
-
-                    <div id="bottomSheet" class="bottom-sheet">
+                    <div id="bottomSheet" class="bottom-sheet hideondesktop">
                         <div class="sheet-content">
                             <span id="closeSheet" class="close-btn">&times;</span>
                             <div class="mobile-ai-response">

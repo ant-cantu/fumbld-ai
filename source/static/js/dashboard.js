@@ -34,53 +34,49 @@ function hideAllMenus() {
 dashboardBtn.addEventListener("click", () => {
     hideAllMenus();
     dashboard.style.display = "flex";
-    // dashboardBtn.style.background = "#1F3C63";
     dashboardBtn.classList.add("active");
+    navLinks.classList.toggle("show");
 });
 
 aiBtn.addEventListener("click", () => {
     hideAllMenus();
     ai.style.display = "flex";
     aiBtn.classList.add("active");
+    navLinks.classList.toggle("show");
 });
 
 matchupBtn.addEventListener("click", () => {
     hideAllMenus();
     matchups.style.display = "flex";
     matchupBtn.classList.add("active");
+    navLinks.classList.toggle("show");
 });
 
 rankingBtn.addEventListener("click", () => {
     hideAllMenus();
     rankings.style.display = "flex";
     rankingBtn.classList.add("active");
+    navLinks.classList.toggle("show");
 });
 
 settingsBtn.addEventListener("click", () => {
     hideAllMenus();
     settings.style.display = "flex";
     settingsBtn.classList.add("active");
+    navLinks.classList.toggle("show");
 });
 
-const mobileNav = document.querySelector("#select-nav");
-mobileNav.addEventListener('change', () => {
-    hideAllMenus()
-    switch(mobileNav.selectedIndex) {
-        case 0: dashboard.style.display = "flex"; break;
-        case 1: ai.style.display = "flex"; break;
-        case 2: matchups.style.display = "flex"; break;
-        case 3: rankings.style.display = "flex"; break;
-        case 4: settings.style.display = "flex"; break;
-    }
-});
-
-// Hamburger menu
-const hamburger = document.getElementById('hamburgerButton');
-const navLinks = document.getElementById('navLinks');
-
-hamburger.addEventListener('click', () => {
-    navLinks.classList.toggle('show');
-});
+// const mobileNav = document.querySelector("#select-nav");
+// mobileNav.addEventListener('change', () => {
+//     hideAllMenus()
+//     switch(mobileNav.selectedIndex) {
+//         case 0: dashboard.style.display = "flex"; break;
+//         case 1: ai.style.display = "flex"; break;
+//         case 2: matchups.style.display = "flex"; break;
+//         case 3: rankings.style.display = "flex"; break;
+//         case 4: settings.style.display = "flex"; break;
+//     }
+// });
 
 // --------------------------------------
 
@@ -243,9 +239,7 @@ modalCloseBtn.addEventListener("click", () => {
     modalPopUp.style.display = "none";
 });
 
-// Expose function globally
-//window.modal = modal;
-
+// --- Slide Sheet ---
 const sheet = document.getElementById('bottomSheet');
 const openBtn = document.getElementById('openSheet');
 const closeBtn = document.getElementById('closeSheet');
@@ -256,4 +250,12 @@ openBtn.addEventListener('click', () => {
 
 closeBtn.addEventListener('click', () => {
     sheet.classList.remove('open');
+});
+
+// --- Hamburger menu ---
+const hamburger = document.getElementById('hamburgerButton');
+const navLinks = document.getElementById('navLinks');
+
+hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('show');
 });

@@ -37,7 +37,7 @@ function fetch_recommendation(league_id) {
         return;
     }
 
-    modal("Getting your recommendation, please wait...");
+    modal("Getting your recommendation...");
     modalCloseBtn.style.display = "none";
 
     // fetch('/fetch/ai/recommendation?league-id=' + league_id)
@@ -132,6 +132,12 @@ function typeIt(textContainer) {
     }
     else {
         spinner.style.display = "none";
+        const sheetBtn = document.querySelector("#openSheet");
+        sheetBtn.style.display = "flex";
+        //mobileInsightBtn.classList.add("ai-active");
+        mobileInsightBtn.style.height = "50px";
+        mobileInsightBtn.style.width = "150px";
+        mobileInsightBtn.style.fontSize = "1rem";
     }
 }
 
@@ -142,7 +148,6 @@ insightBtn.addEventListener("click", () => {
 
 const mobileInsightBtn = document.querySelector("#mobile-insight-btn");
 mobileInsightBtn.addEventListener("click", () => {
-    alert("clicked... =)");
     mobileInsightBtn.classList.add("mobile-active");
     fetch_recommendation(leagueMenu.value);
 });
