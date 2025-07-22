@@ -37,7 +37,9 @@ function fetch_recommendation(league_id) {
         return;
     }
 
-    modal("Getting your recommendation...");
+    modal("Getting your recommendation 🤖");
+    const modalSpinner = document.querySelector("#modal-spinner");
+    modalSpinner.style.display = "block";
     modalCloseBtn.style.display = "none";
 
     // fetch('/fetch/ai/recommendation?league-id=' + league_id)
@@ -97,6 +99,7 @@ function fetch_recommendation(league_id) {
             
             aiDiv.style.display = "block";
             aiText.style.display = "block";
+            modalSpinner.style.display = "none";
             modalCloseBtn.style.display = "block";
             //const reasonContainer = document.querySelector("#ai-response");
             //reasonContainer.innerHTML += "<p><strong>Fumbld AI</strong>: ";
@@ -107,10 +110,22 @@ function fetch_recommendation(league_id) {
 
             if(mobileInsightBtn.classList.contains("mobile-active")) {
                 sheet.classList.add('open');
+                mobileInsightBtn.style.height = "50px";
+                mobileInsightBtn.style.width = "150px";
+                mobileInsightBtn.style.fontSize = "1rem";
+                const sheetBtn = document.querySelector("#openSheet");
+                sheetBtn.style.display = "flex";
+
+                // Change the content container to flex-start after fumbld button is pressed
+                const aiModuleContent = document.querySelector(".ai-container #content");
+                aiModuleContent.style.justifyContent = "flex-start";
+
                 typeIt(mobileResponse);
             } else {
                 typeIt(response);
             }
+            //mobileInsightBtn.classList.add("ai-active");
+            
         });
 }
 
@@ -128,16 +143,10 @@ function typeIt(textContainer) {
     if (charCount < ai_response.length) {
         textContainer.innerHTML += ai_response[charCount];
         charCount++;
-        setTimeout(typeIt(textContainer), 10);
+        setTimeout(() => typeIt(textContainer), 20);
     }
     else {
         spinner.style.display = "none";
-        const sheetBtn = document.querySelector("#openSheet");
-        sheetBtn.style.display = "flex";
-        //mobileInsightBtn.classList.add("ai-active");
-        mobileInsightBtn.style.height = "50px";
-        mobileInsightBtn.style.width = "150px";
-        mobileInsightBtn.style.fontSize = "1rem";
     }
 }
 

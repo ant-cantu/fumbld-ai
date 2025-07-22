@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Fumbld AI | Dashboard</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='img/fumbld-main-logo-only.png') }}" type="image/x-icon">
     
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
@@ -23,7 +26,7 @@
         <!-- Nav Menu -->
         <nav class="nav-bar">
             <button class="hamburger-button" id="hamburgerButton">&#9776;</button>
-            <a href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='img/fumbld-small-logo.png') }}" alt="fumbld-ai Logo"></a>
+            <a href="/"><img src="{{ url_for('static', filename='img/fumbld-small-logo.png') }}" alt="fumbld-ai Logo"></a>
             <div class="nav-links" id="navLinks">
                 <div class="hideondesktop">
                     <ul>
@@ -35,8 +38,8 @@
                     </ul>
                 </div>
                 <ul>
-                    <li><a href="{{ url_for('main.dashboard') }}">Home</a></li>
-                    <li><a href="{{ url_for('main.dashboard') }}">About</a></li>
+                    <li><a href="/dashboard">Home</a></li>
+                    <li><a href="#">About</a></li>
                     <li><a href="/logout" role="button" style="color: #207ad4;">Log Out</a></li>
                 </ul>
             </div>
@@ -163,13 +166,15 @@
                 </div>
 
                 <div id="content">
+                    <!-- Mobile View Only -->
                     <div id="mobile-ai-buttons" class="hideondesktop">
                         <a href="#" type="button" id="mobile-insight-btn">Ask Fumbld</a>
                         <a href="#" type="button" id="openSheet" style="display: none;">Reason</a>
                     </div>
+                    <!-- End -->
 
                     <div class="ai-starters">
-                        <table class="table table-striped table-borderless">
+                        <table class="table table-striped table-borderless" id="starters">
                             <colgroup>
                                 <col style="width: 20%;">
                                 <col style="width: 60%;">
@@ -289,6 +294,9 @@
 
     <div class="modalPopUp" style="display: none;">
         <p id="modalContent"></p>
+        <div class="spinner-border" id="modal-spinner" role="status" style="display: none;">
+            <span class="visually-hidden">Loading...</span>
+        </div>
         <button id="modalClose">Close</button>
     </div>
 

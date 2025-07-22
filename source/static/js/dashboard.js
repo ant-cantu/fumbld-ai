@@ -1,9 +1,9 @@
 // Buttons
-const dashboardBtn = document.querySelector("#dashboard");
-const aiBtn = document.querySelector("#ai");
-const matchupBtn = document.querySelector("#matchups");
-const rankingBtn = document.querySelector("#rankings");
-const settingsBtn = document.querySelector("#settings");
+const dashboardBtn = document.querySelectorAll("#dashboard");
+const aiBtn = document.querySelectorAll("#ai");
+const matchupBtn = document.querySelectorAll("#matchups");
+const rankingBtn = document.querySelectorAll("#rankings");
+const settingsBtn = document.querySelectorAll("#settings");
 
 // Containers
 const dashboard = document.querySelector(".dashboard-container");
@@ -24,46 +24,56 @@ function hideAllMenus() {
     rankings.style.display = "none";
     settings.style.display = "none";
 
-    dashboardBtn.classList.remove("active");
-    aiBtn.classList.remove("active");
-    matchupBtn.classList.remove("active");
-    rankingBtn.classList.remove("active");
-    settingsBtn.classList.remove("active");
+    dashboardBtn.forEach(button => { button.classList.remove("active") });
+    aiBtn.forEach(button => { button.classList.remove("active") });
+    matchupBtn.forEach(button => { button.classList.remove("active") });
+    rankingBtn.forEach(button => { button.classList.remove("active") });
+    settingsBtn.forEach(button => { button.classList.remove("active") });
 }
 
-dashboardBtn.addEventListener("click", () => {
-    hideAllMenus();
-    dashboard.style.display = "flex";
-    dashboardBtn.classList.add("active");
-    navLinks.classList.toggle("show");
+dashboardBtn.forEach(button => {
+    button.addEventListener("click", () => {
+        hideAllMenus();
+        dashboard.style.display = "flex";
+        button.classList.add("active");
+        navLinks.classList.toggle("show");
+    });
+})
+
+aiBtn.forEach(button => {
+    button.addEventListener("click", () => {
+        hideAllMenus();
+        ai.style.display = "flex";
+        button.classList.add("active");
+        navLinks.classList.toggle("show");
+    });
 });
 
-aiBtn.addEventListener("click", () => {
-    hideAllMenus();
-    ai.style.display = "flex";
-    aiBtn.classList.add("active");
-    navLinks.classList.toggle("show");
+matchupBtn.forEach(button => {
+    button.addEventListener("click", () => {
+        hideAllMenus();
+        matchups.style.display = "flex";
+        button.classList.add("active");
+        navLinks.classList.toggle("show");
+    });
 });
 
-matchupBtn.addEventListener("click", () => {
-    hideAllMenus();
-    matchups.style.display = "flex";
-    matchupBtn.classList.add("active");
-    navLinks.classList.toggle("show");
+rankingBtn.forEach(button => {
+    button.addEventListener("click", () => {
+        hideAllMenus();
+        rankings.style.display = "flex";
+        button.classList.add("active");
+        navLinks.classList.toggle("show");
+    });
 });
 
-rankingBtn.addEventListener("click", () => {
-    hideAllMenus();
-    rankings.style.display = "flex";
-    rankingBtn.classList.add("active");
-    navLinks.classList.toggle("show");
-});
-
-settingsBtn.addEventListener("click", () => {
-    hideAllMenus();
-    settings.style.display = "flex";
-    settingsBtn.classList.add("active");
-    navLinks.classList.toggle("show");
+settingsBtn.forEach(button => {
+    button.addEventListener("click", () => {
+        hideAllMenus();
+        settings.style.display = "flex";
+        button.classList.add("active");
+        navLinks.classList.toggle("show");
+    });
 });
 
 // const mobileNav = document.querySelector("#select-nav");
