@@ -79,11 +79,11 @@ body {
     display: flex;
     flex-direction: column;
     padding: 20px;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
     gap: 2px;
     width: 450px;
-    height: 100%;
+    height: 500px;
     margin: 0 auto;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
     border-radius: 18px;
@@ -158,12 +158,15 @@ body {
     cursor: pointer;
     box-shadow: 0 4px 16px 0 rgba(15, 23, 42, 0.15);
     transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
-
-    &:hover {
+}
+.form-button .form-submit:hover {
         background: radial-gradient(circle at center, #16213a 0%, #10182a 60%, #0a0f1e 100%);
         transform: translateY(-2px) scale(1.03);
         box-shadow: 0 8px 24px 0 rgba(15, 23, 42, 0.22);
-    }
+}
+
+.g-recaptcha {
+    padding-top: 10px;
 }
 
 /* Error Visual */
