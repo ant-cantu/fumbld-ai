@@ -17,3 +17,5 @@ source/.env
 # DB and build artifacts
 pgdata/
 *.db
+alembic.ini
+migrations/

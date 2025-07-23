@@ -132,11 +132,11 @@ function fetch_leagues(provider) {
             });
 
             leagueMenu.selectedIndex = 1;
-            fetch_roster(leagueMenu.value);
+            fetch_roster(provider, leagueMenu.value);
         });
 }
 
-function fetch_roster(league_id) {
+function fetch_roster(provider, league_id) {
     // Clear table first
     startersTable.forEach(table => {
         table.innerHTML = '';
@@ -153,12 +153,14 @@ function fetch_roster(league_id) {
     charCount = 0;
 
     // fetch('/fetch/yahoo/roster?league-id=' + league_id)
-    fetch('/api/yahoo/leagues/' + league_id + '/roster')
+    // fetch('/api/yahoo/leagues/' + league_id + '/roster')
+    fetch('/api/' + provider + '/leagues/' + league_id + '/roster')
         .then(response => response.json())
         .then(data => {
             data.forEach(player => {
 
                 // Fix bad URLs
+                
                 if(player.url.startsWith("https://https://")) {
                     player.url = player.url.replace("https://https://", "https://");
                 }
@@ -168,11 +170,15 @@ function fetch_roster(league_id) {
                 const newPlayer = document.createElement('td');
                 const newPos = document.createElement('td');
 
-                const headshotImg = document.createElement('img');
-                headshotImg.src = player.url;
-                headshotImg.alt = player.name + " headshot image.";
-                headshotImg.height = 50;
-                newHeadshot.appendChild(headshotImg);
+                if(player.url === "🤖") {
+                    newHeadshot.textContent = player.url;
+                } else {
+                    const headshotImg = document.createElement('img');
+                    headshotImg.src = player.url;
+                    headshotImg.alt = player.name + " headshot image.";
+                    headshotImg.height = 50;
+                    newHeadshot.appendChild(headshotImg);
+                }
 
                 newPlayer.textContent = player.name;
                 newPos.textContent = player.position;
@@ -196,27 +202,35 @@ function fetch_roster(league_id) {
 // Page is finished loading
 document.addEventListener('DOMContentLoaded', () => {
     //fetch_leagues();
+    if(serviceDropDown.length === 0) return;
+
     for(let i = 0; i < serviceDropDown.length; i++) {
-        if(serviceDropDown[i].value === "yahoo") {
+        if(serviceDropDown[i].value === "yahoo" || serviceDropDown[i].value === "sleeper") {
             serviceDropDown.selectedIndex = i;
             if(leagueMenu.length > 0) {
                 leagueMenu.selectedIndex = 1;
             }
-            fetch_leagues("yahoo");
+            fetch_leagues(serviceDropDown[i].value);
+            break;
         }
     }
 });
 
 // League drop down is changed
 leagueMenu.addEventListener("change", () => {
+    const selectedProvider = serviceDropDown.value;
     const selectedLeague = leagueMenu.value;
-    fetch_roster(selectedLeague);
+    console.log("provider: " + selectedProvider);
+    console.log("league: " + selectedLeague);
+    fetch_roster(selectedProvider, selectedLeague);
 });
 
 const serviceDropDown = document.querySelector("#provider");
 serviceDropDown.addEventListener("change", () => {
     if(serviceDropDown.value === "yahoo") {
         fetch_leagues("yahoo");
+    } else if(serviceDropDown.value === "sleeper") {
+        fetch_leagues("sleeper")
     } else if(serviceDropDown.value === "") {
         // Clear league menu dropdown
         leagueMenu.innerHTML = "";

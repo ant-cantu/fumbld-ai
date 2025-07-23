@@ -83,6 +83,9 @@
                             {% if yahoo %}
                                 <option value="yahoo">Yahoo! Sports</option>
                             {% endif %}
+                            {% if sleeper %}
+                                <option value="sleeper">Sleeper</option>
+                            {% endif %}
                         </select>
 
                         <select id="leagues">
@@ -264,7 +267,22 @@
                 </div>
 
                 <div id="content">
+                    <!-- Auth Yahoo -->
                     <a id="yahoo-link" href="/yahoo/authorize"><img id="yahoo-img" src="../static/img/assets/yahoo_button.png"></a>
+
+                    <!-- Auth Sleeper -->
+                    <div id="sleeper-username-container">
+                        <form id="sleeper-username-form" method="POST" action="{{ url_for('main.set_sleeper_username') }}">
+                            {{ sleeper_form.hidden_tag() }}
+                            {% if sleeper %}
+                                {{ sleeper_form.sleeper_username(placeholder="Enter Sleeper Username", value=sleeper_username) }}
+                            {% else %}
+                                {{ sleeper_form.sleeper_username(placeholder="Enter Sleeper Username") }}
+                            {% endif %}
+                            {{ sleeper_form.submit(id="sleeperSubmitBtn") }}
+                        </form>
+                    </div>
+
                     <!-- Change Password -->
                      <a href="#" type=button id="change-password">Change Password</a>
                      <div id="pass-reset-container">

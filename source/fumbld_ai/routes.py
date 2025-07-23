@@ -1,10 +1,11 @@
 from flask import render_template, Blueprint, flash, redirect, url_for, request, abort, jsonify, current_app
 import pytz, datetime
 from .yahoo_fantasy import yahoo_get_roster, yahoo_get_league, yahoo_refresh
+from .sleeper import get_sleeper_leagues, get_sleeper_roster, get_sleeper_userid
 from .utils import db, is_safe_url, gpt_call, gemini_call, limiter
-from .forms import LoginForm, RegistrationForm, ChangePasswordForm
+from .forms import LoginForm, RegistrationForm, ChangePasswordForm, SleeperForm
 from flask_login import current_user, login_user, logout_user, login_required
-from .models import YahooToken
+from .models import YahooToken, SleeperLeague
 from flask_limiter.errors import RateLimitExceeded
 import requests
 
@@ -54,18 +55,34 @@ def dashboard():
     # Password reset form
     pass_reset_form = ChangePasswordForm()
 
+    # Sleeper username form
+    sleeper_user_form = SleeperForm()
+
     # Is user authenticated with Yahoo?
-    yahoo_query = YahooToken.query.filter_by(user_id=current_user.id)
+    yahoo_query = YahooToken.query.filter_by(user_id=current_user.id).first()
     if yahoo_query:
         yahoo_auth = True
     else:
         yahoo_auth = False
 
+    # Is user set up with Sleeper?
+    sleeper_query = SleeperLeague.query.filter_by(user_id=current_user.id).first()
+    if sleeper_query:
+        sleeper_username = sleeper_query.sleeper_username
+        sleeper_auth = True
+    else:
+        sleeper_auth = False
+
+    print(f"Yahoo Auth: {yahoo_auth} | Sleeper Auth: {sleeper_auth}")
+
     return render_template("dashboard.html",
                             username=current_user.username,
                             last_login=last_login,
                             pass_reset=pass_reset_form,
-                            yahoo=yahoo_auth)
+                            yahoo=yahoo_auth,
+                            sleeper_form=sleeper_user_form,
+                            sleeper=sleeper_auth,
+                            sleeper_username=sleeper_username)
     
 # User Registration
 @main_bp.route('/register', methods=['GET', 'POST'])
@@ -272,23 +289,39 @@ def get_ai_rec(league_id):
 @main_bp.route('/api/<provider>/leagues/<league_id>/roster', methods=['GET'])
 @login_required
 def get_roster(provider, league_id):
-    if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
-        abort(403)
-
+    
     # /fetch/yahoo/roster?league-id=423.l.1215322
     # league_id = request.args.get('league-id', '')
     if provider == "yahoo":
+        if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
+            abort(403)
+
+        print(f"Yahoo: \n {yahoo_get_roster(league_id)}") # Debug
+
         return jsonify(yahoo_get_roster(league_id)), 201
+    elif provider == "sleeper":
+        sleeper_query = SleeperLeague.query.filter_by(
+            user_id=current_user.id,
+            sleeper_league_id=league_id
+        ).first()
+        print(get_sleeper_roster(league_id, sleeper_query.sleeper_username))
+        return jsonify(get_sleeper_roster(league_id, sleeper_query.sleeper_username)), 201
+
+
 
 @main_bp.route('/api/<provider>/leagues', methods=['GET'])
 @login_required
 def get_leagues(provider):
-    if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
-        abort(403)
-
     if provider == "yahoo":
-        return jsonify(yahoo_get_league()), 201
+        if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
+            abort(403)
 
+        return jsonify(yahoo_get_league()), 201
+    elif provider == "sleeper":
+        sleeper_query = SleeperLeague.query.filter_by(user_id=current_user.id).first()
+    
+        return jsonify(get_sleeper_leagues(sleeper_query.sleeper_user_id))
+        
 @main_bp.route('/api/<provider>/leagues/refresh', methods=['POST'])
 @login_required
 def refresh_roster(provider):
@@ -313,6 +346,23 @@ def refresh_roster(provider):
 @main_bp.errorhandler(403)
 def forbidden_error(error):
     return render_template("/errors/403.html"), 403
+
+# ------------------------------------------------------------
+# Sleeper Integration
+from .sleeper import setup_sleeper
+@main_bp.route('/api/users/me/sleeper/setup', methods=['POST'])
+@login_required
+def set_sleeper_username():
+    sleeper_username_form = SleeperForm()
+    # query_sleeper = SleeperLeague.query.filter_by(user_id=current_user.id).first()
+
+    if sleeper_username_form.validate_on_submit():
+        # Check if sleeper data exist and handle it
+        username = sleeper_username_form.sleeper_username.data
+        setup_sleeper(username)
+        return jsonify({'success': f'Sleeper data successfully saved from sleeper acount: {username}'})
+    else:
+        return jsonify({'error': 'Please enter your sleeper username'})
 
 # ------------------------------------------------------------
 # Backend Function Calls

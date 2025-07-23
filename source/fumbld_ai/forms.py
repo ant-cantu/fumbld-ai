@@ -62,3 +62,11 @@ class ChangePasswordForm(FlaskForm):
     ])
 
     submit = SubmitField("Change Password")
+
+# '/sleeper-setup' form
+class SleeperForm(FlaskForm):
+    sleeper_username = StringField("Sleeper Username", validators=[
+        Length(min=3, message="Username must be at least 3 characters long.")
+    ])
+
+    submit = SubmitField("Save Username")
