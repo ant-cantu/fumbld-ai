@@ -23,12 +23,12 @@
         <!-- Nav Menu -->
         <nav class="nav-bar">
             <button class="hamburer-button" id="hamburgerButton">&#9776;</button>
-            <a href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='img/fumbld-small-logo.png') }}" alt="fumbld-ai Logo"></a>
+            <a href="/"><img src="{{ url_for('static', filename='img/fumbld-small-logo.png') }}" alt="fumbld-ai Logo"></a>
             <div class="nav-links" id="navLinks">
                 <ul>
-                    <li><a href="{{ url_for('main.home') }}">Home</a></li>
-                    <li><a href="{{ url_for('main.home') }}">About</a></li>
-                    <li><a href="/register" role="button" style="color: green;">Register</a></li>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/">About</a></li>
+                    <li><a href="/register" role="button" style="color: #0b628f;">Register</a></li>
                     <li><a href="/login" role="button">Log In</a></li>
                 </ul>
             </div>
@@ -43,7 +43,7 @@
         <div class="menu-container">
             <div class="menu-container-header">
                 <h2>Register for an account</h2>
-                <p>Or <a href="{{ url_for('main.account_login') }}">login to your existing account</a></p>
+                <p>Or <a href="/login">login to your existing account</a></p>
             </div>
             <div class="menu-form-container">
                 <form method="POST" action="{{ url_for('main.account_register') }}" novalidate>
@@ -95,7 +95,6 @@
                     <div class="form-button">
                         {{ form.submit(class="form-submit") }}
                     </div>
-
                     <div class="g-recaptcha" data-sitekey="6LckHHcrAAAAAPjzJZj8V05A0hFXp2lte2603OE5"></div>
                     <!-- Get user's token for response verification -->
                     <input type="hidden" name="g-recaptcha-response">
@@ -111,9 +110,9 @@
         <div class="footer-container">
             <div class="footer-nav">
                 <ul>
-                    <li><a href="index.html">Home</a></li>
+                    <li><a href="/">Home</a></li>
                     <li><a href="#">About</a></li>
-                    <li><a href="#">Register</a></li>
+                    <li><a href="/register">Register</a></li>
                     <li><a href="#">Contact</a></li>
                 </ul>
             </div>
