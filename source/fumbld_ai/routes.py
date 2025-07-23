@@ -219,14 +219,18 @@ def handle_logout():
 
 # ------------------------------------------------------------------------
 # Fumbld AI API
-@main_bp.route('/api/leagues/<league_id>/recommendations', methods=['GET'])
+@main_bp.route('/api/<provider>/leagues/<league_id>/recommendations', methods=['GET'])
 @login_required
-def get_ai_rec(league_id):
+def get_ai_rec(provider, league_id):
     # league_id = request.args.get('league-id', '')
     # print(league_id)
     try:
         with limiter.limit("1 per 2 minutes"):
-            current_roster = yahoo_get_roster(league_id)
+            if provider == "yahoo":
+                current_roster = yahoo_get_roster(league_id)
+            elif provider == "sleeper":
+                sleeper_query = SleeperLeague.query.filter_by(user_id=current_user.id).first()
+                current_roster = get_sleeper_roster(league_id, sleeper_query.sleeper_username)
             
             # Separate the URL from the player dictionary
             parsed_roster = []
@@ -242,7 +246,7 @@ def get_ai_rec(league_id):
                     'url': roster['url']
                 })
             
-            gpt_response = gemini_call(parsed_roster)
+            ai_response = gemini_call(parsed_roster)
             import json
             import re
 
@@ -250,7 +254,7 @@ def get_ai_rec(league_id):
             # --- three dashes in string
             # \s* match any whitespace
             # (\[.*?\]) match and capture a json style list inside of [ ]
-            json_match = re.search(r"---\s*(\[.*?\])\s*---", gpt_response, re.DOTALL)
+            json_match = re.search(r"---\s*(\[.*?\])\s*---", ai_response, re.DOTALL)
             if json_match:
                 # return the captured group
                 json_part = json_match.group(1)
@@ -263,7 +267,7 @@ def get_ai_rec(league_id):
             # start search starting with reason:
             # \s* optional whitespace after reason
             # (.*) capture group that grabs everything after the optional whitespace
-            reason_match = re.search(r"Reason:\s*(.*)", gpt_response, re.DOTALL)
+            reason_match = re.search(r"Reason:\s*(.*)", ai_response, re.DOTALL)
             if reason_match:
                 reason = reason_match.group(1).strip()
             else:
@@ -281,7 +285,8 @@ def get_ai_rec(league_id):
             }
 
             # print(gemini_call(parsed_roster))
-
+            print(jsonify(response))
+            
             return jsonify(response), 201
     except RateLimitExceeded:
         return jsonify({"error": "Please allow two minutes in between Fumbld AI calls."})
@@ -296,7 +301,7 @@ def get_roster(provider, league_id):
         if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
             abort(403)
 
-        print(f"Yahoo: \n {yahoo_get_roster(league_id)}") # Debug
+        # print(f"Yahoo: \n {yahoo_get_roster(league_id)}") # Debug
 
         return jsonify(yahoo_get_roster(league_id)), 201
     elif provider == "sleeper":
@@ -304,7 +309,7 @@ def get_roster(provider, league_id):
             user_id=current_user.id,
             sleeper_league_id=league_id
         ).first()
-        print(get_sleeper_roster(league_id, sleeper_query.sleeper_username))
+        # print(get_sleeper_roster(league_id, sleeper_query.sleeper_username))
         return jsonify(get_sleeper_roster(league_id, sleeper_query.sleeper_username)), 201
 
 

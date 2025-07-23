@@ -18,7 +18,7 @@ let ai_response = "";   // This is set with the response from OpenAI
 //                     option available, making them the default choice. Cooper Kupp's bench status and potential injury concerns keep him out of the 
 //                     starting lineup.`;
 
-function fetch_recommendation(league_id) {
+function fetch_recommendation(provider, league_id) {
     /**
     * Fetches AI player recommendations for a given league and updates the UI table and response area.
     *
@@ -43,7 +43,7 @@ function fetch_recommendation(league_id) {
     modalCloseBtn.style.display = "none";
 
     // fetch('/fetch/ai/recommendation?league-id=' + league_id)
-    fetch('/api/leagues/' + league_id + '/recommendations')
+    fetch('/api/' + provider + '/leagues/' + league_id + '/recommendations')
         .then(response => {
             return response.json()
         })
@@ -71,21 +71,25 @@ function fetch_recommendation(league_id) {
             const reason = data.reason;
 
             players.forEach(player => {
-                // Fix bad URLs
-                if(player.url.startsWith("https://https://")) {
-                    player.url = player.url.replace("https://https://", "https://");
-                }
-
                 const newRow = document.createElement('tr');
                 const newHeadshot = document.createElement('td');
                 const newPlayer = document.createElement('td');
                 const newPos = document.createElement('td');
 
-                const headshotImg = document.createElement('img');
-                headshotImg.src = player.url;
-                headshotImg.alt = player.name + " headshot image.";
-                headshotImg.height = 50;
-                newHeadshot.appendChild(headshotImg);
+                if(player.url === "🤖") {
+                    newHeadshot.textContent = player.url;
+                } else {
+                    // Fix bad URLs
+                    if(player.url.startsWith("https://https://")) {
+                        player.url = player.url.replace("https://https://", "https://");
+                    }
+
+                    const headshotImg = document.createElement('img');
+                    headshotImg.src = player.url;
+                    headshotImg.alt = player.name + " headshot image.";
+                    headshotImg.height = 50;
+                    newHeadshot.appendChild(headshotImg);
+                }
 
                 newPlayer.textContent = player.name;
                 newPos.textContent = player.position;
@@ -152,11 +156,11 @@ function typeIt(textContainer) {
 
 // Insight button event handler
 insightBtn.addEventListener("click", () => {
-    fetch_recommendation(leagueMenu.value);
+    fetch_recommendation(serviceDropDown.value, leagueMenu.value);
 });
 
 const mobileInsightBtn = document.querySelector("#mobile-insight-btn");
 mobileInsightBtn.addEventListener("click", () => {
     mobileInsightBtn.classList.add("mobile-active");
-    fetch_recommendation(leagueMenu.value);
+    fetch_recommendation(serviceDropDown.value, leagueMenu.value);
 });
