@@ -188,17 +188,38 @@ nav img {
     padding: 10px;
     justify-content: space-between;
 }
-.about-us h3 {
+.about-us h3{
     text-align: center;
 }
+
 .about-img {
-    width: 10%;
+    width: 100%;
+    max-width: 3.5rem;
     height: auto;
+    flex-shrink: 0;
+    flex-grow: 0;
 }
 .about-content{
     display: flex;
     align-items: flex-start;
     gap: 20px;
+}
+.about-content ul {
+    font-size: 1.1rem;
+    list-style: none;
+    padding-left: 0;
+}
+.about-content ul li:nth-child(1)::before {
+    content: "🤖 ";
+}
+.about-content ul li:nth-child(2)::before {
+    content: "⭐ ";
+}
+.about-content ul li:nth-child(3)::before {
+    content: "🏆 ";
+}
+.about-content ul li:nth-child(4)::before {
+    content: "✅ ";
 }
 
 /* Main - Register Section */
