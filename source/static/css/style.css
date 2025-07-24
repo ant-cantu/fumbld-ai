@@ -117,7 +117,6 @@ nav img {
 .desktop-preview,
 .mobile-preview {
     display: flex;
-    flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
     min-height: 70vh;
@@ -334,25 +333,35 @@ footer {
     }
     .nav-links ul {
         display: flex;
-        flex-direction: column;
-        gap: 10px;
+        flex-direction: row;
+        gap: 2px;
     }
     .hero-box {
         margin: 15vh 5vw;
         text-align: center;
     }
-    .desktop-preview {
-        display: flex;
-        flex-direction: column;
-    }
+
+    /* Preview Section */
+    .desktop-preview,
     .mobile-preview {
         display: flex;
         flex-direction: column;
     }
     .desktop-image img,
     .mobile-image img {
-    height: 50vh;
+        width: 100vw;
     }
+    .desktop-image {
+        order: 1;
+    }
+    .desktop-text {
+        padding: 10px;
+        order: 2;
+    }
+    .mobile-text {
+        padding: 10px;
+    }
+
     .about-us {
         flex-direction: column;
         padding: 20px;
