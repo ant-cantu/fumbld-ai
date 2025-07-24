@@ -117,6 +117,7 @@ nav img {
 .desktop-preview,
 .mobile-preview {
     display: flex;
+    flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
     min-height: 70vh;
@@ -340,6 +341,18 @@ footer {
         margin: 15vh 5vw;
         text-align: center;
     }
+    .desktop-preview {
+        display: flex;
+        flex-direction: column;
+    }
+    .mobile-preview {
+        display: flex;
+        flex-direction: column;
+    }
+    .desktop-image img,
+    .mobile-image img {
+    height: 50vh;
+    }
     .about-us {
         flex-direction: column;
         padding: 20px;
@@ -406,6 +419,18 @@ footer {
   .btn {
     font-size: 16px;
     padding: 10px 20px;
+  }
+  .desktop-preview {
+    display: flex;
+    flex-direction: column;
+  }
+  .mobile-preview {
+    display: flex;
+    flex-direction: column;
+  }
+  .mobile-image img,
+  .desktop-image img {
+    height: 35vh;
   }
   .footer-container {
     padding: 30px 10px 5px;
