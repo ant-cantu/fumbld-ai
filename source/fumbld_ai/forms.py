@@ -28,7 +28,7 @@ class RegistrationForm(FlaskForm):
 
     reg_code = StringField("Registration Code", validators=[
         DataRequired(message="Registration code is required to sign up"),
-        Length(min=6, max=6, message="The registration code must be a max of 5 characters.")
+        Length(min=6, max=6, message="The registration code must be exactly 6 characters.")
     ])
 
     terms = BooleanField('accept', validators=[
