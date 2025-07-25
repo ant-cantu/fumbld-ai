@@ -19,8 +19,6 @@ def get_sleeper_leagues(user_id):
     query_sleeper = SleeperLeague.query.filter_by(user_id=current_user.id).all()
 
     if not query_sleeper:
-        print("Entered get_sleeper_leagues()") # Debug
-
         response = requests.get(f"https://api.sleeper.app/v1/user/{user_id}/leagues/nfl/{season}")
 
         league_data = []
@@ -31,9 +29,6 @@ def get_sleeper_leagues(user_id):
                     name = leagues['name']
                     league_id = leagues['league_id']
                     league_data.append({'id': league_id, 'league_name': name})
-
-            # Add data to database from here
-            # print(f"Print Inside Function: {league_data}")
             return league_data
         else:
             print({'error': response.status_code})
@@ -55,7 +50,6 @@ def get_sleeper_roster(league_id, username):
         response = requests.get(f'https://api.sleeper.app/v1/league/{league_id}/rosters')
 
         team_data = []
-        # team_roster = {}
         if response.status_code == 200:
             data = response.json()
             for owners in data:
@@ -77,25 +71,15 @@ def get_sleeper_roster(league_id, username):
                                 else:
                                     team_data.append({'position': 'BN', 'name': name, 'url': '🤖'})
                                 
-            # team_roster[league_id] = team_data
-            print(team_data)
             return team_data
-        # add league ids, league names, 
         else:
             print({'error': response.status_code})
     else:
-        # team = []
-        # for players in query_team.sleeper_roster:
-        #     name = players['name']
-        #     position = players['position']
-        #     team.append({'position': position, 'name': name})
-
+        # If query found, return roster from database
         return query_team.sleeper_roster
 
 def setup_sleeper(username):
     from .models import SleeperLeague
-
-    print("Entered setup_sleeper()")
 
     # Query the users leagues
     query_leagues = SleeperLeague.query.filter_by(
@@ -111,12 +95,12 @@ def setup_sleeper(username):
 
         league_ids = []
         league_names = []
-        for leagues in sleeper_leagues: # ['leagues']:
+        for leagues in sleeper_leagues:
             league_ids.append(leagues['id'])
             league_names.append(leagues['league_name'])
 
         db_list = []
-        for x in range(len(sleeper_leagues)): # ['leagues'])):
+        for x in range(len(sleeper_leagues)):
             add_league = SleeperLeague(username, sleeper_user_id, league_ids[x], league_names[x], get_sleeper_roster(league_ids[x], username), user=current_user)
             
             try:
@@ -143,23 +127,3 @@ def sleeper_refresh():
     except Exception as e:
         db.session.rollback()
         print(f"[LOG][ERROR]: The database encountered an error: {e}")
-
-
-
-# print(get_sleeper_roster('1124026204417294336', 'mrjland'))
-# print("Sleeper Username: mrjland\n")
-# print(f"Sleeper Users ID: {sleeper_user_id} \n")
-
-# print("Sleeper User Leagues Data:")
-# sleeper_leagues = get_sleeper_leagues(sleeper_user_id)
-# print(f"{json.dumps(sleeper_leagues, indent=4)}\n\n")
-
-
-
-# print("\n\n")
-
-# for leagues in sleeper_leagues['leagues']:
-#     print(f"Sleeper League ID: {leagues['id']}")
-#     print(f"Sleeper League Name: {leagues['league_name']}")
-#     print(f"League Roster: {json.dumps(get_sleeper_roster(leagues['id']), indent=4)}\n\n")
-

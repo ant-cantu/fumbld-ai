@@ -222,8 +222,6 @@ def handle_logout():
 @main_bp.route('/api/<provider>/leagues/<league_id>/recommendations', methods=['GET'])
 @login_required
 def get_ai_rec(provider, league_id):
-    # league_id = request.args.get('league-id', '')
-    # print(league_id)
     try:
         with limiter.limit("1 per 2 minutes"):
             if provider == "yahoo":
@@ -283,9 +281,6 @@ def get_ai_rec(provider, league_id):
                 'players': players,
                 'reason': reason
             }
-
-            # print(gemini_call(parsed_roster))
-            print(jsonify(response))
             
             return jsonify(response), 201
     except RateLimitExceeded:
