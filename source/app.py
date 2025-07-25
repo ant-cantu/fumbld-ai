@@ -1,6 +1,6 @@
 import os
 from flask import Flask
-from fumbld_ai.utils import db, TokenEncryptor, limiter
+from fumbld_ai.utils import db, TokenEncryptor, limiter, crsf
 # from dotenv import load_dotenv # Development Stage ONLY
 from fumbld_ai.routes import main_bp
 from fumbld_ai.utils import yahoo_bp
@@ -70,6 +70,9 @@ def init_app():
     
     # Initialize Flask-Limiter
     limiter.init_app(app)
+
+    # Initialize CSRF Protection
+    crsf.init_app(app)
 
     # Initialize SQLAlchemy
     db.init_app(app)

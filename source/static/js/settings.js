@@ -1,7 +1,7 @@
 // Password reset button
 const passResetBtn = document.querySelector("#passResetBtn");
 const passResetForm = document.querySelector("#pass-reset-form");
-//const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 function yahoo_refresh() {
     /**
@@ -15,7 +15,8 @@ function yahoo_refresh() {
     fetch('/api/yahoo/leagues/refresh', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
         }
     })
     .then(response => response.json())
@@ -63,7 +64,11 @@ generateCodeBtn.addEventListener("click", (e) => {
     e.preventDefault();
 
     fetch('/api/admin/generate-reg-code', {
-        method: "POST"
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        }
     })
     .then(response => {
         return response.json()
