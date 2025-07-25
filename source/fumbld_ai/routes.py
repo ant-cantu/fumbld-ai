@@ -415,7 +415,6 @@ def change_password():
 @main_bp.route('/api/admin/generate-reg-code', methods=['POST'])
 @login_required
 def generate_reg_code():
-    print("called")
     if current_user.role != "admin":
         return jsonify({"error": "You are not authorized to access this function."}), 403
     
