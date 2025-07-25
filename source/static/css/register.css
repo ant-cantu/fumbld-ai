@@ -17,6 +17,14 @@ body {
     gap: 5px;
 }
 
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    border: 1px solid red;
+}
+
 /* Navigation Menu */
 .nav-bar {
     background: radial-gradient(circle at center, #0f172a 0%, #0a0f1e 60%, #060913 100%);
@@ -73,31 +81,20 @@ body {
     width: 100%;
 }
 
-/* Login Menu */
-/* .logo-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 10px;
-
-    #logo-img {
-        width: 125px;
-        height: auto;
-    }
-} */
-
 .menu-container {
     background-color:white;
     /* border: 5px solid black; */
     display: flex;
     flex-direction: column;
     padding: 20px;
-    justify-content: space-evenly;
+    /* justify-content: space-evenly; */
+    justify-content: flex-start;
     align-items: center;
-    gap: 2px;
+    /* gap: 2px; */
+    /* gap: 20px; */
     width: 450px;
-    height: 635px;
+    /* height: 635px; */
+    height: auto;
     margin: 0 auto;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
     border-radius: 18px;
@@ -109,28 +106,24 @@ body {
     flex-direction: column;
     margin: 0;
     padding: 0;
-    justify-content: center;
+    /* justify-content: center; */
+    justify-content: flex-start;
     align-items: center;
-    gap: 10px;
-    height: 280px;
+    gap: 5px;
+    /* height: 280px; */
+    height: auto;
 }
 
 .menu-form-container {
-    margin-top: 30px;
+    /* margin-top: 30px; */
+    margin: 0;
     height: 100%;
 }
 
 .menu-container .menu-container-header {
     /* border: 5px solid red; */
     text-align: center;
-    margin-top: 15px;
-    margin-bottom: 25px;
 }
-
-/* .menu-container .form-username,
-.menu-container .form-password {
-    border: 5px solid blue;
-} */
 
 .menu-container .form-control {
     width: 25rem;
@@ -151,17 +144,8 @@ body {
     width: 100%;
 }
 
-/* .menu-container .menu-container-lower .remember-me span {
-    border: 5px solid violet;
-}
-
-.menu-container .menu-container-lower .forgot-link {
-    border: 5px solid violet;
-} */
-
 .menu-container .form-button {
     /* border: 5px solid blue; */
-    margin-top: 25px;
     width: 95%;
     height: 50px;
 }
@@ -180,18 +164,21 @@ body {
     cursor: pointer;
     box-shadow: 0 4px 16px 0 rgba(15, 23, 42, 0.15);
     transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+}
+.form-button .form-submit:hover {
+    background: radial-gradient(circle at center, #16213a 0%, #10182a 60%, #0a0f1e 100%);
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 8px 24px 0 rgba(15, 23, 42, 0.22);
+}
 
-    &:hover {
-        background: radial-gradient(circle at center, #16213a 0%, #10182a 60%, #0a0f1e 100%);
-        transform: translateY(-2px) scale(1.03);
-        box-shadow: 0 8px 24px 0 rgba(15, 23, 42, 0.22);
-    }
+.g-recaptcha {
+    margin-top: 10px;
 }
 
 /* Error Visual */
 .form-control.is-invalid {
     border: 2px solid red;
-    color: white;
+    color: black;
 }
 
 .form-control::placeholder {
@@ -247,6 +234,32 @@ body {
     color: #0b628f;
     font-weight: 400;
     margin: 0px 5px;
+}
+
+/* Flash Message */
+.flash-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.flash-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.flash-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 10px;
 }
 
 @media only screen and (max-width: 767.98px) { 

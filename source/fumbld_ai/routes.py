@@ -5,7 +5,7 @@ from .sleeper import get_sleeper_leagues, get_sleeper_roster, get_sleeper_userid
 from .utils import db, is_safe_url, gpt_call, gemini_call, limiter
 from .forms import LoginForm, RegistrationForm, ChangePasswordForm, SleeperForm
 from flask_login import current_user, login_user, logout_user, login_required
-from .models import YahooToken, SleeperLeague
+from .models import YahooToken, SleeperLeague, RegCodes
 from flask_limiter.errors import RateLimitExceeded
 import requests
 
@@ -71,9 +71,13 @@ def dashboard():
         sleeper_username = sleeper_query.sleeper_username
         sleeper_auth = True
     else:
+        sleeper_username = ""
         sleeper_auth = False
 
-    print(f"Yahoo Auth: {yahoo_auth} | Sleeper Auth: {sleeper_auth}")
+    if current_user.role == "admin":
+        admin_user = True
+    else:
+        admin_user = False
 
     return render_template("dashboard.html",
                             username=current_user.username,
@@ -82,7 +86,8 @@ def dashboard():
                             yahoo=yahoo_auth,
                             sleeper_form=sleeper_user_form,
                             sleeper=sleeper_auth,
-                            sleeper_username=sleeper_username)
+                            sleeper_username=sleeper_username,
+                            admin=admin_user)
     
 # User Registration
 @main_bp.route('/register', methods=['GET', 'POST'])
@@ -98,25 +103,45 @@ def account_register():
     # If everything passes validation on forms
     if form.validate_on_submit():
         if verify_recaptcha():
-            userName = form.username.data
-            userEmail = form.email.data
+            username = form.username.data
+            user_email = form.email.data
             password = form.password.data
+            terms = form.terms.data
 
             # Check for existing user
             # SQL Equivalent: SELECT * FROM user WHERE username = '<username>' LIMIT 1;
-            existing_user = User.query.filter_by(username=userName).first()
+            existing_user = User.query.filter_by(username=username).first()
             if existing_user:
+                print("No REG CODE")
                 flash("The username already exists, please choose another.", "error")
                 return render_template("registration.html", form=form)
             
             # Check if existing email
-            exisiting_email = User.query.filter_by(email=userEmail).first()
+            exisiting_email = User.query.filter_by(email=user_email).first()
             if exisiting_email:
                 flash("This email is already registered!", "error")
                 return render_template("registration.html", form=form)
+            
+            # Beta Test Only
+            reg_code = form.reg_code.data
+            query_reg_codes = RegCodes.query.filter_by(reg_code=reg_code).first()
+            if not query_reg_codes:
+                flash("Invalid registration code.", "error")
+                return render_template("registration.html", form=form)
+            else:
+                query_reg_codes.used = True
+                query_reg_codes.used_by = username
+                role = "beta"
+
+                try:
+                    db.session.commit()
+                except Exception as e:
+                    db.session.rollback()
+                    flash("There was an error processing the registration code.", "error")
+                    return render_template("registration.html", form=form)
 
             # Pass user name, email and hash from forms and store into DB
-            new_user = User(username=userName, email=userEmail)
+            new_user = User(username=username, email=user_email, role=role, accepted_terms=terms)
             new_user.set_password(password)
 
             utc_now = datetime.datetime.now(pytz.utc)
@@ -387,3 +412,35 @@ def change_password():
             return jsonify({"error": "Current password entered was not correct."}), 403
     else:
         return jsonify({"error": "Password in confirmation form does not patch new password."}), 400
+    
+@main_bp.route('/api/admin/generate-reg-code', methods=['POST'])
+@login_required
+def generate_reg_code():
+    print("called")
+    if current_user.role != "admin":
+        return jsonify({"error": "You are not authorized to access this function."}), 403
+    
+    import string, random
+
+    characters = string.ascii_uppercase + string.digits # A-Z and 0-9
+
+    # Generate a random code
+    reg_code = ''.join(random.choice(characters) for _ in range(6))
+
+    # Make sure the code generated does not exist in the DB already
+    while RegCodes.query.filter_by(reg_code=reg_code).first():
+        reg_code = ''.join(random.choice(characters) for _ in range(6))
+    
+    # Create new registration code
+    new_reg_code = RegCodes(reg_code=reg_code, used=False, created_by=current_user.username)
+
+    try:
+        db.session.add(new_reg_code)
+        db.session.commit()
+        return jsonify({
+            "success": f"Registration code '{reg_code}' has been generated successfully.",
+            "reg_code": reg_code
+        }), 201
+    except Exception as e:
+        return jsonify({"error": "There was an error saving the registration code to the database."}), 500
+    

@@ -1,4 +1,22 @@
 /* Settings Container */
+.settings-container #header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.settings-container #header button {
+    border: none;
+    border-radius: 16px;
+    height: 40px;
+    width: 175px;
+    background-color: #004181;
+    color: white;
+    font-weight: 600;
+}
+.settings-container #header button:hover {
+    background-color: #207ad4;
+}
 
 /* Connect to Yahoo button */
 .settings-container #content #yahoo-img {
