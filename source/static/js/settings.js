@@ -60,7 +60,6 @@ refreshBtn.addEventListener("click", () => {
 // Admin - generate registration code
 const generateCodeBtn = document.querySelector("#generate-code");
 generateCodeBtn.addEventListener("click", (e) => {
-    console.log("worked");
     e.preventDefault();
 
     fetch('/api/admin/generate-reg-code', {
