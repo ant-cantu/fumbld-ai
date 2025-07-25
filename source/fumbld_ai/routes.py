@@ -112,7 +112,6 @@ def account_register():
             # SQL Equivalent: SELECT * FROM user WHERE username = '<username>' LIMIT 1;
             existing_user = User.query.filter_by(username=username).first()
             if existing_user:
-                print("No REG CODE")
                 flash("The username already exists, please choose another.", "error")
                 return render_template("registration.html", form=form)
             
