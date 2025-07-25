@@ -289,22 +289,18 @@ def get_ai_rec(provider, league_id):
 @main_bp.route('/api/<provider>/leagues/<league_id>/roster', methods=['GET'])
 @login_required
 def get_roster(provider, league_id):
-    
-    # /fetch/yahoo/roster?league-id=423.l.1215322
-    # league_id = request.args.get('league-id', '')
     if provider == "yahoo":
         if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
             abort(403)
 
-        # print(f"Yahoo: \n {yahoo_get_roster(league_id)}") # Debug
-
         return jsonify(yahoo_get_roster(league_id)), 201
     elif provider == "sleeper":
+        # Query database for sleeper data
         sleeper_query = SleeperLeague.query.filter_by(
             user_id=current_user.id,
             sleeper_league_id=league_id
         ).first()
-        # print(get_sleeper_roster(league_id, sleeper_query.sleeper_username))
+
         return jsonify(get_sleeper_roster(league_id, sleeper_query.sleeper_username)), 201
 
 
