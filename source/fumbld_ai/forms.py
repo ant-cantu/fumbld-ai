@@ -1,7 +1,7 @@
 # forms.py
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
-from wtforms.validators import DataRequired, Email, Length, EqualTo
+from wtforms.validators import DataRequired, Email, Length, EqualTo, InputRequired
 
 # '/register' form
 class RegistrationForm(FlaskForm):
@@ -24,6 +24,15 @@ class RegistrationForm(FlaskForm):
         DataRequired(message="Please confirm your password"),
         EqualTo('password', message="Passwords must match")
         # 'password' refers to variable password above
+    ])
+
+    reg_code = StringField("Registration Code", validators=[
+        DataRequired(message="Registration code is required to sign up"),
+        Length(min=6, max=6, message="The registration code must be exactly 6 characters.")
+    ])
+
+    terms = BooleanField('accept', validators=[
+        InputRequired(message='You must accept the privacy, cookie, and terms of use policy to continue.')
     ])
 
     submit = SubmitField("Register")

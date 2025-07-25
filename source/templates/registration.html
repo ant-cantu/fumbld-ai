@@ -92,6 +92,22 @@
                         ) }}
                     </div>
 
+                    <div class="form-reg-code">
+                        <label for="reg-code">{{ form.reg_code.label(class="form-label") }}</label>
+
+                        {% set reg_code_error = form.reg_code.errors[0] if form.reg_code.errors else '' %}
+                        {{ form.reg_code(
+                            size=30,
+                            class="form-control" if not reg_code_error else "form-control is-invalid",
+                            placeholder=reg_code_error if reg_code_error
+                        ) }}
+                    </div>
+
+                    <div class="form-terms">
+                        {{ form.terms }}
+                        <label for="terms">{{ form.terms.label }}</label>
+                    </div>
+
                     <div class="form-button">
                         {{ form.submit(class="form-submit") }}
                     </div>
@@ -104,6 +120,20 @@
         <!-- End Login Menu -->
     </main>
     <!-- End Main Body -->
+
+    <div class="flash-message">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-container">
+                    {% for category, message in messages %}
+                        <div class="flash-{{ category }}">
+                            <p>{{ message }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
 
     <!-- Footer -->
     <footer>

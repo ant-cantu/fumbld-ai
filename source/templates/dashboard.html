@@ -264,6 +264,11 @@
             <div class="settings-container">
                 <div id="header">
                     <p>Settings</p>
+                    {% if admin %}
+                        <form method="POST" action="{{ url_for('main.generate_reg_code') }}">
+                            <button id="generate-code" type="submit">Generate Reg Code</button>
+                        </form>
+                    {% endif %}
                 </div>
 
                 <div id="content">

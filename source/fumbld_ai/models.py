@@ -18,7 +18,8 @@ class User(UserMixin, db.Model):
     date_registered = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))
     last_login = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))
     now_login = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))
-    role = db.Column(db.String(15), default="user", unique=False, nullable=False)
+    role = db.Column(db.String(5), default="user", unique=False, nullable=False)
+    accepted_terms = db.Column(db.Boolean, default=False, nullable=False)
 
     # Relationship with Yahoo roster
     yahoo_leagues = db.relationship('YahooLeague', back_populates='user', lazy=True, cascade="all, delete-orphan")
@@ -46,9 +47,11 @@ class User(UserMixin, db.Model):
         """
         return check_password_hash(self.password_hash, password)
     
-    def __init__(self, username, email):
+    def __init__(self, username, email, role, accepted_terms):
         self.username = username
         self.email = email
+        self.role = role
+        self.accepted_terms = accepted_terms
 
     # String representation for debugging
     def __repr__(self):
@@ -142,12 +145,15 @@ class RegCodes(db.Model):
     # ID Column (Primary Key)
     id = db.Column(db.Integer, primary_key=True)
 
-    reg_code = db.Column(db.String(10), unique=False, nullable=False)
+    reg_code = db.Column(db.String(6), unique=True, nullable=False)
     used = db.Column(db.Boolean, default=False, nullable=False)
+    used_by = db.Column(db.String(30), nullable=True)
+    created_by = db.Column(db.String(30), unique=False, nullable=False)
 
-    def __init__(self, reg_code, used):
+    def __init__(self, reg_code, used, created_by):
         self.reg_code = reg_code
         self.used = used
+        self.created_by = created_by
 
     def __repr__(self):
         return f"<RegCode {self.reg_code} - Used: {self.used}>"

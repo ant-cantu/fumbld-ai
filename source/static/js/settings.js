@@ -41,11 +41,9 @@ passResetBtn.addEventListener("click", (e) => {
     .then(response => response.json())
     .then(data => {
         if(data.success) {
-            console.log(data.success);
             modal(data.success)
             passResetForm.reset();
         } else {
-            console.log(data.error);
             modal(data.error);
             passResetForm.reset();
         }
@@ -57,4 +55,23 @@ refreshBtn.addEventListener("click", () => {
     modalCloseBtn.style.display = "none";
     modal("Refreshing Yahoo! Sports league data. Please wait...");
     yahoo_refresh();
+});
+
+// Admin - generate registration code
+const generateCodeBtn = document.querySelector("#generate-code");
+generateCodeBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    fetch('/api/admin/generate-reg-code', {
+        method: "POST"
+    })
+    .then(response => {
+        return response.json()
+    })
+    .then(data => {
+        if(data.success)
+            modal(data.success);
+        else
+            modal(data.error);
+    });
 });
