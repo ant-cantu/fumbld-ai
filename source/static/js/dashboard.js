@@ -230,7 +230,7 @@ serviceDropDown.addEventListener("change", () => {
     if(serviceDropDown.value === "yahoo") {
         fetch_leagues("yahoo");
     } else if(serviceDropDown.value === "sleeper") {
-        fetch_leagues("sleeper")
+        fetch_leagues("sleeper");
     } else if(serviceDropDown.value === "") {
         // Clear league menu dropdown
         leagueMenu.innerHTML = "";
