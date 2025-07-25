@@ -22,7 +22,6 @@ main {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    border: 1px solid red;
 }
 
 /* Navigation Menu */
