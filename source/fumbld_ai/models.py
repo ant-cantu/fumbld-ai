@@ -18,9 +18,13 @@ class User(UserMixin, db.Model):
     date_registered = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))
     last_login = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))
     now_login = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))
+    role = db.Column(db.String(15), default="user", unique=False, nullable=False)
 
-    # Relationship with Roster
+    # Relationship with Yahoo roster
     yahoo_leagues = db.relationship('YahooLeague', back_populates='user', lazy=True, cascade="all, delete-orphan")
+
+    # Relationship with Sleeper roster
+    sleeper_leagues = db.relationship('SleeperLeague', back_populates='user', lazy=True, cascade="all, delete-orphan")
 
     # Relationship to the YahooToken table
     # 'uselist=False' makes this a one-to-one relationship from the User side
@@ -101,3 +105,49 @@ class YahooLeague(db.Model):
 
     def __repr__(self):
         return f"{self.yahoo_roster}"
+    
+class SleeperLeague(db.Model):
+    __tablename__ = "sleeper_league"
+
+    # ID Column (Primary Key)
+    id = db.Column(db.Integer, primary_key=True)
+
+    # Store roster information in this table
+    sleeper_username = db.Column(db.String(35), unique=False, nullable=False)
+    sleeper_user_id = db.Column(db.String(50), unique=False, nullable=False)
+    sleeper_league_id = db.Column(db.String(20), unique=False, nullable=False)
+    sleeper_league_name = db.Column(db.String(45), unique=False, nullable=False)
+    sleeper_roster = db.Column(JSON)
+    
+    # Foreign key defintion
+    # (Integer ID, users.id refers to 'id' in users table, must not be empty)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) 
+
+    user = db.relationship("User", back_populates="sleeper_leagues")
+
+    def __init__(self, sleeper_username, sleeper_user_id, sleeper_league_id, sleeper_league_name, sleeper_roster, user=None):
+        self.sleeper_username = sleeper_username
+        self.sleeper_user_id = sleeper_user_id
+        self.sleeper_league_id = sleeper_league_id
+        self.sleeper_league_name = sleeper_league_name
+        self.sleeper_roster = sleeper_roster
+        self.user = user
+
+    def __repr__(self):
+        return f"{self.sleeper_roster}"
+    
+class RegCodes(db.Model):
+    __tablename__ = "registration_codes"
+
+    # ID Column (Primary Key)
+    id = db.Column(db.Integer, primary_key=True)
+
+    reg_code = db.Column(db.String(10), unique=False, nullable=False)
+    used = db.Column(db.Boolean, default=False, nullable=False)
+
+    def __init__(self, reg_code, used):
+        self.reg_code = reg_code
+        self.used = used
+
+    def __repr__(self):
+        return f"<RegCode {self.reg_code} - Used: {self.used}>"
