@@ -147,7 +147,7 @@ class RegCodes(db.Model):
 
     reg_code = db.Column(db.String(6), unique=True, nullable=False)
     used = db.Column(db.Boolean, default=False, nullable=False)
-    used_by = db.Column(db.String(30), unique=True, nullable=True)
+    used_by = db.Column(db.String(30), nullable=True)
     created_by = db.Column(db.String(30), unique=False, nullable=False)
 
     def __init__(self, reg_code, used, created_by):
