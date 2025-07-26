@@ -1,0 +1,42 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: antcantu/fumbld-ai:v1.0.0
+    container_name: fumbld_backend
+    env_file:
+      - ./source/.env
+    volumes:
+      - ./source:/app
+    expose:
+      - "8000"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  frontend:
+    image: nginx:alpine
+    container_name: fumbld_frontend
+    ports:
+    - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./source/static:/app/static
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  db:
+    image: postgres:15
+    container_name: fumbld_db
+    env_file:
+      - ./source/.env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  pgdata:
