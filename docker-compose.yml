@@ -35,14 +35,13 @@ services:
   certbot:
     image: certbot/certbot
     container_name: fumbld_certbot
+    entrypoint: ["certbot"]
     volumes:
       - certs:/etc/letsencrypt
       - certbot-www:/var/www/certbot
-    entrypoint: ""
-    command: >
-      certonly --webroot --webroot-path=/var/www/certbot 
-      --email fumbldai@outlook.com --agree-tos --no-eff-email 
-      -d fumbldai.com -d www.fumbldai.com
+    command: certonly --webroot --webroot-path=/var/www/certbot 
+            --email fumbldai@outlook.com --agree-tos --no-eff-email 
+            -d fumbldai.com -d www.fumbldai.com
     depends_on:
       - frontend
 
