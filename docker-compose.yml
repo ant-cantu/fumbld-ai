@@ -41,8 +41,8 @@ services:
     entrypoint: ""
     command: >
       certonly --webroot --webroot-path=/var/www/certbot 
-      --email your@email.com --agree-tos --no-eff-email 
-      -d yourdomain.com -d www.yourdomain.com
+      --email fumbldai@outlook.com --agree-tos --no-eff-email 
+      -d fumbldai.com -d www.fumbldai.com
     depends_on:
       - frontend
 
