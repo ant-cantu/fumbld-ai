@@ -333,13 +333,35 @@ footer {
     }
     .nav-links ul {
         display: flex;
-        flex-direction: column;
-        gap: 10px;
+        flex-direction: row;
+        gap: 2px;
     }
     .hero-box {
         margin: 15vh 5vw;
         text-align: center;
     }
+
+    /* Preview Section */
+    .desktop-preview,
+    .mobile-preview {
+        display: flex;
+        flex-direction: column;
+    }
+    .desktop-image img,
+    .mobile-image img {
+        width: 100vw;
+    }
+    .desktop-image {
+        order: 1;
+    }
+    .desktop-text {
+        padding: 10px;
+        order: 2;
+    }
+    .mobile-text {
+        padding: 10px;
+    }
+
     .about-us {
         flex-direction: column;
         padding: 20px;
@@ -406,6 +428,15 @@ footer {
   .btn {
     font-size: 16px;
     padding: 10px 20px;
+  }
+  .desktop-preview,
+  .mobile-preview {
+    display: flex;
+    flex-direction: column;
+  }
+  .mobile-image img,
+  .desktop-image img {
+    height: 35vh;
   }
   .footer-container {
     padding: 30px 10px 5px;

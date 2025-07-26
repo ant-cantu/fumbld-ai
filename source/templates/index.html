@@ -15,6 +15,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -25,7 +26,7 @@
             <div class="nav-links">
                 <ul>
                     <li><a href="/">Home</a></li>
-                    <li><a href="#">About</a></li>
+                    <li><a href="#about">About</a></li>
                     <li><a href="/register" role="button" style="color: #0b628f">Register</a></li>
                     <li><a href="/login" role="button">Log In</a></li>
                 </ul>
@@ -34,13 +35,13 @@
         <div class="hero-box">
             <h1>Fumbld <span style="color: #0b628f; ">AI</span></h1>
             <h5>Fumble the Guesswork, Not the Game</h5>
-            <a href="#" class="hero-btn" role="button">Sign Up Now!</a>
+            <a href="/register" class="hero-btn" role="button">Sign Up Now!</a>
         </div>
     </section>
 <!-- End Hero Section-->
 
 <!-- App Preview -->
-<section class="desktop-preview">
+<section class="desktop-preview" id="about">
     <div class="desktop-text appear">
         <h1>Experience Fumbld <span style="color: #0b628f;">AI</span> in Action</h1>
         <p>
@@ -84,14 +85,14 @@
         <div class="about-col left-col">
             <h3>What is Fumbld AI?</h3>
             <div class="about-content">
-            <img class="about-img" src="{{ url_for('static', filename='img/fumbld-main-logo-only.png') }}" alt="company-logo">
+            <img class="about-img" src="{{ url_for('static', filename='img/help-circle.svg') }}" alt="question-mark">
             <p>Fumbld AI is your smart assistant for fantasy football success.  Powered by artificial intelligence (AI), it helps you make data-driven decisions when preparing for your matchup and setting the weekly lineup.  No more second-guessing sit/start choices--Fumbld AI evaluates player performance, matchups, injury reports and more to give you the edge you need to win your league. </p>
             </div>
         </div>
         <div class="about-col right-col">
             <h3>How Does It Work?</h3>
             <div class="about-content">
-            <img class="about-img" src="{{ url_for('static', filename='img/fumbld-main-logo-only.png') }}" alt="company-logo">
+            <img class="about-img" src="{{ url_for('static', filename='img/shield-checkmark.svg') }}" alt="shield-checkmark">
             <p>Analyzing a wide range of data in real-time, Fumbld AI looks at player stats, team trends, injury updates, weather conditions and historical performance to deliver weekly recommendations tailored specifically to your roster and matchup.  Whether you're a seasoned fantasy vet or a rookie manager, Fumbld AI makes lineup decisions faster, smarter and more accurate.</p>
             </div>
         </div>
@@ -100,7 +101,7 @@
         <div class="about-col left-col">
                 <h3>Key Features</h3>
             <div class="about-content">
-            <img class="about-img" src="{{ url_for('static', filename='img/fumbld-main-logo-only.png') }}" alt="company-logo">
+            <img class="about-img" src="{{ url_for('static', filename='img/star.svg') }}" alt="star-icon">
                 <ul class="about-list">
                     <li>AI-Insights: Personalized advice based on detailed player analysis.</li>
                     <li>Custom League Integration: Import your Yahoo Fantasy or Sleeper Fantasy teams!</li>
@@ -112,7 +113,7 @@
         <div class="about-col right-col">
                 <h3>Data Driven Decisions for Everyone</h3>
             <div class="about-content">
-                <img class="about-img" src="{{ url_for('static', filename='img/fumbld-main-logo-only.png') }}" alt="company-logo">
+                <img class="about-img" src="{{ url_for('static', filename='img/analytics.svg') }}" alt="analytics-icon">
                 <p>Easy to use! Fumbld AI is your secret weapon to use against opponents in all of your leagues. Tired of relying on luck and outdated stats? Say goodbye to those agonizing lineup decisions and hello to AI-powered domination! Never take home the "Worst Place-Crap League" trophy again! With Fumbld AI, you'll be the envy of your league, making all the right moves on your way to the championship!</p>
             </div>
         </div>
