@@ -14,10 +14,7 @@ def init_app():
     # Configure application
     app = Flask(__name__)
 
-    # DB File Location
-    # THIS IS FOR DEV ONLY, PRODUCTION WILL BE MOVED TO A MORE SECURE DATABASE
-    # basedir = os.path.abspath(os.path.dirname(__file__))
-    # app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///" + os.path.join(basedir, "fumbld.db")
+    # PostgreSQL
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 
     # Disable Modification Warnings
@@ -25,6 +22,9 @@ def init_app():
 
     # Super Duper Secret Key
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+
+    # Encrypt Key
+    app.config['ENCRYPT_KEY'] = os.environ.get('ENCRYPT_KEY')
 
     # Yahoo OAuth Credentials
     app.config['YAHOO_CONSUMER_KEY'] = os.environ.get('YAHOO_CONSUMER_KEY')

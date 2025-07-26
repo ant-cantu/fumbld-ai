@@ -23,7 +23,7 @@ def update_token_in_db(user, token):
         token: Yahoo token to refresh
     """
     # Cryptography
-    crypt = TokenEncryptor(current_app.config.get("SECRET_KEY").encode())
+    crypt = TokenEncryptor(current_app.config.get("ENCRYPT_KEY").encode())
 
     # Update database fields
     user.yahoo_token.access_token = base64.b64encode(crypt.encrypt(token['access_token'].encode())).decode()
@@ -56,7 +56,7 @@ def yahoo_api_connect():
     consumer_secret = current_app.config.get('YAHOO_CONSUMER_SECRET')
 
     # Retrieve Secret Key
-    app_key = current_app.config.get("SECRET_KEY").encode()
+    app_key = current_app.config.get("ENCRYPT_KEY").encode()
     
     def token_updater(token):
         # ----> Print for now, adding logger later <----
@@ -170,7 +170,7 @@ def yahoo_callback():
     callback_url = url_for('yahoo.yahoo_callback', _external=True, _scheme='https')
 
     # Get Secret Key
-    app_key = current_app.config.get("SECRET_KEY").encode()
+    app_key = current_app.config.get("ENCRYPT_KEY").encode()
 
     # The two 'if' checks are not really needed due to the 'login_required' decorator
     # Fetch user_id by session
