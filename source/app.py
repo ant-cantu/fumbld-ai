@@ -14,6 +14,9 @@ def init_app():
     # Configure application
     app = Flask(__name__)
 
+    # App Environment
+    app.config['APP_ENV'] = os.getenv("APP_ENV", "production")
+
     # PostgreSQL
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 

@@ -12,6 +12,17 @@ import requests
 
 main_bp = Blueprint('main', __name__, template_folder='templates')
 
+def check_env():
+    """
+    Returns true if app is ran in development environment
+    """
+    if current_app.config.get('APP_ENV') == 'development':
+        print("Development Environment Detected")
+        return True
+    else:
+        print("Production Environment Detected")
+        return False
+
 # Google reCaptcha
 def verify_recaptcha():
     recaptcha_response = request.form.get('g-recaptcha-response')
@@ -28,7 +39,10 @@ def verify_recaptcha():
     if result.get('success'):
         return True
     else:
-        return False # False (remove comment for production)
+        if check_env(): 
+            # Development Environment Only
+            return True
+        return False
 
 # Defining Root Page
 @main_bp.route('/')
