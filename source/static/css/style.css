@@ -429,10 +429,7 @@ footer {
     font-size: 16px;
     padding: 10px 20px;
   }
-  .desktop-preview {
-    display: flex;
-    flex-direction: column;
-  }
+  .desktop-preview,
   .mobile-preview {
     display: flex;
     flex-direction: column;
