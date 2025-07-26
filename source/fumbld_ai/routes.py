@@ -28,7 +28,7 @@ def verify_recaptcha():
     if result.get('success'):
         return True
     else:
-        return True # False (remove comment for production)
+        return False # False (remove comment for production)
 
 # Defining Root Page
 @main_bp.route('/')
@@ -128,9 +128,13 @@ def account_register():
                 flash("Invalid registration code.", "error")
                 return render_template("registration.html", form=form)
             else:
-                query_reg_codes.used = True
-                query_reg_codes.used_by = username
-                role = "beta"
+                if query_reg_codes.used == True:
+                    flash("This code has been used already!", "error")
+                    return render_template("registration.html", form=form)
+                else:
+                    query_reg_codes.used = True
+                    query_reg_codes.used_by = username
+                    role = "beta"
 
                 try:
                     db.session.commit()
