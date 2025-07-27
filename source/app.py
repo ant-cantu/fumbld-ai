@@ -1,7 +1,8 @@
 import os
+import logging
+from logging.handlers import RotatingFileHandler
 from flask import Flask
-from fumbld_ai.utils import db, TokenEncryptor, limiter, crsf
-# from dotenv import load_dotenv # Development Stage ONLY
+from fumbld_ai.utils import db, limiter, crsf
 from fumbld_ai.routes import main_bp
 from fumbld_ai.utils import yahoo_bp
 from fumbld_ai.models import User
@@ -17,6 +18,44 @@ def init_app():
     # App Environment
     app.config['APP_ENV'] = os.getenv("APP_ENV", "production")
 
+    # Initialize Logging --------------
+    if app.config['APP_ENV'] == "development":
+        log_dir = 'logs'
+    else:
+        log_dir = '/app/logs'
+    
+    # Create the logs directory
+    os.makedirs(log_dir, exist_ok=True)
+
+    # File path for log file
+    log_file = os.path.join(log_dir, 'fumbld.log')
+
+    # Setup Logger
+    logger = logging.getLogger("fumbld_logger")
+    logger.setLevel(logging.DEBUG)
+    logger.handlers.clear()
+
+    # Logging Format
+    log_format = logging.Formatter("[%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(funcName)s()]: %(message)s")
+
+    # Rotating file handler
+    file_handler = RotatingFileHandler(
+        log_file, 
+        maxBytes=5*1024*1024, 
+        backupCount=5
+    )
+    file_handler.setLevel(logging.INFO)
+    file_handler.setFormatter(log_format)
+    logger.addHandler(file_handler)
+    
+    # Stream handler
+    stream_handler = logging.StreamHandler()
+    stream_handler.setLevel(logging.DEBUG)
+    stream_handler.setFormatter(log_format)
+    logger.addHandler(stream_handler)
+
+    # End Logger Set Up -----------------
+
     # PostgreSQL
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 
@@ -30,21 +69,25 @@ def init_app():
     app.config['ENCRYPT_KEY'] = os.environ.get('ENCRYPT_KEY')
 
     # Yahoo OAuth Credentials
-    app.config['YAHOO_CONSUMER_KEY'] = os.environ.get('YAHOO_CONSUMER_KEY')
-    app.config['YAHOO_CONSUMER_SECRET'] = os.environ.get('YAHOO_CONSUMER_SECRET')
+    if app.config['APP_ENV'] == "development":
+        app.config['YAHOO_CONSUMER_KEY'] = os.environ.get('DEV_YAHOO_CONSUMER_KEY')
+        app.config['YAHOO_CONSUMER_SECRET'] = os.environ.get('DEV_YAHOO_CONSUMER_SECRET')
+    else:
+        app.config['YAHOO_CONSUMER_KEY'] = os.environ.get('YAHOO_CONSUMER_KEY')
+        app.config['YAHOO_CONSUMER_SECRET'] = os.environ.get('YAHOO_CONSUMER_SECRET')
 
     if not app.config['YAHOO_CONSUMER_KEY'] or \
        not app.config['YAHOO_CONSUMER_SECRET']:
-        print("[CRITICAL]: Yahoo OAuth credentials are not fully configured in .env.")
-        print("[CRITICAL] Terminating Application")
+        logger.critical("Yahoo OAuth credentials are not fully configured in .env.")
+        logger.critical("Terminating Application")
         return 
     
     # OpenAI Key
     app.config['OPENAI_KEY'] = os.environ.get('OPENAI_KEY')
 
     if not app.config['OPENAI_KEY']:
-        print("[CRITICAL] OpenAI Key not configured correctly.")
-        print('[CRITICAL] Terminating Application')
+        logger.critical("OpenAI Key not configured correctly.")
+        logger.critical("Terminating Application")
         return
     
     # Gemini Key

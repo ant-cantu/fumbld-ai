@@ -1,15 +1,15 @@
 from flask import render_template, Blueprint, flash, redirect, url_for, request, abort, jsonify, current_app
 import pytz, datetime
 from .yahoo_fantasy import yahoo_get_roster, yahoo_get_league, yahoo_refresh
-from .sleeper import get_sleeper_leagues, get_sleeper_roster, get_sleeper_userid
+from .sleeper import get_sleeper_leagues, get_sleeper_roster, setup_sleeper
 from .utils import db, is_safe_url, gpt_call, gemini_call, limiter
 from .forms import LoginForm, RegistrationForm, ChangePasswordForm, SleeperForm
 from flask_login import current_user, login_user, logout_user, login_required
 from .models import YahooToken, SleeperLeague, RegCodes
 from flask_limiter.errors import RateLimitExceeded
-import requests
+import requests, logging
 
-
+logger = logging.getLogger("fumbld_logger")
 main_bp = Blueprint('main', __name__, template_folder='templates')
 
 def check_env():
@@ -17,10 +17,8 @@ def check_env():
     Returns true if app is ran in development environment
     """
     if current_app.config.get('APP_ENV') == 'development':
-        print("Development Environment Detected")
         return True
     else:
-        print("Production Environment Detected")
         return False
 
 # Google reCaptcha
@@ -53,7 +51,6 @@ def home():
 @main_bp.route("/dashboard", methods=['GET', 'POST'])
 @login_required
 def dashboard():
-    from .models import User
     # Get date for last login
     if not current_user.last_login:
         last_login = current_user.now_login.strftime("%m-%d-%y %I:%M:%S")
@@ -88,10 +85,8 @@ def dashboard():
         sleeper_username = ""
         sleeper_auth = False
 
-    if current_user.role == "admin":
-        admin_user = True
-    else:
-        admin_user = False
+    # Is user an admin?
+    admin_user = current_user.role == "admin"
 
     return render_template("dashboard.html",
                             username=current_user.username,
@@ -140,21 +135,24 @@ def account_register():
             query_reg_codes = RegCodes.query.filter_by(reg_code=reg_code).first()
             if not query_reg_codes:
                 flash("Invalid registration code.", "error")
+                logger.info(f"Invalid registration code used: {reg_code}")
                 return render_template("registration.html", form=form)
             else:
                 if query_reg_codes.used == True:
                     flash("This code has been used already!", "error")
+                    logger.info(f"Previously used registration code was used again: {reg_code}")
                     return render_template("registration.html", form=form)
                 else:
                     query_reg_codes.used = True
                     query_reg_codes.used_by = username
-                    role = "beta"
+                    role = "beta" # Only for beta phase
 
                 try:
                     db.session.commit()
                 except Exception as e:
                     db.session.rollback()
                     flash("There was an error processing the registration code.", "error")
+                    logger.error(f"There was an error processing the registration code: {reg_code} | error: {e}")
                     return render_template("registration.html", form=form)
 
             # Pass user name, email and hash from forms and store into DB
@@ -180,11 +178,14 @@ def account_register():
                 if next_page and not is_safe_url(next_page):
                     return abort(400)
 
-                print(f"New account created successfully for: {current_user.username} with ID: {current_user.id}")
+                # Log successful user creation
+                logger.info(f"New account created successfully for: {current_user.username} with ID: {current_user.id}")
+
                 return redirect(next_page or url_for('main.dashboard'))
             except Exception as e:
                 # Rollback changes made to database incase of error
                 db.session.rollback()
+                logger.critical(f"There was an internal error with creating the account: {e}")
                 flash("There was an internal error with creating the account.", "error")
                 return render_template("registration.html", form=form)
         else:
@@ -202,53 +203,57 @@ def account_login():
     if current_user.is_authenticated:
         return redirect(url_for('main.dashboard'))
 
-    # Check if forms have valid information
-    if form.validate_on_submit():
-        if verify_recaptcha():
-            userName = form.username.data
-            raw_password = form.password.data
+    try:
+        with limiter.limit("3 per 5 minutes"):
+            # Check if forms have valid information
+            if form.validate_on_submit():
+                if verify_recaptcha():
+                    username = form.username.data
+                    raw_password = form.password.data
 
-            # Find the user in the database
-            query_user = User.query.filter_by(username=userName).first()
+                    # Find the user in the database
+                    query_user = User.query.filter_by(username=username).first()
 
-            # If user was not found
-            if not query_user:
-                #form.username.validators[0].message = "Invalid login"
-                return render_template("login.html", form=form)
-            
-            # Check if the password matches
-            if query_user.check_password(raw_password):
-                print(f"[DEBUG LOG] Login was successful. User ID: {query_user.id}")
-                
-                # Add login session to browser
-                #session['user_id'] = query_user.id
-                login_user(query_user, remember=form.remember.data)
-                next_page = request.args.get('next')
-                if next_page and not is_safe_url(next_page):
-                    return abort(400)
+                    # If user was not found
+                    if not query_user:
+                        logger.warning(f"Login attempt made using a username '{username}' that does not exist.")
+                        flash("Invalid credentials used. PLease try again.")
+                        return render_template("login.html", form=form)
+                    
+                    # Check if the password matches
+                    if query_user.check_password(raw_password):
+                        # Add login session to flask_login and check if used wanted to be remembered
+                        login_user(query_user, remember=form.remember.data)
 
-                # ** Need to figure out where to store the last login, so we can display it before its updated to the current time **
-                # update 'last login' date to now in database
-                utc_now = datetime.datetime.now(pytz.utc)
-                pacific_tmz = pytz.timezone("America/Los_Angeles")
-                pacific_now = utc_now.astimezone(pacific_tmz)
-                query_user.now_login = pacific_now
+                        # Security checks
+                        next_page = request.args.get('next')
+                        if next_page and not is_safe_url(next_page):
+                            return abort(400)
 
-                try:
-                    db.session.commit()
-                    print(f"[DEBUG LOG] Successfully updated database for '{query_user.username}' time logged in: {query_user.last_login}")
-                except Exception as e:
-                    db.session.rollback()
-                    print(f"[DEBUG LOG] There was an internal error: {e}")
-                finally:
-                    return redirect(next_page or url_for('main.dashboard'))
-            else:
-                flash("You entered the wrong password!", "error")
-                print("[DEBUG LOG] Login attempt failed.")
-                return render_template("login.html", form=form)
-        else:
-            print("reCaptcha was not verified!")
-        
+                        # ** Need to figure out where to store the last login, so we can display it before its updated to the current time **
+                        # update 'last login' date to now in database
+                        utc_now = datetime.datetime.now(pytz.utc)
+                        pacific_tmz = pytz.timezone("America/Los_Angeles")
+                        pacific_now = utc_now.astimezone(pacific_tmz)
+                        query_user.now_login = pacific_now
+
+                        try:
+                            db.session.commit()
+                        except Exception as e:
+                            db.session.rollback()
+                            logger.critical(f"There was an internal error with the database: {e}")
+                        finally:
+                            return redirect(next_page or url_for('main.dashboard'))
+                    else:
+                        flash("Invalid credentials entered. Please try again!", "error")
+                        logger.warning(f"Login attempt made using password has failed for entered username: {username}")
+                        return render_template("login.html", form=form)
+                else:
+                    logger.warning(f"reCaptcha was not verified for entered username: {username}")
+    except RateLimitExceeded:
+        flash("Too many login attempts! Please try again in 5 minutes.", "error")
+        logger.warning(f"Login attempts exceeded limit for entered username: {username}")
+
     return render_template("login.html", form=form)
 
 # User Logout
@@ -286,7 +291,9 @@ def get_ai_rec(provider, league_id):
                     'url': roster['url']
                 })
             
+            # Make a call to Gemini
             ai_response = gemini_call(parsed_roster)
+
             import json
             import re
 
@@ -301,7 +308,9 @@ def get_ai_rec(provider, league_id):
                 # parse the json string into a dictionary
                 players = json.loads(json_part)
             else:
-                return jsonify({'error': 'There was an error making an AI call.'})
+                logger.critical(f"There was an error parsing AI output for user: {current_user.username}")
+                logger.critical(f" -- Fumbld Output: \n{ai_response}")
+                return jsonify({'error': 'There was an error making an AI call.'}), 422
             
             # Extract the reason text in gpt response
             # start search starting with reason:
@@ -311,7 +320,9 @@ def get_ai_rec(provider, league_id):
             if reason_match:
                 reason = reason_match.group(1).strip()
             else:
-                return jsonify({'error': 'There was an error making an AI call.'})
+                logger.critical(f"There was an error parsing AI output for user: {current_user.username}")
+                logger.critical(f" -- Fumbld Output: \n{ai_response}")
+                return jsonify({'error': 'There was an error making an AI call.'}), 422
             
             # Add URL back into AI response
             for player in players:
@@ -326,7 +337,8 @@ def get_ai_rec(provider, league_id):
             
             return jsonify(response), 201
     except RateLimitExceeded:
-        return jsonify({"error": "Please allow two minutes in between Fumbld AI calls."})
+        logger.warning(f"Rate limit hit for Fumbld AI calls for user: {current_user.username}")
+        return jsonify({"error": "Please allow two minutes in between Fumbld AI calls."}), 429
 
 @main_bp.route('/api/<provider>/leagues/<league_id>/roster', methods=['GET'])
 @login_required
@@ -344,8 +356,6 @@ def get_roster(provider, league_id):
         ).first()
 
         return jsonify(get_sleeper_roster(league_id, sleeper_query.sleeper_username)), 201
-
-
 
 @main_bp.route('/api/<provider>/leagues', methods=['GET'])
 @login_required
@@ -369,17 +379,18 @@ def refresh_roster(provider):
                 if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
                     abort(403)
                     # Log a warning here, user should not be able to access this without being authenticated with yahoo.
+                    logger.error(f"User: {current_user.username} accessed refresh_roster API call without being authenticated.")
                     return jsonify({"error": "There was an error refreshing your Yahoo! data. Try reauthenticating yourself with Yahoo!"}), 403
 
                 try:
                     # Delete all yahoo related entries in the database and refresh
                     yahoo_refresh()
                     return jsonify({"success": "Yahoo! Sports refresh has comepleted. Thanks for waiting! 🏈🏆"}), 200
-                except:
-                    # Log error here <---------------
+                except Exception as e:
+                    logger.error(f"There was an error refreshing Yahoo! data for user: {current_user.username} | {e}")
                     return jsonify({"error": "There was an error refreshing your Yahoo! data. Please submit an error report."}), 500
     except RateLimitExceeded:
-        return jsonify({"error": "Please give one minute in between Yahoo refresh."})
+        return jsonify({"error": "Please give one minute in between Yahoo refresh."}), 429
 
 @main_bp.errorhandler(403)
 def forbidden_error(error):
@@ -387,7 +398,6 @@ def forbidden_error(error):
 
 # ------------------------------------------------------------
 # Sleeper Integration
-from .sleeper import setup_sleeper
 @main_bp.route('/api/users/me/sleeper/setup', methods=['POST'])
 @login_required
 def set_sleeper_username():
@@ -397,10 +407,15 @@ def set_sleeper_username():
     if sleeper_username_form.validate_on_submit():
         # Check if sleeper data exist and handle it
         username = sleeper_username_form.sleeper_username.data
-        setup_sleeper(username)
-        return jsonify({'success': f'Sleeper data successfully saved from sleeper acount: {username}'})
+        try:
+            setup_sleeper(username)
+            logger.info(f"Sleeper data successfully saved from Sleeper acount: {username}")
+            return jsonify({'success': f'Sleeper data successfully saved from Sleeper acount: {username}'}), 200
+        except Exception as e:
+            logger.error(f"There was an error processing Sleeper username: {username} for user {current_user.username}")
+            return jsonify({"error": "There was an error processing the username entered. Make sure it is spelled correctly."}), 404
     else:
-        return jsonify({'error': 'Please enter your sleeper username'})
+        return jsonify({'error': 'Please enter your Sleeper username'}), 404
 
 # ------------------------------------------------------------
 # Backend Function Calls
@@ -422,8 +437,11 @@ def change_password():
             query_user.set_password(new_password)
             try:
                 db.session.commit()
+                logger.info(f"Username: {current_user.username} has successfully changed their password.")
                 return jsonify({"success": "Your password has been changed."}), 200
-            except:
+            except Exception as e:
+                db.session.rollback()
+                logger.critical(f"There was an error writing to the database while an attempt to change password: {e}")
                 return jsonify({"error": "There was an error writing to the database."}), 500
         else:
             return jsonify({"error": "Current password entered was not correct."}), 403
@@ -453,10 +471,12 @@ def generate_reg_code():
     try:
         db.session.add(new_reg_code)
         db.session.commit()
+        logger.info(f"Admin user: {current_user.username} has created a registration code: {reg_code}")
         return jsonify({
             "success": f"Registration code '{reg_code}' has been generated successfully.",
             "reg_code": reg_code
         }), 201
     except Exception as e:
+        logger.critical(f"There was an error saving the registration code to the database: {e}")
         return jsonify({"error": "There was an error saving the registration code to the database."}), 500
     

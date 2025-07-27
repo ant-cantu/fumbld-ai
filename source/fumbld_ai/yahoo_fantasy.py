@@ -3,6 +3,9 @@ import yahoo_fantasy_api as yfa
 from .utils import yahoo_api_connect, db
 from flask_login import current_user
 from .models import YahooLeague
+import logging
+
+logger = logging.getLogger("fumbld_logger")
 
 def yahoo_set_leagues():
     years = [2024] # The year we are pulling leagues from
@@ -18,8 +21,11 @@ def yahoo_set_leagues():
     ).all()
 
     if not query_leagues:
-        # Connect to the Yahoo API to make a request
-        auth_handler = yahoo_api_connect()
+        try:
+            # Connect to the Yahoo API to make a request
+            auth_handler = yahoo_api_connect()
+        except Exception as e:
+            logger.critical(f"There was an error connecting to the Yahoo! Sports API: {e}")
 
         # Create an object of yahoo_fantasy_api
         gm = yfa.Game(auth_handler, 'nfl')
@@ -92,11 +98,10 @@ def yahoo_set_leagues():
         try:
             db.session.add(add_league)
             db.session.commit()
-            print(f"[LOG]: 'user_id: {current_user.id}' 'username: {current_user.username}' successfully added 'league_id: {league_ids[x]} to database from Yahoo! Sports API.")
+            logger.info(f"User ID: {current_user.id} | Username: {current_user.username}: Successfully added 'league_id: {league_ids[x]} to database from Yahoo! Sports API.")
         except Exception as e:
             db.session.rollback()
-            print(f"[LOG][ERROR]: Unable to save data to database: {e}")
-
+            logger.critical(f"User ID: {current_user.id} | Username: {current_user.username}: The application encountered an error saving Yahoo! Sports data to the database: {e}")
 
 def yahoo_refresh():
     try:
@@ -104,13 +109,11 @@ def yahoo_refresh():
         YahooLeague.query.filter_by(user_id=current_user.id).delete()
         db.session.commit()
 
-        print(f"[LOG][DEBUG]: 'User ID: {current_user.id}' leagues have been deleted.")
-
         # Call Yahoo API to setup users leagues
         yahoo_set_leagues()
     except Exception as e:
         db.session.rollback()
-        print(f"[LOG][ERROR]: The database encountered an error: {e}")
+        logger.critical(f"User ID: {current_user.id} | Username: {current_user.username}: The application encountered an error refresh league data from Yahoo! Sports: {e}")
 
 def yahoo_get_league():
     """
@@ -119,13 +122,17 @@ def yahoo_get_league():
     Returns:
         Returns league_id and league_name from database in a dictionary format
     """
-    league_name = []
-    # query_leagues = UserLeagues.query.filter_by(user_id=current_user.id).all()
-    query_leagues = YahooLeague.query.filter_by(user_id=current_user.id).all()
-    for league in query_leagues:
-        league_name.append({"id": league.yahoo_league_id, "league_name": league.yahoo_league_name})
+    try:
+        league_name = []
+        # query_leagues = UserLeagues.query.filter_by(user_id=current_user.id).all()
+        query_leagues = YahooLeague.query.filter_by(user_id=current_user.id).all()
+        for league in query_leagues:
+            league_name.append({"id": league.yahoo_league_id, "league_name": league.yahoo_league_name})
 
-    return league_name
+        return league_name
+    except Exception as e:
+        logger.error(f"User ID: {current_user.id} | Username: {current_user.username}: Unable to read data from the database: {e}")
+        return {"error": "Unable to read data from the database"}
 
 def yahoo_get_roster(league_id):
     query_team = YahooLeague.query.filter_by(
@@ -134,15 +141,14 @@ def yahoo_get_roster(league_id):
     ).first()
 
     if query_team is None:
-        print(f"[ERROR]: League ID: {league_id} does not exist for User ID: {current_user.id}")
+        logger.error(f"User ID: {current_user.id} | Username: {current_user.username}: League ID: {league_id} does not exist for this user.")
+        return {"error": "League selected does not exist"}
     else:
         return query_team.yahoo_roster
 
 # This needs to be refactored
 # Create a database to save this information to
-def yahoo_get_opp_roster(user):
-    print(f"Pulling opponents roster for user: {user.username}") # Debug
-
+def yahoo_get_opp_roster():
     starting_positions = {'QB', 'WR', 'RB', 'K', 'TE', 'W/R/T', 'DEF'}
     auth_handler = yahoo_api_connect()
 
