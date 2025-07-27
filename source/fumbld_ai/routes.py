@@ -189,7 +189,8 @@ def account_register():
                 flash("There was an internal error with creating the account.", "error")
                 return render_template("registration.html", form=form)
         else:
-            print("Google reCaptcha was not verified!")
+            logger.warning("Google reCaptcha was not verified!")
+            flash("reCaptcha was not verified!")
     return render_template("registration.html", form=form)
         
 # User Login

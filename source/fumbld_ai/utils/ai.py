@@ -3,6 +3,9 @@ from flask import current_app
 from openai import OpenAI
 from google import genai
 from google.genai import types
+import logging
+
+logger = logging.getLogger("fumbld_logger")
 
 # Model we are using
 gemini_model = "gemini-2.5-pro"
@@ -55,6 +58,7 @@ def gemini_call(roster):
         )
         return response.text
     except Exception as e:
+        logger.critical(f"Gemini API call failed | details: {e}") 
         return {"error": "Gemini API call failed", "details": str(e)}
 
 def gpt_call(roster):

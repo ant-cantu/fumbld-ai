@@ -90,24 +90,27 @@ def yahoo_api_connect():
     except Exception as e:
         logger.error(f"User ID: {current_user.id} | Username: {current_user.username}: An error occured building token payload: {e}")        
 
-    # The token endpoint for Yahoo Fantasy Sports
-    token_url = 'https://api.login.yahoo.com/oauth2/get_token'
+    try:
+        # The token endpoint for Yahoo Fantasy Sports
+        token_url = 'https://api.login.yahoo.com/oauth2/get_token'
 
-    # Create an OAuth2Session with automatic token refresh and update callback
-    oauth = OAuth2Session(
-        client_id=consumer_key,
-        token=token_data,
-        auto_refresh_url=token_url,
-        auto_refresh_kwargs={
-            'client_id': consumer_key,
-            'client_secret': consumer_secret,
-        },
-        token_updater=token_updater
-    )
+        # Create an OAuth2Session with automatic token refresh and update callback
+        oauth = OAuth2Session(
+            client_id=consumer_key,
+            token=token_data,
+            auto_refresh_url=token_url,
+            auto_refresh_kwargs={
+                'client_id': consumer_key,
+                'client_secret': consumer_secret,
+            },
+            token_updater=token_updater
+        )
 
-    auth_handler = SimpleNamespace()
-    auth_handler.session = oauth
-    return auth_handler
+        auth_handler = SimpleNamespace()
+        auth_handler.session = oauth
+        return auth_handler
+    except Exception as e:
+        logger.error(f"User ID: {current_user.id} | Username: {current_user.username}: An error occured building OAuth Session: {e}")  
 
 # ----------------------------------------------------------------------
 # Flask routes which handle Yahoo! authorization
@@ -126,7 +129,7 @@ def yahoo_authorize():
 
             # Make sure API keys are configured correct.
             if not all([consumer_key, consumer_secret, callback_url]):
-                print("Yahoo API credentials are not properly configured.")
+                logger.critical("Yahoo API credentials are not properly configured.")
                 return redirect(url_for('main.dashboard'))
             
             try:
@@ -150,9 +153,10 @@ def yahoo_authorize():
                     response_type='code'
                 )
             except Exception as e:
-                print(f"Yahoo Authorize Error: {e}")
+                logger.error(f"User ID: {current_user.id} | Username: {current_user.username}: Yahoo! authorization error occured: {e}")  
             return redirect(auth_url)
     except RateLimitExceeded:
+        logger.warning(f"User ID: {current_user.id} | Username: {current_user.username}: Yahoo! Authorization rate limit hit.")  
         return jsonify({"error": "Please allow one hour in between Yahoo! authorization requests."})
 
 
@@ -170,12 +174,8 @@ def yahoo_callback():
     # Get Secret Key
     app_key = current_app.config.get("ENCRYPT_KEY").encode()
 
-    # The two 'if' checks are not really needed due to the 'login_required' decorator
-    # Fetch user_id by session
-    # user_id = session.get('user_id')
     if not current_user.is_authenticated:
-        # ----> Print for now, adding logger later <----
-        print("User is not logged in.")
+        logger.error(f"An attempt to access /yahoo/callback has been made without the user being logged in.")  
         return redirect(url_for('main.handle_login'))
     
     # Get 'code' arg from url
@@ -189,18 +189,16 @@ def yahoo_callback():
 
     # Check if auth code was provided by Yahoo
     if not code:
-        print("No auth code provided by Yahoo.")
+        logger.error(f"User ID: {current_user.id} | Username: {current_user.username}: No auth code was provided by Yahoo.")
         return "Missing auth code.", 400
 
     # CSRF check
     if not returned_state or returned_state != original_state:
-        # ----> Print for now, adding logger later <----
-        print("Invalid state parameter. CSRF attempt suspected.")
+        logger.critical(f"User ID: {current_user.id} | Username: {current_user.username}: Invalid state parameter. CSRF attempt suspected.")
         return "Missing state parameter.", 403
 
     try:
         token_url = 'https://api.login.yahoo.com/oauth2/get_token'
-
 
         # Prepare the payload for exchanging the authorization code for tokens
         payload = {
@@ -215,11 +213,9 @@ def yahoo_callback():
         response.raise_for_status()
         token_payload = response.json()
 
-        # ----> Print for now, adding logger later <----
-        print("Token Received! SUCCESS!")
-
+        logger.info(f"User ID: {current_user.id} | Username: {current_user.username}: User recieved authorization token.")
     except Exception as e:
-        print(f"Error getting token from Yahoo for user: {e}")
+        logger.error(f"User ID: {current_user.id} | Username: {current_user.username}: Unable to recieve authorization token from Yahoo: {e}")
         return redirect(url_for('main.dashboard'))
     
     # Access the users related YahooToken model
@@ -242,11 +238,9 @@ def yahoo_callback():
 
     try:
         db.session.commit()
-        # ----> Print for now, adding logger later <----
-        print("Success Yahoo connect!")
+        logger.info(f"User ID: {current_user.id} | Username: {current_user.username}: Successfully connected and authorized their account with Yahoo!")
     except Exception as e:
-        # ----> Print for now, adding logger later <----
-        print(f"Failed to save Yahoo token to database: {e}")
+        logger.error(f"User ID: {current_user.id} | Username: {current_user.username}: Failed to save Yahoo! token to database: {e}")
         db.session.rollback()
 
     from ..yahoo_fantasy import yahoo_refresh

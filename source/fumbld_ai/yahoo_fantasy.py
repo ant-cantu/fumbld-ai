@@ -93,7 +93,6 @@ def yahoo_set_leagues():
     
     for x in range(len(league_ids)):
         add_league = YahooLeague(league_ids[x], league_names[x], league_teams[league_ids[x]], user=current_user)
-        # print(f"[DEBUG TEAM DATA]\n\n{league_teams[league_ids[x]]}\n\n")
 
         try:
             db.session.add(add_league)
