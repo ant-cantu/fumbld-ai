@@ -22,3 +22,4 @@ migrations/
 
 # Log files
 logs/
+*.logs
