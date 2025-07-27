@@ -2,6 +2,11 @@
 .dashboard-container #header {
     justify-content: space-between;
 }
+.dashboard-container .beta-header {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #004181;
+}
 
 .dashboard-container #content {
     display: flex;
