@@ -119,7 +119,7 @@ def yahoo_api_connect():
 def yahoo_authorize():
     """Redirects the user to Yahoo for authentication."""
     try:
-        with limiter.limit("1 per hour"):
+        with limiter.limit("10 per hour"):
             #  ..models import User, YahooToken
 
             # Get Yahoo API Keys
@@ -157,7 +157,7 @@ def yahoo_authorize():
             return redirect(auth_url)
     except RateLimitExceeded:
         logger.warning(f"User ID: {current_user.id} | Username: {current_user.username}: Yahoo! Authorization rate limit hit.")  
-        return jsonify({"error": "Please allow one hour in between Yahoo! authorization requests."})
+        return jsonify({"error": "Too many request made, please allow one hour to try again! authorization requests."})
 
 
 @yahoo_bp.route('/yahoo/callback')
