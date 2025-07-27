@@ -3,8 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_wtf.csrf import CSRFProtect
-from flask import current_app
-
 db = SQLAlchemy()
 
 crsf = CSRFProtect()
