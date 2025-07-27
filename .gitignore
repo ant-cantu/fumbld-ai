@@ -11,3 +11,4 @@ venv/
 source/fumbld.db
 alembic.ini
 migrations/
+*.log
