@@ -11,6 +11,7 @@ services:
       - ./source/.env
     volumes:
       - ./source:/app
+      - ./logs:/app/logs
     expose:
       - "8000"
     depends_on:
