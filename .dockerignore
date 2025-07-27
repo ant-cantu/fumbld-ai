@@ -19,3 +19,7 @@ pgdata/
 *.db
 alembic.ini
 migrations/
+
+# Log files
+logs/
+*.logs

@@ -1,44 +1,61 @@
-import requests, json
+import requests, json, logging
 from flask_login import current_user
 from .models import SleeperLeague
 from .utils import db
 
+logger = logging.getLogger("fumbld_logger")
+
 season = "2024"
 
 def get_sleeper_userid(username):
-    response = requests.get(f'https://api.sleeper.app/v1/user/{username}')
+    try:
+        response = requests.get(f'https://api.sleeper.app/v1/user/{username}')
 
-    if response.status_code == 200:
-        data = response.json()
-        if data['user_id']:
-            return data['user_id']
-    else:
-        print({'error': response.status_code})
-
-def get_sleeper_leagues(user_id):
-    query_sleeper = SleeperLeague.query.filter_by(user_id=current_user.id).all()
-
-    if not query_sleeper:
-        response = requests.get(f"https://api.sleeper.app/v1/user/{user_id}/leagues/nfl/{season}")
-
-        league_data = []
         if response.status_code == 200:
             data = response.json()
-            for leagues in data:
-                if leagues['name'] and leagues['league_id']:
-                    name = leagues['name']
-                    league_id = leagues['league_id']
-                    league_data.append({'id': league_id, 'league_name': name})
-            return league_data
+            if data == "null":
+                raise Exception("'get_sleeper_userid()': Sleeper username does not exist")
+            
+            if data['user_id']:
+                return data['user_id']
         else:
-            print({'error': response.status_code})
-    else:
-        print("Sleeper database entry found...")
-        league_list = []
-        for league in query_sleeper:
-            league_list.append({"id": league.sleeper_league_id, "league_name": league.sleeper_league_name})
-        
-        return league_list
+            raise Exception(response.status_code)
+    except Exception as e:
+        logger.error(f"User ID: {current_user.id} | Username: {current_user.username}: {e}")
+
+def get_sleeper_leagues(user_id):
+    try:
+        query_sleeper = SleeperLeague.query.filter_by(user_id=current_user.id).all()
+
+        if not query_sleeper:
+            response = requests.get(f"https://api.sleeper.app/v1/user/{user_id}/leagues/nfl/{season}")
+            league_data = []
+
+            try: 
+                if response.status_code == 200:
+                    data = response.json()
+                    if data == "null":
+                        raise Exception("'get_sleeper_leagues()': League data does not exist.")
+                    
+                    for leagues in data:
+                        if leagues['name'] and leagues['league_id']:
+                            name = leagues['name']
+                            league_id = leagues['league_id']
+                            league_data.append({'id': league_id, 'league_name': name})
+
+                    return league_data
+                else:
+                    raise Exception(response.status_code)
+            except Exception as e:
+                logger.error(f"User ID: {current_user.id} | Username: {current_user.username}: {e}")
+        else:
+            league_list = []
+            for league in query_sleeper:
+                league_list.append({"id": league.sleeper_league_id, "league_name": league.sleeper_league_name})
+            
+            return league_list
+    except Exception as e:
+        logger.error(f"User ID: {current_user.id} | Username: {current_user.username}: {e}")
 
 def get_sleeper_roster(league_id, username):
     query_team = SleeperLeague.query.filter_by(
@@ -46,37 +63,46 @@ def get_sleeper_roster(league_id, username):
         sleeper_league_id=league_id
     ).first()
 
-    if query_team is None:
-        response = requests.get(f'https://api.sleeper.app/v1/league/{league_id}/rosters')
+    try:
+        if query_team is None:
+            response = requests.get(f'https://api.sleeper.app/v1/league/{league_id}/rosters')
 
-        team_data = []
-        if response.status_code == 200:
-            data = response.json()
-            for owners in data:
-                if owners['owner_id'] == get_sleeper_userid(username):
-                    players = owners['players']
-                    starters = owners['starters']
-                    
-                    # file_path = 'c:\\Projects\\Python\\fumbld-ai\\source\\player_data.json'
-                    file_path = '/app/player_data.json'
-                    with open(file_path, 'r') as file:
-                        player_data = json.load(file)
-                        for player_id, player_info in player_data.items():
-                            if player_id in players:
-                                name = player_info.get('full_name')
-                                position = player_info.get('position')
+            team_data = []
+            if response.status_code == 200:
+                data = response.json()
+                if data == "null":
+                    raise Exception("No roster data found for user")
+                
+                for owners in data:
+                    if owners['owner_id'] == get_sleeper_userid(username):
+                        players = owners['players']
+                        starters = owners['starters']
+                        
+                        # file_path = 'c:\\Projects\\Python\\fumbld-ai\\source\\player_data.json'
+                        file_path = '/app/player_data.json'
+                        try:
+                            with open(file_path, 'r') as file:
+                                player_data = json.load(file)
+                                for player_id, player_info in player_data.items():
+                                    if player_id in players:
+                                        name = player_info.get('full_name')
+                                        position = player_info.get('position')
 
-                                if player_id in starters:
-                                    team_data.append({'position': position, 'name': name, 'url': '🤖'})
-                                else:
-                                    team_data.append({'position': 'BN', 'name': name, 'url': '🤖'})
-                                
-            return team_data
+                                        if player_id in starters:
+                                            team_data.append({'position': position, 'name': name, 'url': '🤖'})
+                                        else:
+                                            team_data.append({'position': 'BN', 'name': name, 'url': '🤖'})
+                        except Exception as e:
+                            logger.error(f"User ID: {current_user.id} | Username: {current_user.username}: Unable to open Sleeper player data: {e}")
+                                    
+                return team_data
+            else:
+                raise Exception(response.status_code)
         else:
-            print({'error': response.status_code})
-    else:
-        # If query found, return roster from database
-        return query_team.sleeper_roster
+            # If query found, return roster from database
+            return query_team.sleeper_roster
+    except Exception as e:
+        logger.error(f"User ID: {current_user.id} | Username: {current_user.username}: {e}")
 
 def setup_sleeper(username):
     from .models import SleeperLeague
@@ -87,11 +113,8 @@ def setup_sleeper(username):
     ).all()
 
     if not query_leagues:
-        print(username)
         sleeper_user_id = get_sleeper_userid(username)
-        print(sleeper_user_id)
         sleeper_leagues = get_sleeper_leagues(sleeper_user_id)
-        print(sleeper_leagues)
 
         league_ids = []
         league_names = []
@@ -99,19 +122,18 @@ def setup_sleeper(username):
             league_ids.append(leagues['id'])
             league_names.append(leagues['league_name'])
 
-        db_list = []
         for x in range(len(sleeper_leagues)):
             add_league = SleeperLeague(username, sleeper_user_id, league_ids[x], league_names[x], get_sleeper_roster(league_ids[x], username), user=current_user)
             
             try:
                 db.session.add(add_league)
                 db.session.commit()
-                print("[LOG][NOTICE]: New sleeper data saved to database")
+                logger.info(f"User ID: {current_user.id} | Username: {current_user.username}: New Sleeper data saved to database for user")
             except Exception as e:
                 db.session.rollback()
-                print(f"[LOG][ERROR]: Unable to save data to database: {e}")
+                logger.error(f"User ID: {current_user.id} | Username: {current_user.username}: Unable to save Sleeper data to database: {e}")
     else:
-        print("[LOG][ERROR]: League already exist for user")
+        logger.error(f"User ID: {current_user.id} | Username: {current_user.username}: League data already exist for user.")
 
 def sleeper_refresh():
     try:
@@ -121,9 +143,7 @@ def sleeper_refresh():
         SleeperLeague.query.filter_by(user_id=current_user.id).delete()
         db.session.commit()
 
-        print(f"[LOG][DEBUG]: Sleeper leagues for User ID: '{current_user.id}' have been deleted.")
-
         setup_sleeper(sleeper_username)
     except Exception as e:
         db.session.rollback()
-        print(f"[LOG][ERROR]: The database encountered an error: {e}")
+        logger.error(f"User ID: {current_user.id} | Username: {current_user.username}: The database encountered an error during Sleeper refresh: {e}")
