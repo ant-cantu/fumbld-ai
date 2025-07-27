@@ -1,7 +1,7 @@
 # yahoo_oauth
 from datetime import datetime, timedelta, timezone
 from flask import Blueprint, redirect, url_for, current_app, session,request, jsonify
-# from rauth import OAuth2Service
+from rauth import OAuth2Service
 from requests_oauthlib import OAuth2Session
 from types import SimpleNamespace
 import binascii, requests, os
@@ -10,11 +10,6 @@ from flask_login import login_required, current_user
 from .helper import TokenEncryptor
 from flask_limiter.errors import RateLimitExceeded
 import base64, logging
-import os
-
-# Allow insecure transport on development machine
-if os.getenv('APP_ENV') == 'development':
-    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 # Yahoo Blueprint to handle Flask routes
 yahoo_bp = Blueprint('yahoo', __name__, template_folder='templates')
@@ -136,39 +131,27 @@ def yahoo_authorize():
             
             try:
                 # Create an OAuth2Service object to handle Yahoo API connection
-                # yahoo_service = OAuth2Service(
-                #     name='yahoo',
-                #     client_id=consumer_key,
-                #     client_secret=consumer_secret,
-                #     access_token_url='https://api.login.yahoo.com/oauth2/get_token',
-                #     authorize_url='https://api.login.yahoo.com/oauth2/request_auth'
-                # )
+                yahoo_service = OAuth2Service(
+                    name='yahoo',
+                    client_id=consumer_key,
+                    client_secret=consumer_secret,
+                    access_token_url='https://api.login.yahoo.com/oauth2/get_token',
+                    authorize_url='https://api.login.yahoo.com/oauth2/request_auth'
+                )
 
                 # Generate a random token
-                # generated_state = binascii.hexlify(os.urandom(16)).decode()
-                oauth = OAuth2Session(
-                    client_id=consumer_key,
-                    redirect_uri=callback_url
-                )
-
-                # Generate authorization URL
-                authorization_url, state = oauth.authorization_url(
-                    'https://api.login.yahoo.com/oauth2/request_auth'
-                )
-
-                # session['yahoo_oauth_state'] = generated_state
-                # Store state for CSRF protection
-                session['yahoo_oauth_state'] = state
+                generated_state = binascii.hexlify(os.urandom(16)).decode()
+                session['yahoo_oauth_state'] = generated_state
                 
                 # Build OAuth URL 
-                # auth_url = yahoo_service.get_authorize_url(
-                #     state=generated_state,
-                #     redirect_uri=callback_url,
-                #     response_type='code'
-                # )
+                auth_url = yahoo_service.get_authorize_url(
+                    state=generated_state,
+                    redirect_uri=callback_url,
+                    response_type='code'
+                )
             except Exception as e:
                 print(f"Yahoo Authorize Error: {e}")
-            return redirect(authorization_url)
+            return redirect(auth_url)
     except RateLimitExceeded:
         return jsonify({"error": "Please allow one hour in between Yahoo! authorization requests."})
 
@@ -195,9 +178,6 @@ def yahoo_callback():
         print("User is not logged in.")
         return redirect(url_for('main.handle_login'))
     
-    # added
-    authorization_response = request.url
-
     # Get 'code' arg from url
     code = request.args.get('code')
 
@@ -223,29 +203,17 @@ def yahoo_callback():
 
 
         # Prepare the payload for exchanging the authorization code for tokens
-        # payload = {
-        #     'code': code,
-        #     'redirect_uri': callback_url,
-        #     'grant_type': 'authorization_code'
-        # }
+        payload = {
+            'code': code,
+            'redirect_uri': callback_url,
+            'grant_type': 'authorization_code'
+        }
 
-        # # Exchange the authorization code for an access token from Yahoo
-        # auth = (consumer_key, consumer_secret)
-        # response = requests.post(token_url, data=payload, auth=auth)
-        # response.raise_for_status()
-        # token_payload = response.json()
-        oauth = OAuth2Session(
-            client_id=consumer_key,
-            redirect_uri=callback_url,
-            state=original_state
-        )
-
-        # Exchange authorization code for token
-        token = oauth.fetch_token(
-            'https://api.login.yahoo.com/oauth2/get_token',
-            authorization_response=authorization_response,
-            client_secret=consumer_secret
-        )
+        # Exchange the authorization code for an access token from Yahoo
+        auth = (consumer_key, consumer_secret)
+        response = requests.post(token_url, data=payload, auth=auth)
+        response.raise_for_status()
+        token_payload = response.json()
 
         # ----> Print for now, adding logger later <----
         print("Token Received! SUCCESS!")
@@ -262,14 +230,14 @@ def yahoo_callback():
 
     # Cryptography
     crypt = TokenEncryptor(app_key)
-    access_token = base64.b64encode(crypt.encrypt(token['access_token'].encode())).decode()
-    refresh_token = base64.b64encode(crypt.encrypt(token['refresh_token'].encode())).decode()
+    access_token = base64.b64encode(crypt.encrypt(token_payload.get('access_token').encode())).decode()
+    refresh_token = base64.b64encode(crypt.encrypt(token_payload.get('refresh_token').encode())).decode()
 
     # Update users database with Yahoo's token
     token_entry.access_token = access_token
     token_entry.refresh_token = refresh_token
-    token_entry.token_type = token.get('token_type', 'Bearer')
-    expires_in = token.get('expires_in', 3600)
+    token_entry.token_type = token_payload.get('token_type')
+    expires_in = token_payload.get('expires_in', 3600)
     token_entry.token_expiry = datetime.now(timezone.utc) + timedelta(seconds=expires_in)
 
     try:
