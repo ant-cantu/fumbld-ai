@@ -16,6 +16,7 @@ services:
       - "8000"
     depends_on:
       - db
+      - redis
     restart: unless-stopped
 
   frontend:
@@ -46,6 +47,19 @@ services:
     depends_on:
       - frontend
 
+  redis:
+    image: redis:7-alpine
+    container_name: fumbld_redis
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   db:
     image: postgres:15
     container_name: fumbld_db
@@ -59,3 +73,4 @@ services:
 
 volumes:
   pgdata:
+  redis_data:

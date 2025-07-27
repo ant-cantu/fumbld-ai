@@ -115,6 +115,13 @@ def init_app():
     # print(key)
     
     # Initialize Flask-Limiter
+    if app.config['APP_ENV'] == "development":
+        app.config['RATELIMIT_STORAGE_URI'] = 'memory://'
+        logger.debug('Using memory storage for rate limiting (development)')
+    else:
+        app.config['RATELIMIT_STORAGE_URI'] = 'redis://redis:6379/0'
+        logger.debug('Using Redis for rate limiting (production)')
+
     limiter.init_app(app)
 
     # Initialize CSRF Protection
