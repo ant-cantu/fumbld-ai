@@ -254,7 +254,7 @@ def account_login():
                     flash("reCaptcha was not verified!")
     except RateLimitExceeded:
         flash("Too many login attempts! Please try again in 5 minutes.", "error")
-        logger.warning(f"Login attempts exceeded limit for entered username: {username}")
+        logger.warning(f"Login attempts exceeded limit - IP: ")
 
     return render_template("login.html", form=form)
 
