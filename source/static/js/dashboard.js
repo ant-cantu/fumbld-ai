@@ -199,6 +199,40 @@ function fetch_roster(provider, league_id) {
         });
 }
 
+function yahoo_refresh() {
+    /**
+     * Sends a request to refresh Yahoo data by calling the '/fetch/yahoo/refresh' endpoint.
+     * Logs the response message to the console upon completion.
+     *
+     * @function
+     * @returns {void}
+     */
+    //fetch('/fetch/yahoo/refresh')
+    fetch('/api/yahoo/leagues/refresh', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success) {
+            modal(data.success);
+        } else {
+            modal(data.error);
+        }
+        modalCloseBtn.style.display = "block";
+    });
+}
+
+// League Refresh Button
+refreshBtn.addEventListener("click", () => {
+    modalCloseBtn.style.display = "none";
+    modal("Refreshing Yahoo! Sports league data. Please wait...");
+    yahoo_refresh();
+});
+
 // Page is finished loading
 document.addEventListener('DOMContentLoaded', () => {
     //fetch_leagues();

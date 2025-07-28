@@ -317,6 +317,21 @@
             </div>
         <!-- </div> -->
     </main>
+
+    <!-- Flash Message -->
+    <div class="flash-message">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-container">
+                    {% for category, message in messages %}
+                        <div class="flash-{{ category }}">
+                            <p>{{ message }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
     
     <!-- Footer -->
     <footer>

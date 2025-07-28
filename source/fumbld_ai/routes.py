@@ -5,12 +5,21 @@ from .sleeper import get_sleeper_leagues, get_sleeper_roster, setup_sleeper
 from .utils import db, is_safe_url, gpt_call, gemini_call, limiter
 from .forms import LoginForm, RegistrationForm, ChangePasswordForm, SleeperForm
 from flask_login import current_user, login_user, logout_user, login_required
-from .models import YahooToken, SleeperLeague, RegCodes
+from .models import YahooToken, SleeperLeague, RegCodes, YahooLeague
 from flask_limiter.errors import RateLimitExceeded
 import requests, logging
 
 logger = logging.getLogger("fumbld_logger")
 main_bp = Blueprint('main', __name__, template_folder='templates')
+
+def check_demo_account():
+    # Check if account being used is a demo account
+    from .models import User
+    query_demo_user = User.query.filter_by(id=current_user.id).first()
+    if query_demo_user.role == "demo":
+        return True
+    else:
+        return False
 
 def check_env():
     """
@@ -190,7 +199,7 @@ def account_register():
                 return render_template("registration.html", form=form)
         else:
             logger.warning("Google reCaptcha was not verified!")
-            flash("reCaptcha was not verified!")
+            flash("reCaptcha was not verified!", 'error')
     return render_template("registration.html", form=form)
         
 # User Login
@@ -218,7 +227,7 @@ def account_login():
                     # If user was not found
                     if not query_user:
                         logger.warning(f"Login attempt made using a username '{username}' that does not exist.")
-                        flash("Invalid credentials used. PLease try again.")
+                        flash("Invalid credentials used. Please try again.", 'error')
                         return render_template("login.html", form=form)
                     
                     # Check if the password matches
@@ -251,7 +260,7 @@ def account_login():
                         return render_template("login.html", form=form)
                 else:
                     logger.warning(f"reCaptcha was not verified on login screen")
-                    flash("reCaptcha was not verified!")
+                    flash("reCaptcha was not verified!", 'error')
     except RateLimitExceeded:
         flash("Too many login attempts! Please try again in 5 minutes.", "error")
         logger.warning(f"Login attempts exceeded limit - IP: ")
@@ -346,7 +355,8 @@ def get_ai_rec(provider, league_id):
 @login_required
 def get_roster(provider, league_id):
     if provider == "yahoo":
-        if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
+        yahoo_query = YahooLeague.query.filter_by(user_id=current_user.id).first()
+        if not yahoo_query:
             abort(403)
 
         return jsonify(yahoo_get_roster(league_id)), 201
@@ -363,7 +373,8 @@ def get_roster(provider, league_id):
 @login_required
 def get_leagues(provider):
     if provider == "yahoo":
-        if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
+        yahoo_query = YahooLeague.query.filter_by(user_id=current_user.id).first()
+        if not yahoo_query:
             abort(403)
 
         return jsonify(yahoo_get_league()), 201
@@ -375,11 +386,16 @@ def get_leagues(provider):
 @main_bp.route('/api/<provider>/leagues/refresh', methods=['POST'])
 @login_required
 def refresh_roster(provider):
+    if current_user.role == "demo":
+        return jsonify({'error': 'Sorry this feature is disabled for Demo accounts.'})
+    
     try:
         with limiter.limit("1 per minute"):
             if provider == "yahoo":
-                if not current_user or not current_user.yahoo_token or not current_user.yahoo_token.access_token:
+                yahoo_query = YahooLeague.query.filter_by(user_id=current_user.id).first()
+                if not yahoo_query:
                     abort(403)
+
                     # Log a warning here, user should not be able to access this without being authenticated with yahoo.
                     logger.error(f"User: {current_user.username} accessed refresh_roster API call without being authenticated.")
                     return jsonify({"error": "There was an error refreshing your Yahoo! data. Try reauthenticating yourself with Yahoo!"}), 403
@@ -404,7 +420,11 @@ def forbidden_error(error):
 @login_required
 def set_sleeper_username():
     sleeper_username_form = SleeperForm()
-    # query_sleeper = SleeperLeague.query.filter_by(user_id=current_user.id).first()
+
+    # Check if this is a demo account
+    if check_demo_account():
+        flash('Sorry this feature is disabled for Demo accounts.', 'error')
+        return redirect(url_for('main.dashboard'))
 
     if sleeper_username_form.validate_on_submit():
         # Check if sleeper data exist and handle it
@@ -429,6 +449,12 @@ def change_password():
     from .models import User
 
     pass_reset_form = ChangePasswordForm()
+
+    # Check if this is a demo account
+    if check_demo_account():
+        flash('Sorry this feature is disabled for Demo accounts.', 'error')
+        return redirect(url_for('main.dashboard'))
+    
     if pass_reset_form.validate_on_submit():
         curr_password = pass_reset_form.current_password.data
         new_password = pass_reset_form.new_password.data
