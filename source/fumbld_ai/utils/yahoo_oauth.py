@@ -1,6 +1,6 @@
 # yahoo_oauth
 from datetime import datetime, timedelta, timezone
-from flask import Blueprint, redirect, url_for, current_app, session,request, jsonify
+from flask import Blueprint, redirect, url_for, current_app, session,request, jsonify, flash, render_template
 from rauth import OAuth2Service
 from requests_oauthlib import OAuth2Session
 from types import SimpleNamespace
@@ -118,6 +118,11 @@ def yahoo_api_connect():
 @login_required
 def yahoo_authorize():
     """Redirects the user to Yahoo for authentication."""
+    # Check for Demo account
+    if current_user.role == "demo":
+        flash("Sorry this feature is disabled for Demo accounts.", 'error')
+        return redirect(url_for('main.dashboard'))
+
     try:
         with limiter.limit("10 per hour"):
             #  ..models import User, YahooToken
@@ -164,6 +169,11 @@ def yahoo_authorize():
 @login_required
 def yahoo_callback():
     """Handles the callback from Yahoo after authorization"""
+    # Check for Demo account
+    if current_user.role == "demo":
+        flash("Sorry this feature is disabled for Demo accounts.", 'error')
+        return
+    
     from ..models import YahooToken
 
     # Get Yahoo API Keys
@@ -245,5 +255,6 @@ def yahoo_callback():
 
     from ..yahoo_fantasy import yahoo_refresh
     yahoo_refresh()
-
+    flash('Successfully authorized Yahoo! Sports with Fumbld AI', 'success')
+    
     return redirect(url_for('main.dashboard'))
