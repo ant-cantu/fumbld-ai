@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /logout
+Disallow: /yahoo/
+Allow: /register
+Allow: /login
+Sitemap: https://fumbldai.com/sitemap.xml
