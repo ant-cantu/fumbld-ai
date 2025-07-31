@@ -157,3 +157,25 @@ class RegCodes(db.Model):
 
     def __repr__(self):
         return f"<RegCode {self.reg_code} - Used: {self.used}>"
+    
+# Stats Database
+class Stats(db.Model):
+	__tablename__ = "stats"
+	
+	# ID Column (Primary Key)
+	id = db.Column(db.Integer, primary_key=True)
+	
+	# Database Columns
+	current_week = db.Column(db.Integer, nullable=False)
+	current_users = db.Column(db.Integer, nullable=False)
+	weekly_logins = db.Column(db.Integer, nullable=False)
+	weekly_ai_calls = db.Column(db.Integer, nullable=False)
+	recorded_at = db.Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
+
+def __repr__(self):
+        
+    return (
+        f"<Stats(id={self.id}, current_week={self.current_week}, "
+        f"current_users={self.current_users}, weekly_logins={self.weekly_logins}, "
+        f"weekly_ai_calls={self.weekly_ai_calls}, recorded_at='{self.recorded_at}')>"
+        )
