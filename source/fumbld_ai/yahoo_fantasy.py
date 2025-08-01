@@ -104,15 +104,32 @@ def yahoo_set_leagues():
 
 def yahoo_refresh():
     try:
-        # Delete users league data from database
-        YahooLeague.query.filter_by(user_id=current_user.id).delete()
-        db.session.commit()
+        # from fumbld_ai.nfl_fantasy_projections import get_yahoo_projection
+        from .nfl_fantasy_projections import get_yahoo_projection, get_sample_projection
+        oauth = yahoo_api_connect()
+        projections = get_yahoo_projection(oauth, "Kenneth Gainwell", scoring_system="ppr", use_ml=True)
 
-        # Call Yahoo API to setup users leagues
-        yahoo_set_leagues()
+        traditional = get_yahoo_projection(oauth, "Kenneth Gainwell", scoring_system="ppr", use_ml=False)
+
+        if projections:
+            print(f"ML: {projections.player_name}: {projections.projected_points} points")
+            print(f"Data Source: {projections.data_source}")
+
+        if traditional:
+            print(f"Traditional: {traditional.player_name}: {traditional.projected_points} points")
+            print(f"Data Source: {traditional.data_source}")
     except Exception as e:
-        db.session.rollback()
-        logger.critical(f"User ID: {current_user.id} | Username: {current_user.username}: The application encountered an error refresh league data from Yahoo! Sports: {e}")
+        print(f"Error: {e}")
+    # try:
+    #     # Delete users league data from database
+    #     YahooLeague.query.filter_by(user_id=current_user.id).delete()
+    #     db.session.commit()
+
+    #     # Call Yahoo API to setup users leagues
+    #     yahoo_set_leagues()
+    # except Exception as e:
+    #     db.session.rollback()
+    #     logger.critical(f"User ID: {current_user.id} | Username: {current_user.username}: The application encountered an error refresh league data from Yahoo! Sports: {e}")
 
 def yahoo_get_league():
     """
