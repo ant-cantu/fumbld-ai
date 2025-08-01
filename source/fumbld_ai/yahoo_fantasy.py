@@ -3,6 +3,7 @@ import yahoo_fantasy_api as yfa
 from .utils import yahoo_api_connect, db
 from flask_login import current_user
 from .models import YahooLeague
+from .nfl_fantasy_projections import get_multiple_projections, get_yahoo_projection
 import logging
 
 logger = logging.getLogger("fumbld_logger")
@@ -10,6 +11,8 @@ logger = logging.getLogger("fumbld_logger")
 def yahoo_set_leagues():
     years = [2024] # The year we are pulling leagues from
     starting_positions = {'QB', 'WR', 'RB', 'K', 'TE', 'W/R/T', 'DEF', 'BN'}
+
+    print("set league called")
 
     league_ids = []
     league_names = []
@@ -62,6 +65,26 @@ def yahoo_set_leagues():
                     name = player['name']
                     position = player['selected_position']
 
+                    print(f"getting projections for... {name}")
+                    
+                    # Get player projections
+                    projections = get_yahoo_projection(
+                        oauth=auth_handler, 
+                        player_name=name, 
+                        scoring_system="ppr", 
+                        use_ml=True
+                    )
+
+                    print("Got projections")
+
+                    if projections.projected_points == None:
+                        pp = 0
+                    else:
+                        pp = projections.projected_points
+
+                    confidence = projections.confidence or 0
+                    
+
                     # Replace W/R/T with D/S/T
                     if position == "W/R/T":
                         position = "D/S/T"
@@ -70,7 +93,11 @@ def yahoo_set_leagues():
                     player_id = player['player_id']
 
                     # Append position and player names to 'team_data' list
-                    team_data.append({'position': position, 'name': name})
+                    team_data.append({
+                        'position': position, 'name': name, 
+                        'pp': pp, 
+                        'confidence': confidence
+                    })
 
                     # Append player id to 'player_ids' list, used to get headshot image url
                     player_ids.append(player_id)
@@ -104,32 +131,15 @@ def yahoo_set_leagues():
 
 def yahoo_refresh():
     try:
-        # from fumbld_ai.nfl_fantasy_projections import get_yahoo_projection
-        from .nfl_fantasy_projections import get_yahoo_projection, get_sample_projection
-        oauth = yahoo_api_connect()
-        projections = get_yahoo_projection(oauth, "Kenneth Gainwell", scoring_system="ppr", use_ml=True)
+        # Delete users league data from database
+        YahooLeague.query.filter_by(user_id=current_user.id).delete()
+        db.session.commit()
 
-        traditional = get_yahoo_projection(oauth, "Kenneth Gainwell", scoring_system="ppr", use_ml=False)
-
-        if projections:
-            print(f"ML: {projections.player_name}: {projections.projected_points} points")
-            print(f"Data Source: {projections.data_source}")
-
-        if traditional:
-            print(f"Traditional: {traditional.player_name}: {traditional.projected_points} points")
-            print(f"Data Source: {traditional.data_source}")
+        # Call Yahoo API to setup users leagues
+        yahoo_set_leagues()
     except Exception as e:
-        print(f"Error: {e}")
-    # try:
-    #     # Delete users league data from database
-    #     YahooLeague.query.filter_by(user_id=current_user.id).delete()
-    #     db.session.commit()
-
-    #     # Call Yahoo API to setup users leagues
-    #     yahoo_set_leagues()
-    # except Exception as e:
-    #     db.session.rollback()
-    #     logger.critical(f"User ID: {current_user.id} | Username: {current_user.username}: The application encountered an error refresh league data from Yahoo! Sports: {e}")
+        db.session.rollback()
+        logger.critical(f"User ID: {current_user.id} | Username: {current_user.username}: The application encountered an error refresh league data from Yahoo! Sports: {e}")
 
 def yahoo_get_league():
     """
@@ -184,3 +194,19 @@ def yahoo_get_opp_roster():
             team_data.append({'position': position, 'name': name})
 
     return team_data
+
+def get_player_projections(oauth, players):
+    try:
+        # from fumbld_ai.nfl_fantasy_projections import get_yahoo_projection
+        from .nfl_fantasy_projections import get_multiple_projections
+        # oauth = yahoo_api_connect()
+        # projections = get_yahoo_projection(oauth, "Kenneth Gainwell", scoring_system="ppr", use_ml=True)
+        projections = get_multiple_projections(oauth, player_names=players, scoring_system="ppr", use_ml=True)
+        player_projections = {}
+        for p in projections.values():
+            player_projections[p.player_name] = {'pp': {p.projected_points}, 'confidence': {p.confidence}}
+            # print(f"Player Name: {p.player_name} | Projected Points: {p.projected_points} | Confidence: {p.confidence}")
+        # traditional = get_yahoo_projection(oauth, "Kenneth Gainwell", scoring_system="ppr", use_ml=False)
+        return player_projections
+    except Exception as e:
+        print(f"Error: {e}")

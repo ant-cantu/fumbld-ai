@@ -10,7 +10,7 @@ Version: 1.0.0
 """
 
 # Debug printing control
-DEBUG_PRINTS = True  # Set to False to disable all print statements
+DEBUG_PRINTS = False  # Set to False to disable all print statements
 
 import pandas as pd
 import numpy as np
@@ -1391,6 +1391,20 @@ class NFLProjectionsLibrary:
                 fumbles=1,
                 two_point_conversions=0
             ),
+            "D'Andre Swift": PlayerStats(
+                player_name="D'Andre Swift",
+                player_id="sample_009",
+                position="RB",
+                team="CHI",
+                games_played=0,
+                rushing_yards=0,
+                rushing_tds=0,
+                receiving_yards=0,
+                receiving_tds=0,
+                receptions=0,
+                fumbles=0,
+                two_point_conversions=0
+            ),
             "San Francisco DEF": PlayerStats(
                 player_name="San Francisco DEF",
                 player_id="sample_007",
@@ -1494,7 +1508,7 @@ class NFLProjectionsLibrary:
         return projection
     
     def bulk_projections(self, oauth, player_names: List[str], 
-                        use_sample_data: bool = False) -> Dict[str, PlayerProjection]:
+                        use_sample_data: bool = False, use_ml: bool = True) -> Dict[str, PlayerProjection]:
         """
         Get projections for multiple players
         
@@ -1502,6 +1516,7 @@ class NFLProjectionsLibrary:
             oauth: Yahoo OAuth object (already authenticated)
             player_names (List[str]): List of player names
             use_sample_data (bool): If True, use sample data instead of Yahoo API
+            use_ml (bool): Whether to use ML models for projections (default: True)
             
         Returns:
             Dict[str, PlayerProjection]: Dictionary of player projections
@@ -1514,9 +1529,9 @@ class NFLProjectionsLibrary:
             debug_print(f"\n📊 Processing {i}/{len(player_names)}: {player_name}")
             
             if use_sample_data:
-                projection = self.get_sample_projection(player_name)
+                projection = self.get_sample_projection(player_name, use_ml=use_ml)
             else:
-                projection = self.get_yahoo_projection(oauth, player_name)
+                projection = self.get_yahoo_projection(oauth, player_name, use_ml=use_ml)
             
             if projection:
                 projections[player_name] = projection
@@ -1666,7 +1681,7 @@ def get_sample_projection(player_name: str, scoring_system: str = "ppr", use_ml:
 
 
 def get_multiple_projections(oauth, player_names: List[str], scoring_system: str = "ppr", 
-                           use_sample_data: bool = False) -> Dict[str, PlayerProjection]:
+                           use_sample_data: bool = False, use_ml: bool = True) -> Dict[str, PlayerProjection]:
     """
     Get projections for multiple players
     
@@ -1675,12 +1690,13 @@ def get_multiple_projections(oauth, player_names: List[str], scoring_system: str
         player_names (List[str]): List of player names
         scoring_system (str): Fantasy scoring system ("ppr", "half_ppr", "standard", "superflex")
         use_sample_data (bool): If True, use sample data instead of Yahoo API
+        use_ml (bool): Whether to use ML models for projections (default: True)
         
     Returns:
         Dict[str, PlayerProjection]: Dictionary of player projections
     """
     library = NFLProjectionsLibrary(scoring_system=scoring_system)
-    return library.bulk_projections(oauth, player_names, use_sample_data)
+    return library.bulk_projections(oauth, player_names, use_sample_data, use_ml)
 
 
 def export_to_csv(projections: Dict[str, PlayerProjection], filename: str = None) -> str:
