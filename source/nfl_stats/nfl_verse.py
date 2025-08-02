@@ -3,7 +3,20 @@ import pandas as pd
 import os, requests
 
 nfl_stats_path = os.path.join(os.getcwd(), 'source\\nfl_stats\\data')
-season = 2024
+
+response = requests.get("https://api.sleeper.app/v1/state/nfl")
+
+# print(response.json())
+df = pd.DataFrame([response.json()])
+
+week = df['week'].iloc[0]
+season = int(df['season'].iloc[0])
+season_type = df['season_type'].iloc[0]
+prev_season = int(df['previous_season'].iloc[0])
+
+if season_type == "pre":
+    print(f"Current season is in pre-season - using previous season: {prev_season}")
+    season = prev_season
 
 # -------------------------
 # GAME SCHEDULE
