@@ -14,8 +14,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY ./source /app
 
-# Set up cron job
-RUN chmod +x /app/run_nightly_jobs.sh /app/start.sh
+# Set up cron job - FIXED: Set permissions after copying files
+RUN chmod +x /app/run_nightly_jobs.sh
+RUN chmod +x /app/start.sh
 RUN crontab /app/crontab
 
 # Create log file for cron jobs
