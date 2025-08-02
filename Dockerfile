@@ -14,9 +14,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY ./source /app
 
-# Set up cron job - More robust permission setting with verification
-RUN chmod 755 /app/run_nightly_jobs.sh && \
-    chmod 755 /app/start.sh && \
+# Set up cron job - Use more explicit approach with find and chmod
+RUN find /app -name "*.sh" -exec chmod 755 {} \; && \
     ls -la /app/*.sh && \
     crontab /app/crontab
 
