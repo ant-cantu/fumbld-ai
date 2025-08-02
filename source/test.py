@@ -35,11 +35,18 @@ print(f"pp: {pp} | conf: {conf}")
 # if result is not None:
 #     print(f"Projected Points: {result['projected_points']}, Confidence: {result['confidence']}")
 
-import nfl_data_py as nfl
+# import nfl_data_py as nfl
 
-pbp = nfl.import_pbp_data([2024], downcast=False)
+# desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
 
-desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
-pbp.to_csv(os.path.join(desktop_path, "nfl_pbp_2024.csv"), index=False)
-print(f"Data saved to {os.path.join(desktop_path, 'nfl_pbp_2024.csv')}")
+# df_players = nfl.__import_rosters(release="seasonal", years=[2024])
+# df_players.to_csv(rf'{desktop_path}\\df_players_2024.csv', index=False)
+# print(f"✅ Exported df_players_2024.csv")
+
+name = "Josh Allen"
+player = pd.read_csv(os.path.join(os.path.dirname(__file__), "nfl_stats/data/df_players_2024.csv"))
+player_url = player[player['player_name'].str.contains(name, case=False, na=False)]
+if not player_url.empty:
+    print(player_url['headshot_url'].iloc[0])
+
 

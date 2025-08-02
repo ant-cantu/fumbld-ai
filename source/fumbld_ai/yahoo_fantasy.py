@@ -120,6 +120,7 @@ def yahoo_refresh():
     try:
         # Delete users league data from database
         YahooLeague.query.filter_by(user_id=current_user.id).delete()
+        
         db.session.commit()
 
         # Call Yahoo API to setup users leagues

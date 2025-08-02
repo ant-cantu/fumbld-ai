@@ -2,6 +2,8 @@ import requests, json, logging
 from flask_login import current_user
 from .models import SleeperLeague
 from .utils import db
+import pandas as pd
+import os, re
 
 logger = logging.getLogger("fumbld_logger")
 
@@ -88,10 +90,23 @@ def get_sleeper_roster(league_id, username):
                                         name = player_info.get('full_name')
                                         position = player_info.get('position')
 
-                                        if player_id in starters:
-                                            team_data.append({'position': position, 'name': name, 'url': '🤖'})
+                                        # Projections
+                                        projections = get_player_projection(remove_jr_suffix(name))
+                                        if name == "Los Angeles":
+                                            pp = "??"
                                         else:
-                                            team_data.append({'position': 'BN', 'name': name, 'url': '🤖'})
+                                            pp = projections.iloc[0]
+                                            conf = projections.iloc[1]
+
+                                        player_data = pd.read_csv("/app/nfl_stats/data/df_players_2024.csv")
+                                        player_url = player_data[player_data['player_name'].str.contains(name, case=False, na=False)]
+                                        if not player_url.empty:
+                                            url = player_url['headshot_url'].iloc[0]
+
+                                        if player_id in starters:
+                                            team_data.append({'position': position, 'name': name, 'url': url, 'pp': pp, 'confidence': conf})
+                                        else:
+                                            team_data.append({'position': 'BN', 'name': name, 'url': url, 'pp': pp, 'confidence': conf})
                         except Exception as e:
                             logger.error(f"User ID: {current_user.id} | Username: {current_user.username}: Unable to open Sleeper player data: {e}")
                                     
@@ -147,3 +162,43 @@ def sleeper_refresh():
     except Exception as e:
         db.session.rollback()
         logger.error(f"User ID: {current_user.id} | Username: {current_user.username}: The database encountered an error during Sleeper refresh: {e}")
+
+def get_player_projection(player_name):
+    csv_path = os.path.join(os.path.dirname(__file__), "..", "df_projected_points_2024.csv")
+
+    try:
+        nfl_data = pd.read_csv(csv_path)
+        player_data = nfl_data[nfl_data['player_name'].str.contains(player_name, case=False, na=False)]
+        if not player_data.empty:
+            return player_data[['projected_points', 'confidence']].iloc[0]
+        else:
+            return None
+    except FileNotFoundError:
+        # Add debugging info
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Projections file not found at {csv_path}")
+        logger.error(f"Current working directory: {os.getcwd()}")
+        logger.error(f"Script directory: {os.path.dirname(__file__)}")
+        try:
+            logger.error(f"Contents of parent directory: {os.listdir(os.path.dirname(os.path.dirname(__file__)))}")
+        except:
+            pass
+        return None
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error reading projections file: {e}")
+        return None
+
+# Fix player names with suffix  
+def remove_jr_suffix(name):
+    print(f"Input: '{name}' (repr: {repr(name)})")
+    # Match 'Jr', 'Jr.', 'jr', 'jr.', 'JR', 'JR.', etc., only if at the end
+    # Allow for optional space/comma before Jr
+    pattern = r'[ ,]*Jr\.?$'
+    match = re.search(pattern, name, flags=re.IGNORECASE)
+    print(f"Pattern match: {match}")
+    result = re.sub(pattern, '', name, flags=re.IGNORECASE).strip()
+    print(f"Result: '{result}'")
+    return result

@@ -205,7 +205,7 @@ function fetch_roster(provider, league_id) {
         });
 }
 
-function yahoo_refresh() {
+function league_refresh(provider) {
     /**
      * Sends a request to refresh Yahoo data by calling the '/fetch/yahoo/refresh' endpoint.
      * Logs the response message to the console upon completion.
@@ -214,7 +214,7 @@ function yahoo_refresh() {
      * @returns {void}
      */
     //fetch('/fetch/yahoo/refresh')
-    fetch('/api/yahoo/leagues/refresh', {
+    fetch('/api/' + provider + '/leagues/refresh', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -235,8 +235,8 @@ function yahoo_refresh() {
 // League Refresh Button
 refreshBtn.addEventListener("click", () => {
     modalCloseBtn.style.display = "none";
-    modal("Refreshing Yahoo! Sports league data. Please wait...");
-    yahoo_refresh();
+    modal("Refreshing league data. Please wait...");
+    league_refresh(serviceDropDown.value);
 });
 
 // Page is finished loading
