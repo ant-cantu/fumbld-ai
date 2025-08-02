@@ -12,6 +12,12 @@
 
     .hideondesktop {
         display: inherit;
+        /* display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        border-bottom: 2px solid black; */
     }
 
     main {
@@ -55,6 +61,7 @@
         padding: 10px 0;
         transition: left 0.3s ease;
         display: flex;
+        align-items: center;
         z-index: 1000;
     }
 
@@ -67,8 +74,41 @@
         align-items: center;
     }
 
+    .nav-bar ul li div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    #mobile-nav-menu {
+        border-bottom: 1px solid black;
+    }
+    
+    .user-nav-container #dashboard,
+    #ai,
+    #matchups,
+    #rankings,
+    #settings {
+        border-radius: 0;
+        width: 175px;
+
+    }
+
+    .user-nav-container #dashboard.active,
+    #ai.active,
+    #matchups.active,
+    #rankings.active,
+    #settings.active {
+        border-radius: 0;
+    }
+
     .nav-links.show {
         left: 0px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
     }
 
     /* figure out content height */
@@ -91,6 +131,7 @@
         flex-direction: column;
         background-color: transparent;
         gap: 0;
+        padding-top: 0;
     }
     .dashboard-container img {
         border-radius: 50%;
