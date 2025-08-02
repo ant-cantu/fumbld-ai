@@ -14,12 +14,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY ./source /app
 
-# Set up permissions and cron job - separate commands for better control
-RUN ls -la /app/
-RUN chmod 755 /app/run_nightly_jobs.sh
-RUN chmod 755 /app/start.sh
-RUN ls -la /app/*.sh
-RUN crontab /app/crontab
+# Create a modified crontab that uses bash explicitly
+RUN echo "0 0 * * * /bin/bash /app/run_nightly_jobs.sh >> /var/log/nightly_jobs.log 2>&1" > /app/crontab_bash && \
+    crontab /app/crontab_bash
 
 # Create log file for cron jobs
 RUN touch /var/log/nightly_jobs.log
@@ -27,5 +24,5 @@ RUN touch /var/log/nightly_jobs.log
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 
-# Start with startup script that runs both cron and Gunicorn - use explicit bash
+# Start with bash explicitly
 CMD ["/bin/bash", "/app/start.sh"]
