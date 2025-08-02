@@ -1,0 +1,2 @@
+# Run nightly NFL data jobs at midnight every day
+0 0 * * * /app/run_nightly_jobs.sh >> /var/log/nightly_jobs.log 2>&1

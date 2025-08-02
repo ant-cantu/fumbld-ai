@@ -3,7 +3,8 @@ import yahoo_fantasy_api as yfa
 from .utils import yahoo_api_connect, db
 from flask_login import current_user
 from .models import YahooLeague
-import logging
+import pandas as pd
+import logging, os, re
 
 logger = logging.getLogger("fumbld_logger")
 
@@ -62,6 +63,15 @@ def yahoo_set_leagues():
                     name = player['name']
                     position = player['selected_position']
 
+                    # Get player projections
+                    if name == "Los Angeles":
+                        pp = "??"
+                        confidence = "??"
+                    else:
+                        projections = get_player_projection(remove_jr_suffix(name))
+                        pp = projections.iloc[0]
+                        confidence = projections.iloc[1]
+
                     # Replace W/R/T with D/S/T
                     if position == "W/R/T":
                         position = "D/S/T"
@@ -70,7 +80,11 @@ def yahoo_set_leagues():
                     player_id = player['player_id']
 
                     # Append position and player names to 'team_data' list
-                    team_data.append({'position': position, 'name': name})
+                    team_data.append({
+                        'position': position, 'name': name, 
+                        'pp': pp, 
+                        'confidence': confidence
+                    })
 
                     # Append player id to 'player_ids' list, used to get headshot image url
                     player_ids.append(player_id)
@@ -167,3 +181,43 @@ def yahoo_get_opp_roster():
             team_data.append({'position': position, 'name': name})
 
     return team_data
+
+def get_player_projection(player_name):
+    csv_path = os.path.join(os.path.dirname(__file__), "..", "df_projected_points_2024.csv")
+
+    try:
+        nfl_data = pd.read_csv(csv_path)
+        player_data = nfl_data[nfl_data['player_name'].str.contains(player_name, case=False, na=False)]
+        if not player_data.empty:
+            return player_data[['projected_points', 'confidence']].iloc[0]
+        else:
+            return None
+    except FileNotFoundError:
+        # Add debugging info
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Projections file not found at {csv_path}")
+        logger.error(f"Current working directory: {os.getcwd()}")
+        logger.error(f"Script directory: {os.path.dirname(__file__)}")
+        try:
+            logger.error(f"Contents of parent directory: {os.listdir(os.path.dirname(os.path.dirname(__file__)))}")
+        except:
+            pass
+        return None
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error reading projections file: {e}")
+        return None
+
+# Fix player names with suffix  
+def remove_jr_suffix(name):
+    print(f"Input: '{name}' (repr: {repr(name)})")
+    # Match 'Jr', 'Jr.', 'jr', 'jr.', 'JR', 'JR.', etc., only if at the end
+    # Allow for optional space/comma before Jr
+    pattern = r'[ ,]*Jr\.?$'
+    match = re.search(pattern, name, flags=re.IGNORECASE)
+    print(f"Pattern match: {match}")
+    result = re.sub(pattern, '', name, flags=re.IGNORECASE).strip()
+    print(f"Result: '{result}'")
+    return result
