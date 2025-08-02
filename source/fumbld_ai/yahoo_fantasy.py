@@ -12,8 +12,6 @@ def yahoo_set_leagues():
     years = [2024] # The year we are pulling leagues from
     starting_positions = {'QB', 'WR', 'RB', 'K', 'TE', 'W/R/T', 'DEF', 'BN'}
 
-    print("set league called")
-
     league_ids = []
     league_names = []
     league_teams = {}
@@ -70,9 +68,7 @@ def yahoo_set_leagues():
                         pp = "??"
                         confidence = "??"
                     else:
-                        print(f"getting playe projections for: {name}")
                         projections = get_player_projection(remove_jr_suffix(name))
-                        print(f"got projections: \n{projections}")
                         pp = projections.iloc[0]
                         confidence = projections.iloc[1]
 
