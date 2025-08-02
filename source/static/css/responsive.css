@@ -137,24 +137,28 @@
     } */
 
     
-    .roster tr {
+    .roster .starters tr,
+    .roster .bench tr {
         width: 100vw;
         display: flex;
         justify-content: stretch;
         align-items:stretch;
         height: 100%;
     }
-    .roster td {
+    .roster .starters td,
+    .roster .bench td {
         text-align: center;
         display: flex;
         justify-content: center;
         align-items: center;
         width: 20%;
     }
-    .roster td:nth-child(2) {
+    .roster .starters td:nth-child(2),
+    .roster .bench td:nth-child(2) {
         width: 50%;
     }
-    .roster td:nth-child(1) {
+    .roster .starters td:nth-child(1),
+    .roster .bench td:nth-child(1) {
         width: 130px;
     }
 
