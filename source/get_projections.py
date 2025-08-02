@@ -93,6 +93,50 @@ class ProjectionsGenerator:
         logger.info(f"Using {self.projection_year} for projections")
         logger.info(f"Output file: {self.output_filepath}")
     
+    def _get_team_city_map(self) -> Dict[str, str]:
+        """Get team abbreviation to full city name mapping"""
+        return {
+            'ARI': 'Arizona',
+            'ATL': 'Atlanta', 
+            'BAL': 'Baltimore',
+            'BUF': 'Buffalo',
+            'CAR': 'Carolina',
+            'CHI': 'Chicago',
+            'CIN': 'Cincinnati',
+            'CLE': 'Cleveland',
+            'DAL': 'Dallas',
+            'DEN': 'Denver',
+            'DET': 'Detroit',
+            'GB': 'Green Bay',
+            'HOU': 'Houston',
+            'IND': 'Indianapolis',
+            'JAX': 'Jacksonville',
+            'KC': 'Kansas City',
+            'LV': 'Las Vegas',
+            'LAC': 'Los Angeles',
+            'LAR': 'Los Angeles',
+            'MIA': 'Miami',
+            'MIN': 'Minnesota',
+            'NE': 'New England',
+            'NO': 'New Orleans',
+            'NYG': 'New York',
+            'NYJ': 'New York',
+            'PHI': 'Philadelphia',
+            'PIT': 'Pittsburgh',
+            'SF': 'San Francisco',
+            'SEA': 'Seattle',
+            'TB': 'Tampa Bay',
+            'TEN': 'Tennessee',
+            'WAS': 'Washington'
+        }
+    
+    def _get_team_abbr_from_full_name(self, full_name: str) -> str:
+        """Convert full team name back to abbreviation for library calls"""
+        team_city_map = self._get_team_city_map()
+        # Create reverse mapping
+        reverse_map = {v: k for k, v in team_city_map.items()}
+        return reverse_map.get(full_name, full_name)
+    
     def _find_available_data_years(self) -> Set[int]:
         """Find all available data years in the data directory"""
         years = set()
@@ -181,15 +225,20 @@ class ProjectionsGenerator:
         dst_files = list(self.data_path.glob("dst_stats_*.csv"))
         if dst_files:
             total_dst_records = 0
+            team_city_map = self._get_team_city_map()
+            
             for dst_file in dst_files:
                 try:
                     df_dst = pd.read_csv(dst_file)
                     total_dst_records += len(df_dst)
                     
                     for _, row in df_dst.iterrows():
-                        team = row.get('team', '').strip().upper()
-                        if team:
-                            players_by_position['DEF'].add(f"{team} DEF")
+                        team_abbr = row.get('team', '').strip().upper()
+                        if team_abbr and team_abbr in team_city_map:
+                            full_team_name = team_city_map[team_abbr]
+                            players_by_position['DEF'].add(full_team_name)
+                        elif team_abbr:  # Fallback for unknown abbreviations
+                            players_by_position['DEF'].add(f"{team_abbr} Defense")
                 except Exception as e:
                     logger.warning(f"Error reading {dst_file}: {e}")
             
@@ -206,10 +255,24 @@ class ProjectionsGenerator:
                     df_kicker = pd.read_csv(kicker_file)
                     total_kicker_records += len(df_kicker)
                     
-                    for _, row in df_kicker.iterrows():
-                        kicker_name = row.get('kicker', '').strip()
-                        if kicker_name:
-                            players_by_position['K'].add(kicker_name)
+                    # Check if we have the 'kicker' column (new format) or other column names
+                    kicker_column = None
+                    if 'kicker' in df_kicker.columns:
+                        kicker_column = 'kicker'
+                    elif 'player_name' in df_kicker.columns:
+                        kicker_column = 'player_name'
+                    elif 'kicker_name' in df_kicker.columns:
+                        kicker_column = 'kicker_name'
+                    
+                    if kicker_column:
+                        for _, row in df_kicker.iterrows():
+                            kicker_name = row.get(kicker_column, '')
+                            # Handle NaN values and ensure it's a string
+                            if pd.notna(kicker_name) and str(kicker_name).strip():
+                                players_by_position['K'].add(str(kicker_name).strip())
+                    else:
+                        logger.warning(f"No recognized kicker name column found in {kicker_file}. Available columns: {list(df_kicker.columns)}")
+                        
                 except Exception as e:
                     logger.warning(f"Error reading {kicker_file}: {e}")
             
@@ -438,19 +501,26 @@ class ProjectionsGenerator:
                         skipped_count += 1
                         continue
                     
+                    # For defense teams, convert full name back to abbreviation for library call
+                    projection_name = player_name
+                    if position == 'DEF':
+                        team_abbr = self._get_team_abbr_from_full_name(player_name)
+                        if team_abbr != player_name:  # If we found a mapping
+                            projection_name = f"{team_abbr} DEF"
+                    
                     # Get ML projection
-                    projection = self.proj_lib.get_projection(player_name, position, use_ml=use_ml)
+                    projection = self.proj_lib.get_projection(projection_name, position, use_ml=use_ml)
                     
                     if projection:
                         # Get injury status
                         injury_status = self.get_injury_status(player_name)
                         
-                        # Get season stats
-                        season_stats = self.get_season_stats(player_name, position)
+                        # Get season stats  
+                        season_stats = self.get_season_stats(projection_name, position)
                         
                         # Create projection record with rounded values
                         record = {
-                            'player_name': projection.player_name,
+                            'player_name': player_name,  # Use the full team name for defense
                             'position': projection.position,
                             'team': projection.team,
                             'projected_points': round(projection.projected_points, 2),

@@ -3,8 +3,8 @@ import yahoo_fantasy_api as yfa
 from .utils import yahoo_api_connect, db
 from flask_login import current_user
 from .models import YahooLeague
-from .nfl_fantasy_projections import get_multiple_projections, get_yahoo_projection
-import logging
+import pandas as pd
+import logging, os, re
 
 logger = logging.getLogger("fumbld_logger")
 
@@ -65,25 +65,16 @@ def yahoo_set_leagues():
                     name = player['name']
                     position = player['selected_position']
 
-                    print(f"getting projections for... {name}")
-                    
                     # Get player projections
-                    projections = get_yahoo_projection(
-                        oauth=auth_handler, 
-                        player_name=name, 
-                        scoring_system="ppr", 
-                        use_ml=True
-                    )
-
-                    print("Got projections")
-
-                    if projections.projected_points == None:
-                        pp = 0
+                    if name == "Los Angeles":
+                        pp = "??"
+                        confidence = "??"
                     else:
-                        pp = projections.projected_points
-
-                    confidence = projections.confidence or 0
-                    
+                        print(f"getting playe projections for: {name}")
+                        projections = get_player_projection(remove_jr_suffix(name))
+                        print(f"got projections: \n{projections}")
+                        pp = projections.iloc[0]
+                        confidence = projections.iloc[1]
 
                     # Replace W/R/T with D/S/T
                     if position == "W/R/T":
@@ -195,18 +186,42 @@ def yahoo_get_opp_roster():
 
     return team_data
 
-def get_player_projections(oauth, players):
+def get_player_projection(player_name):
+    csv_path = os.path.join(os.path.dirname(__file__), "..", "df_projected_points_2024.csv")
+
     try:
-        # from fumbld_ai.nfl_fantasy_projections import get_yahoo_projection
-        from .nfl_fantasy_projections import get_multiple_projections
-        # oauth = yahoo_api_connect()
-        # projections = get_yahoo_projection(oauth, "Kenneth Gainwell", scoring_system="ppr", use_ml=True)
-        projections = get_multiple_projections(oauth, player_names=players, scoring_system="ppr", use_ml=True)
-        player_projections = {}
-        for p in projections.values():
-            player_projections[p.player_name] = {'pp': {p.projected_points}, 'confidence': {p.confidence}}
-            # print(f"Player Name: {p.player_name} | Projected Points: {p.projected_points} | Confidence: {p.confidence}")
-        # traditional = get_yahoo_projection(oauth, "Kenneth Gainwell", scoring_system="ppr", use_ml=False)
-        return player_projections
+        nfl_data = pd.read_csv(csv_path)
+        player_data = nfl_data[nfl_data['player_name'].str.contains(player_name, case=False, na=False)]
+        if not player_data.empty:
+            return player_data[['projected_points', 'confidence']].iloc[0]
+        else:
+            return None
+    except FileNotFoundError:
+        # Add debugging info
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Projections file not found at {csv_path}")
+        logger.error(f"Current working directory: {os.getcwd()}")
+        logger.error(f"Script directory: {os.path.dirname(__file__)}")
+        try:
+            logger.error(f"Contents of parent directory: {os.listdir(os.path.dirname(os.path.dirname(__file__)))}")
+        except:
+            pass
+        return None
     except Exception as e:
-        print(f"Error: {e}")
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error reading projections file: {e}")
+        return None
+
+# Fix player names with suffix  
+def remove_jr_suffix(name):
+    print(f"Input: '{name}' (repr: {repr(name)})")
+    # Match 'Jr', 'Jr.', 'jr', 'jr.', 'JR', 'JR.', etc., only if at the end
+    # Allow for optional space/comma before Jr
+    pattern = r'[ ,]*Jr\.?$'
+    match = re.search(pattern, name, flags=re.IGNORECASE)
+    print(f"Pattern match: {match}")
+    result = re.sub(pattern, '', name, flags=re.IGNORECASE).strip()
+    print(f"Result: '{result}'")
+    return result

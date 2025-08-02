@@ -59,19 +59,36 @@ print(f"✅ Exported df_weekly_{season}.csv")
 # Load play-by-play data for the season
 pbp = nfl.import_pbp_data([season], downcast=False)
 
+# Get roster data to map kicker IDs to full names
+roster = nfl.__import_rosters(release='seasonal', years=[season])
+kicker_roster = roster[roster['position'] == 'K'][['player_id', 'player_name', 'team']].drop_duplicates()
+
 kicker_plays = pbp[
     pbp['kicker_player_name'].notna() & 
     pbp['play_type'].isin(['field_goal', 'extra_point'])
 ]
 
-kicker_stats = kicker_plays.groupby(['kicker_player_name', 'posteam', 'week']).agg({
+# Use kicker_player_id to get full names from roster
+kicker_stats = kicker_plays.groupby(['kicker_player_id', 'posteam', 'week']).agg({
     'field_goal_result': lambda x: (x == 'made').sum(),
     'kick_distance': ['mean', 'max', 'count'],
     'extra_point_result': lambda x: (x == 'good').sum()
 }).reset_index()
 
 # Flatten columns
-kicker_stats.columns = ['kicker', 'team', 'week', 'fg_made', 'fg_avg_dist', 'fg_long', 'fg_attempts', 'xp_made']
+kicker_stats.columns = ['kicker_id', 'team', 'week', 'fg_made', 'fg_avg_dist', 'fg_long', 'fg_attempts', 'xp_made']
+
+# Merge with roster to get full player names
+kicker_stats = kicker_stats.merge(
+    kicker_roster[['player_id', 'player_name']], 
+    left_on='kicker_id', 
+    right_on='player_id', 
+    how='left'
+).drop(['kicker_id', 'player_id'], axis=1)
+
+# Reorder columns to put player name first
+kicker_stats = kicker_stats[['player_name', 'team', 'week', 'fg_made', 'fg_avg_dist', 'fg_long', 'fg_attempts', 'xp_made']]
+kicker_stats.rename(columns={'player_name': 'kicker'}, inplace=True)
 
 # -------------------------
 # DST STATS
