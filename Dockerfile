@@ -25,5 +25,5 @@ RUN touch /var/log/nightly_jobs.log
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 
-# Start with startup script that runs both cron and Gunicorn
-CMD ["/app/start.sh"]
+# Start with startup script that runs both cron and Gunicorn - use explicit bash
+CMD ["/bin/bash", "/app/start.sh"]
