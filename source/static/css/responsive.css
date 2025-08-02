@@ -129,6 +129,39 @@
         text-align: center;
     }
 
+    /* #col2 {
+        width: 30%;
+    }
+    #col3, #col4, #col5 {
+        width: 15%;
+    } */
+
+    
+    .roster tr {
+        width: 100vw;
+        display: flex;
+        justify-content: stretch;
+        align-items:stretch;
+        height: 100%;
+    }
+    .roster td {
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 20%;
+    }
+    .roster td:nth-child(2) {
+        width: 50%;
+    }
+    .roster td:nth-child(1) {
+        width: 130px;
+    }
+
+    .schedule {
+        width: 100vw;
+    }
+
     .selections {
         display: flex;
         justify-content: center;
