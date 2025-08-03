@@ -1,7 +1,7 @@
 from flask import render_template, Blueprint, flash, redirect, url_for, request, abort, jsonify, current_app
 import pytz, datetime
 from .yahoo_fantasy import yahoo_get_roster, yahoo_get_league, yahoo_refresh
-from .sleeper import get_sleeper_leagues, get_sleeper_roster, setup_sleeper
+from .sleeper import get_sleeper_leagues, get_sleeper_roster, setup_sleeper, sleeper_refresh
 from .utils import db, is_safe_url, gpt_call, gemini_call, limiter
 from .forms import LoginForm, RegistrationForm, ChangePasswordForm, SleeperForm
 from flask_login import current_user, login_user, logout_user, login_required
@@ -275,6 +275,10 @@ def handle_logout():
     logout_user()
     return redirect(url_for('main.account_login'))
 
+@main_bp.route('/terms-and-privacy')
+def handle_tos():
+    return render_template('terms-and-privacy.html')
+
 # ------------------------------------------------------------------------
 # Fumbld AI API
 @main_bp.route('/api/<provider>/leagues/<league_id>/recommendations', methods=['GET'])
@@ -407,6 +411,23 @@ def refresh_roster(provider):
                 except Exception as e:
                     logger.error(f"There was an error refreshing Yahoo! data for user: {current_user.username} | {e}")
                     return jsonify({"error": "There was an error refreshing your Yahoo! data. Please submit an error report."}), 500
+            
+            if provider == "sleeper":
+                sleeper_query = SleeperLeague.query.filter_by(user_id=current_user.id).first()
+                if not sleeper_query:
+                    abort(403)
+
+                    logger.error(f"User: {current_user.username} accessed refresh_roster API endpoint without being authenticated.")
+                    return jsonify({'error': "There was an error refreshing your Sleeper data. Make sure you entered the correct username in settings."}), 403
+                
+                try:
+                    # Delete sleeper data and refresh
+                    sleeper_refresh()
+                    return jsonify({"success": "Sleeper resfresh has completed. Thanks for waiting! 🏈🏆"}), 200
+                except Exception as e:
+                    logger.error(f"There was an error refreshing Sleeper data for user: {current_user.username} | {e}")
+                    return jsonify({"error": "There was an error refreshing your Sleeper data. Please submit an error report."}), 500
+                    
     except RateLimitExceeded:
         return jsonify({"error": "Please give one minute in between Yahoo refresh."}), 429
 

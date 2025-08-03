@@ -300,6 +300,16 @@ footer {
     opacity: 1;
 }
 
+#terms-link {
+    text-decoration: none;
+    color: white;
+    font-weight: 900;
+    transition: 0.3s ease;
+}
+#terms-link:hover {
+    color: #0b628f;
+}
+
 /* Mobile Queries */
 @media (max-width: 1024px) {
     .hero-box {

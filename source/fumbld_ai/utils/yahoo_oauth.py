@@ -46,6 +46,7 @@ def update_token_in_db(user, token):
 
 @login_required
 def yahoo_api_connect():
+    logger.debug("----------------- Yahoo API Connect Called -----------------")
     """
     Connects user to the Yahoo! Sports API
 
