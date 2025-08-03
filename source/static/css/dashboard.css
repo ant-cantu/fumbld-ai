@@ -167,6 +167,16 @@ main {
     margin: 0px 5px;
 }
 
+#terms-link {
+    text-decoration: none;
+    color: white;
+    font-weight: 900;
+    transition: 0.3s ease;
+}
+#terms-link:hover {
+    color: #0b628f;
+}
+
 /* - - - Global Style - - - */
 .dashboard-container,
 .ai-container,

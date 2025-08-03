@@ -275,6 +275,10 @@ def handle_logout():
     logout_user()
     return redirect(url_for('main.account_login'))
 
+@main_bp.route('/terms-and-privacy')
+def handle_tos():
+    return render_template('terms-and-privacy.html')
+
 # ------------------------------------------------------------------------
 # Fumbld AI API
 @main_bp.route('/api/<provider>/leagues/<league_id>/recommendations', methods=['GET'])

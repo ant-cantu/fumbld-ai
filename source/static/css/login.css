@@ -256,6 +256,16 @@ body {
     margin-bottom: 10px;
 }
 
+#terms-link {
+    text-decoration: none;
+    color: white;
+    font-weight: 900;
+    transition: 0.3s ease;
+}
+#terms-link:hover {
+    color: #0b628f;
+}
+
 @media only screen and (max-width: 767.98px) { 
     /* Hamburger Menu Navigation */
     .nav-bar button {
