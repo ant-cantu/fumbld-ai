@@ -10,7 +10,7 @@ cd /app
 
 # Run nfl_verse.py first and wait for completion
 echo "$(date): Running nfl_verse.py..."
-python nfl_stats/nfl_verse.py
+/usr/local/bin/python nfl_stats/nfl_verse.py
 if [ $? -eq 0 ]; then
     echo "$(date): nfl_verse.py completed successfully"
 else
@@ -20,7 +20,7 @@ fi
 
 # Run get_projections.py after nfl_verse.py completes
 echo "$(date): Running get_projections.py..."
-python get_projections.py
+/usr/local/bin/python get_projections.py
 if [ $? -eq 0 ]; then
     echo "$(date): get_projections.py completed successfully"
 else
