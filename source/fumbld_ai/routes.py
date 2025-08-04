@@ -97,6 +97,9 @@ def dashboard():
     # Is user an admin?
     admin_user = current_user.role == "admin"
 
+    if check_demo_account():
+        yahoo_auth = True
+
     return render_template("dashboard.html",
                             username=current_user.username,
                             last_login=last_login,
