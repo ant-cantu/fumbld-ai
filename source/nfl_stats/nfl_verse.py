@@ -22,14 +22,14 @@ if season_type == "pre":
 # GAME SCHEDULE
 # -------------------------
 df_schedule = nfl.import_schedules([season])
-df_schedule.to_csv(rf'{nfl_stats_path}\\df_schedule_' + str(season) + ".csv", index=False)
+df_schedule.to_csv(os.path.join(nfl_stats_path, f'df_schedule_{season}.csv'), index=False)
 print(f"✅ Exported df_schedule_{season}.csv")
 
 # -------------------------
 # INJURY REPORT
 # -------------------------
-df_depth_chart = nfl.import_injuries([season])
-df_depth_chart.to_csv(rf'{nfl_stats_path}\\df_injury_' + str(season) + ".csv", index=False)
+df_injury_chart = nfl.import_injuries([season])
+df_injury_chart.to_csv(os.path.join(nfl_stats_path, f'df_injury_{season}.csv'), index=False)
 print(f"✅ Exported df_injury_{season}.csv")
 
 # -------------------------
@@ -63,7 +63,7 @@ df_weekly = nfl.import_weekly_data(
     projection_stats,
     downcast=False
 )
-df_weekly.to_csv(rf'{nfl_stats_path}\\df_weekly_2024.csv', index=False)
+df_weekly.to_csv(os.path.join(nfl_stats_path, f'df_weekly_{season}.csv'), index=False)
 print(f"✅ Exported df_weekly_{season}.csv")
 
 # -------------------------
@@ -139,6 +139,6 @@ dst_stats.columns = ['team', 'week', 'sacks', 'interceptions', 'fumbles', 'safet
 # -------------------------
 # Export to CSV
 # -------------------------
-kicker_stats.to_csv(f'{nfl_stats_path}\\kicker_stats_2024.csv', index=False)
-dst_stats.to_csv(f'{nfl_stats_path}\\dst_stats_2024.csv', index=False)
+kicker_stats.to_csv(os.path.join(nfl_stats_path, f'kicker_stats_{season}.csv'), index=False)
+dst_stats.to_csv(os.path.join(nfl_stats_path, f'dst_stats_{season}.csv'), index=False)
 print(f"✅ Exported kicker_stats_{season}.csv and dst_stats_{season}.csv")
