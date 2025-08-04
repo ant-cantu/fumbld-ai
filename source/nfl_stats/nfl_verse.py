@@ -2,7 +2,7 @@ import nfl_data_py as nfl
 import pandas as pd
 import os, requests
 
-nfl_stats_path = os.path.join(os.getcwd(), 'source\\nfl_stats\\data')
+nfl_stats_path = os.path.join(os.getcwd(), 'source', 'nfl_stats', 'data')
 
 response = requests.get("https://api.sleeper.app/v1/state/nfl")
 
