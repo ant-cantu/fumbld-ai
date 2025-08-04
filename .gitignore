@@ -15,6 +15,8 @@ migrations/
 # Log files
 logs/
 *.logs
+*.log
 
 # ML Files
 ml_models/
+source/projections_generation.log
