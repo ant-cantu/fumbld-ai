@@ -1,0 +1,30 @@
+2025-08-04 00:00:22,654 - INFO - NFL Player Projections Generator Starting...
+2025-08-04 00:00:23,162 - INFO - No 2025 data found, using 2024 data
+2025-08-04 00:00:23,163 - INFO - NFL State: Season 2025, Week 1
+2025-08-04 00:00:23,164 - INFO - Available data years: [2024]
+2025-08-04 00:00:23,165 - INFO - Using 2024 for projections
+2025-08-04 00:00:23,166 - INFO - Output file: /app/df_projected_points_2024.csv
+2025-08-04 00:00:23,167 - INFO - Starting projection generation for season 2024
+2025-08-04 00:00:23,171 - INFO - Training ML models...
+2025-08-04 00:00:23,218 - INFO - Extracting player names from ALL available CSV files...
+2025-08-04 00:00:23,684 - INFO - Loaded 5597 records from 1 weekly stats files
+2025-08-04 00:00:23,782 - INFO - Loaded 570 records from 1 defense stats files
+2025-08-04 00:00:23,891 - INFO - Loaded 567 records from 1 kicker stats files
+2025-08-04 00:00:23,892 - INFO - Extracted 636 unique players:
+2025-08-04 00:00:23,893 - INFO -    QB: 79 players
+2025-08-04 00:00:23,893 - INFO -    RB: 135 players
+2025-08-04 00:00:23,894 - INFO -    WR: 228 players
+2025-08-04 00:00:23,896 - INFO -    TE: 120 players
+2025-08-04 00:00:23,897 - INFO -    K: 43 players
+2025-08-04 00:00:23,898 - INFO -    DEF: 31 players
+2025-08-04 00:00:23,941 - INFO - Loaded 634 existing projections
+2025-08-04 00:00:23,942 - INFO - Processing 79 QB players...
+2025-08-04 00:00:24,089 - INFO - Processing 135 RB players...
+2025-08-04 00:00:24,342 - INFO - Processing 228 WR players...
+2025-08-04 00:00:24,793 - INFO - Processing 120 TE players...
+2025-08-04 00:00:24,980 - INFO - Processing 43 K players...
+2025-08-04 00:00:25,095 - INFO - Processing 31 DEF players...
+2025-08-04 00:00:25,402 - WARNING - No projection available for LA Defense
+2025-08-04 00:00:25,646 - WARNING - No projection available for Los Angeles
+2025-08-04 00:00:25,655 - WARNING - No new projections generated
+2025-08-04 00:00:25,656 - INFO - Projection generation completed successfully!
