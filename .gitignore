@@ -9,6 +9,7 @@ venv/
 # Sensitive Configs
 .env
 source/fumbld.db
+.env.*
 
 # Alembic migration cache files
 migrations/__pycache__/

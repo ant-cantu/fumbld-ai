@@ -75,6 +75,8 @@ function fetch_recommendation(provider, league_id) {
                 const newHeadshot = document.createElement('td');
                 const newPlayer = document.createElement('td');
                 const newPos = document.createElement('td');
+                const newProjP = document.createElement('td');
+                const newConf = document.createElement('td');
 
                 if(player.url === "🤖") {
                     newHeadshot.textContent = player.url;
@@ -93,10 +95,14 @@ function fetch_recommendation(provider, league_id) {
 
                 newPlayer.textContent = player.name;
                 newPos.textContent = player.position;
+                newProjP.textContent = player.pp;
+                newConf.textContent = player.confidence;
 
                 newRow.appendChild(newHeadshot);
                 newRow.appendChild(newPlayer);
                 newRow.appendChild(newPos);
+                newRow.appendChild(newProjP);
+                newRow.appendChild(newConf);
 
                 aiTable.appendChild(newRow);
             });

@@ -311,7 +311,9 @@ def get_ai_rec(provider, league_id):
 
                 parsed_url.append({
                     'name': roster['name'],
-                    'url': roster['url']
+                    'url': roster['url'],
+                    'pp': roster['pp'],
+                    'confidence': roster['confidence']
                 })
             
             # Make a call to Gemini
@@ -321,11 +323,13 @@ def get_ai_rec(provider, league_id):
 
             reason = ai_response.reason
             
-            # Add URL back into AI response
+            # Add URL/Projected Points/Confidence back into AI response
             for player in players:
                 for urls in parsed_url:
                     if player['name'] == urls['name']:
                         player['url'] = urls['url']
+                        player['pp'] = urls['pp']
+                        player['confidence'] = urls['confidence']
 
             response = {
                 'players': players,

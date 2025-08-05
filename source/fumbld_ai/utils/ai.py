@@ -65,9 +65,6 @@ def gemini_call(roster, positions):
             )
         )
 
-        logger.debug(f"Roster sent: {roster}")
-        logger.debug(f"League Setup: {positions}")
-
         # Parse the response
         text = response.text
 
@@ -98,6 +95,8 @@ def gemini_call(roster, positions):
 def gpt_call(roster):
     api_key = current_app.config.get("OPENAI_KEY")
     client = OpenAI(api_key=api_key)
+
+    instructions = ""
 
     gpt_input = [
         {
