@@ -62,6 +62,3 @@ def get_sleeper_league_setup(league_id):
         
         return league_setup
 
-print(get_sleeper_league_setup('1124026204417294336'))
-
-
