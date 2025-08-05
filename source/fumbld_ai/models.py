@@ -92,6 +92,7 @@ class YahooLeague(db.Model):
     # Store roster information in this table
     yahoo_league_id = db.Column(db.String(20), unique=False, nullable=False)
     yahoo_league_name = db.Column(db.String(45), unique=False, nullable=False)
+    yahoo_league_setup = db.Column(JSON)
     yahoo_roster = db.Column(JSON)
     
     # Foreign key defintion
@@ -100,9 +101,10 @@ class YahooLeague(db.Model):
 
     user = db.relationship("User", back_populates="yahoo_leagues")
 
-    def __init__(self, yahoo_league_id, yahoo_league_name, yahoo_roster, user=None):
+    def __init__(self, yahoo_league_id, yahoo_league_name, yahoo_league_setup, yahoo_roster, user=None):
         self.yahoo_league_id = yahoo_league_id
         self.yahoo_league_name = yahoo_league_name
+        self.yahoo_league_setup = yahoo_league_setup
         self.yahoo_roster = yahoo_roster
         self.user = user
 
@@ -120,6 +122,7 @@ class SleeperLeague(db.Model):
     sleeper_user_id = db.Column(db.String(50), unique=False, nullable=False)
     sleeper_league_id = db.Column(db.String(20), unique=False, nullable=False)
     sleeper_league_name = db.Column(db.String(45), unique=False, nullable=False)
+    sleeper_league_setup = db.Column(JSON)
     sleeper_roster = db.Column(JSON)
     
     # Foreign key defintion
@@ -128,11 +131,12 @@ class SleeperLeague(db.Model):
 
     user = db.relationship("User", back_populates="sleeper_leagues")
 
-    def __init__(self, sleeper_username, sleeper_user_id, sleeper_league_id, sleeper_league_name, sleeper_roster, user=None):
+    def __init__(self, sleeper_username, sleeper_user_id, sleeper_league_id, sleeper_league_name, sleeper_league_setup, sleeper_roster, user=None):
         self.sleeper_username = sleeper_username
         self.sleeper_user_id = sleeper_user_id
         self.sleeper_league_id = sleeper_league_id
         self.sleeper_league_name = sleeper_league_name
+        self.sleeper_league_setup = sleeper_league_setup
         self.sleeper_roster = sleeper_roster
         self.user = user
 

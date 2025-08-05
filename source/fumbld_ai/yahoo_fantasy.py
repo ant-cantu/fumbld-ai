@@ -15,6 +15,7 @@ def yahoo_set_leagues():
     league_ids = []
     league_names = []
     league_teams = {}
+    league_positions = {}
 
     # Query the users leagues
     query_leagues = YahooLeague.query.filter_by(
@@ -41,6 +42,19 @@ def yahoo_set_leagues():
 
                 # Retrieve league info by league ID
                 lg = gm.to_league(league)
+
+                # Initialize league_positions for this league
+                league_positions[league] = []
+
+                # Get positions played
+                positions_played = lg.positions()
+                for position_name, position_details in positions_played.items():
+                    pos_starting = position_details.get('is_starting_position')
+                    pos_amount = position_details.get('count')
+
+                    if pos_starting == 1:
+                        for x in range(pos_amount):
+                            league_positions[league].append(position_name)
 
                 # Retrieve league settings which includes the name of the league
                 lg_info = lg.settings()
@@ -106,7 +120,7 @@ def yahoo_set_leagues():
             league_teams[league_id] = team_data
     
     for x in range(len(league_ids)):
-        add_league = YahooLeague(league_ids[x], league_names[x], league_teams[league_ids[x]], user=current_user)
+        add_league = YahooLeague(league_ids[x], league_names[x], league_positions.get(league_ids[x]), league_teams[league_ids[x]], user=current_user)
 
         try:
             db.session.add(add_league)
