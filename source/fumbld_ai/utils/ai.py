@@ -68,7 +68,7 @@ def gemini_call(roster, positions):
         # Parse the response
         text = response.text
 
-        #  Extrct the JSON block between --- markers in gpt response
+        #  Extract the JSON block between --- markers in gpt response
         # --- three dashes in string
         # \s* match any whitespace
         # (\[.*?\]) match and capture a json style list inside of [ ]
