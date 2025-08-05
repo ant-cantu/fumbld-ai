@@ -78,7 +78,7 @@ def get_sleeper_league_setup(league_id):
             
             return league_setup
         else:
-            raise Exception(f"Recieved status code: {response.status_code} from the API endpoint.")
+            raise Exception(f"Received status code: {response.status_code} from the API endpoint.")
     except Exception as e:
         logger.error(e)
 
