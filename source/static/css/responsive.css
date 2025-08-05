@@ -146,6 +146,13 @@
         gap: 0;
     }
 
+    .starters,
+    .bench {
+        margin-top: 0;
+        padding: 0;
+        border: none;
+    }
+
     .starters table,
     .bench table {
         background-color: transparent;
