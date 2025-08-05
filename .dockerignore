@@ -13,6 +13,7 @@ venv/
 # Environment variables
 *.env
 source/.env
+.env.*
 
 # DB and build artifacts
 pgdata/
@@ -26,3 +27,7 @@ logs/
 
 # ML Files
 ml_models/
+
+# GitHub
+.git/
+.gitignore

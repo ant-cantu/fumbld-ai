@@ -290,10 +290,14 @@ def get_ai_rec(provider, league_id):
     try:
         with limiter.limit("1 per 2 minutes"):
             if provider == "yahoo":
+                league = YahooLeague.query.filter_by(yahoo_league_id=league_id).first()
+                league_setup = league.yahoo_league_setup
                 current_roster = yahoo_get_roster(league_id)
             elif provider == "sleeper":
                 sleeper_query = SleeperLeague.query.filter_by(user_id=current_user.id).first()
                 current_roster = get_sleeper_roster(league_id, sleeper_query.sleeper_username)
+                league = SleeperLeague.query.filter_by(sleeper_league_id=league_id).first()
+                league_setup = league.sleeper_league_setup
             
             # Separate the URL from the player dictionary
             parsed_roster = []
@@ -301,52 +305,31 @@ def get_ai_rec(provider, league_id):
             for roster in current_roster:
                 parsed_roster.append({
                     'n': roster['name'],
-                    'p': roster['position']
+                    'p': roster['position'],
+                    'pp': roster['pp']
                 })
 
                 parsed_url.append({
                     'name': roster['name'],
-                    'url': roster['url']
+                    'url': roster['url'],
+                    'pp': roster['pp'],
+                    'confidence': roster['confidence']
                 })
             
             # Make a call to Gemini
-            ai_response = gemini_call(parsed_roster)
+            ai_response = gemini_call(parsed_roster, league_setup)
 
-            import json
-            import re
+            players = ai_response.roster
 
-            # Extrct the JSON block between --- markers in gpt response
-            # --- three dashes in string
-            # \s* match any whitespace
-            # (\[.*?\]) match and capture a json style list inside of [ ]
-            json_match = re.search(r"---\s*(\[.*?\])\s*---", ai_response, re.DOTALL)
-            if json_match:
-                # return the captured group
-                json_part = json_match.group(1)
-                # parse the json string into a dictionary
-                players = json.loads(json_part)
-            else:
-                logger.critical(f"There was an error parsing AI output for user: {current_user.username}")
-                logger.critical(f" -- Fumbld Output: \n{ai_response}")
-                return jsonify({'error': 'There was an error making an AI call.'}), 422
+            reason = ai_response.reason
             
-            # Extract the reason text in gpt response
-            # start search starting with reason:
-            # \s* optional whitespace after reason
-            # (.*) capture group that grabs everything after the optional whitespace
-            reason_match = re.search(r"Reason:\s*(.*)", ai_response, re.DOTALL)
-            if reason_match:
-                reason = reason_match.group(1).strip()
-            else:
-                logger.critical(f"There was an error parsing AI output for user: {current_user.username}")
-                logger.critical(f" -- Fumbld Output: \n{ai_response}")
-                return jsonify({'error': 'There was an error making an AI call.'}), 422
-            
-            # Add URL back into AI response
+            # Add URL/Projected Points/Confidence back into AI response
             for player in players:
                 for urls in parsed_url:
                     if player['name'] == urls['name']:
                         player['url'] = urls['url']
+                        player['pp'] = urls['pp']
+                        player['confidence'] = urls['confidence']
 
             response = {
                 'players': players,

@@ -170,6 +170,11 @@
         text-align: center;
     }
 
+    .bench th {
+        background-color: white;
+        color: black;
+    }
+
     /* #col2 {
         width: 30%;
     }
@@ -177,7 +182,7 @@
         width: 15%;
     } */
 
-    
+    /* Adjusted Tables ------------------------ */
     .roster .starters tr,
     .roster .bench tr {
         width: 100vw;
@@ -202,6 +207,7 @@
     .roster .bench td:nth-child(1) {
         width: 130px;
     }
+    /* ------------------------------------- */
 
     .schedule {
         width: 100vw;

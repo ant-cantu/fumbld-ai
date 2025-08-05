@@ -147,6 +147,8 @@ function fetch_roster(provider, league_id) {
     // Clear tables/text
     aiDiv.style.display = "none";
     response.innerHTML = "";
+    const aiStarters = document.querySelector(".ai-starters");
+    aiStarters.style.display = "flex";
     aiTable.innerHTML = "";
     aiText.style.display = "none";
     ai_response = "";
@@ -260,8 +262,6 @@ document.addEventListener('DOMContentLoaded', () => {
 leagueMenu.addEventListener("change", () => {
     const selectedProvider = serviceDropDown.value;
     const selectedLeague = leagueMenu.value;
-    console.log("provider: " + selectedProvider);
-    console.log("league: " + selectedLeague);
     fetch_roster(selectedProvider, selectedLeague);
 });
 

@@ -59,7 +59,32 @@ def get_sleeper_leagues(user_id):
     except Exception as e:
         logger.error(f"User ID: {current_user.id} | Username: {current_user.username}: {e}")
 
+def get_sleeper_league_setup(league_id):
+    """
+    Returns the leagues roster set up:
+        Example: QB, WR, WR, RB, RB, FLEX, K, DST
+    """
+    response = requests.get(f'https://api.sleeper.app/v1/league/{league_id}')
+    league_setup = {}
+
+    try:
+        if response.status_code == 200:
+            data = response.json()
+            if data == "null":
+                raise Exception("'get_sleeper_league_setup()': League data does not exist.")
+            
+            if data['roster_positions']:
+                league_setup = data['roster_positions']
+            
+            return league_setup
+        else:
+            raise Exception(f"Received status code: {response.status_code} from the API endpoint.")
+    except Exception as e:
+        logger.error(e)
+
 def get_sleeper_roster(league_id, username):
+    starting_positions = get_sleeper_league_setup(league_id)
+
     query_team = SleeperLeague.query.filter_by(
         user_id=current_user.id,
         sleeper_league_id=league_id
@@ -109,7 +134,11 @@ def get_sleeper_roster(league_id, username):
                                             team_data.append({'position': 'BN', 'name': name, 'url': url, 'pp': pp, 'confidence': conf})
                         except Exception as e:
                             logger.error(f"User ID: {current_user.id} | Username: {current_user.username}: Unable to open Sleeper player data: {e}")
-                                    
+
+                # Sort by position before returning data
+                position_priority = {'QB': 1, 'WR': 2, 'RB': 3, 'TE': 4, 'K': 5, 'DEF': 6, 'BN': 7}
+                team_data = sorted(team_data, key=lambda x: position_priority.get(x['position'], 999)) 
+
                 return team_data
             else:
                 raise Exception(response.status_code)
@@ -138,7 +167,7 @@ def setup_sleeper(username):
             league_names.append(leagues['league_name'])
 
         for x in range(len(sleeper_leagues)):
-            add_league = SleeperLeague(username, sleeper_user_id, league_ids[x], league_names[x], get_sleeper_roster(league_ids[x], username), user=current_user)
+            add_league = SleeperLeague(username, sleeper_user_id, league_ids[x], league_names[x], get_sleeper_league_setup(league_ids[x]) ,get_sleeper_roster(league_ids[x], username), user=current_user)
             
             try:
                 db.session.add(add_league)
