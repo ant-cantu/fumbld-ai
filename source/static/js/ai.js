@@ -111,6 +111,10 @@ function fetch_recommendation(provider, league_id) {
             aiText.style.display = "block";
             modalSpinner.style.display = "none";
             modalCloseBtn.style.display = "block";
+
+            // Hide starters table
+            const aiStarters = document.querySelector(".ai-starters")
+            aiStarters.style.display = "none";
             //const reasonContainer = document.querySelector("#ai-response");
             //reasonContainer.innerHTML += "<p><strong>Fumbld AI</strong>: ";
             //reasonContainer.innerHTML = '';

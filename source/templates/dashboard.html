@@ -110,11 +110,11 @@
                                     <col id="col4" style="width: 15%;">
                                     <col id="col5" style="width: 15%;">
                                 </colgroup>
-                                <!-- <thead>
+                                <thead>
                                     <tr>
-                                        <th colspan="6" class="sub-header">Starters</th>
+                                        <th colspan="6" class="sub-header">Starting Lineup</th>
                                     </tr>
-                                </thead> -->
+                                </thead>
                                 <tbody id="starter-players">
                                     <!-- Filled via API -->
                                 </tbody>
@@ -130,11 +130,11 @@
                                     <col id="col4" style="width: 10%;">
                                     <col id="col5" style="width: 10%;">
                                 </colgroup>
-                                <!-- <thead>
+                                <thead>
                                     <tr>
-                                        <th colspan="3" class="sub-header">Bench</th>
+                                        <th colspan="6" class="sub-header">Benched Players</th>
                                     </tr>
-                                </thead> -->
+                                </thead>
                                 <tbody id="bench-players">
                                         <!-- Filled via API -->
                                 </tbody>
@@ -174,7 +174,7 @@
             <!-- AI Recommendations -->
             <div class="ai-container">
                 <div id="header">
-                    <p>AI Insights</p>
+                    <p>Fumbld <span style="color: #0b628f;">AI</span></p>
                 </div>
 
                 <div id="content">
@@ -223,7 +223,12 @@
 
                     <div id="ai-sub-container">
                         <div id="ai-response">
-                            <p><strong>Fumbld AI</strong>: Hello <strong>{{ username }}</strong>, press the 'Get AI Insight' button to get an AI recommendation.</p>
+                            <p>
+                                <strong>Fumbld AI</strong>: Hello <strong>{{ username }}</strong>, welcome to <strong>Fumbld <span style="color: #0b628f;">AI</span></strong>. 
+                                Thanks for being one of the early beta testers! Get started by selecting the team you want a recommendation 
+                                for on the main <span id="dashboard" class="ai-text-dashboard">Dashboard</span> menu. After selecting the team that you want to use, click on the 'Ask Fumbld' button below.
+                                Thanks again for being an early beta tester! If you run into any issues please submit a bug report in the contact section.
+                            </p>
                             <p id="fumbld-head" style="display: none;"><strong>Fumbld AI</strong>: <span id="fumbld-response"></span></p>
                         </div>
 
