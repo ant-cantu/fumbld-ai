@@ -11,3 +11,6 @@ from .helper import is_safe_url, TokenEncryptor
 
 # ai.py
 from .ai import gpt_call, gemini_call
+
+# nflschedule.py
+from .nflschedule import NFLSchedule

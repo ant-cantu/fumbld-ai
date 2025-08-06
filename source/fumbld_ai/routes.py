@@ -2,7 +2,7 @@ from flask import render_template, Blueprint, flash, redirect, url_for, request,
 import pytz, datetime
 from .yahoo_fantasy import yahoo_get_roster, yahoo_get_league, yahoo_refresh
 from .sleeper import get_sleeper_leagues, get_sleeper_roster, setup_sleeper, sleeper_refresh
-from .utils import db, is_safe_url, gpt_call, gemini_call, limiter
+from .utils import db, is_safe_url, gpt_call, gemini_call, limiter, NFLSchedule
 from .forms import LoginForm, RegistrationForm, ChangePasswordForm, SleeperForm
 from flask_login import current_user, login_user, logout_user, login_required
 from .models import YahooToken, SleeperLeague, RegCodes, YahooLeague
@@ -60,6 +60,24 @@ def home():
 @main_bp.route("/dashboard", methods=['GET', 'POST'])
 @login_required
 def dashboard():
+    # Get NFL Schedule
+    schedule = NFLSchedule(2025, 1)
+    
+    # Build schedule data for template
+    schedule_data = []
+    for games in range(schedule.total_games):
+        schedule.set_schedule(game=games+1)
+
+        
+        schedule_data.append({
+            'week': schedule.week,
+            'gameday': schedule.gameday,
+            'weekday': schedule.weekday,
+            'gametime': schedule.gametime,
+            'away_team': schedule.away_team,
+            'home_team': schedule.home_team
+        })
+
     # Get date for last login
     if not current_user.last_login:
         last_login = current_user.now_login.strftime("%m-%d-%y %I:%M:%S")
@@ -108,7 +126,8 @@ def dashboard():
                             sleeper_form=sleeper_user_form,
                             sleeper=sleeper_auth,
                             sleeper_username=sleeper_username,
-                            admin=admin_user)
+                            admin=admin_user,
+                            schedule=schedule_data)
     
 # User Registration
 @main_bp.route('/register', methods=['GET', 'POST'])
