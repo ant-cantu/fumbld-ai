@@ -235,10 +235,10 @@ def account_login():
     if current_user.is_authenticated:
         return redirect(url_for('main.dashboard'))
 
-    try:
-        with limiter.limit("3 per 5 minutes"):
-            # Check if forms have valid information
-            if form.validate_on_submit():
+    # Check if forms have valid information
+    if form.validate_on_submit():
+        try:
+            with limiter.limit("3 per 5 minutes"):
                 if verify_recaptcha():
                     username = form.username.data
                     raw_password = form.password.data
@@ -283,9 +283,9 @@ def account_login():
                 else:
                     logger.warning(f"reCaptcha was not verified on login screen")
                     flash("reCaptcha was not verified!", 'error')
-    except RateLimitExceeded:
-        flash("Too many login attempts! Please try again in 5 minutes.", "error")
-        logger.warning(f"Login attempts exceeded limit - IP: ")
+        except RateLimitExceeded:
+            flash("Too many login attempts! Please try again in 5 minutes.", "error")
+            logger.warning(f"Login attempts exceeded limit - IP: ")
 
     return render_template("login.html", form=form)
 
