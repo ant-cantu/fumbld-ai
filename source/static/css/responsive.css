@@ -276,7 +276,7 @@
     }
 
     .ai-starters {
-        display: none;
+        display: none !important;
     }
     .recommendations {
         display: none;
