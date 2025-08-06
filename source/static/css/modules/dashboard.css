@@ -23,31 +23,35 @@
     width: 100%;
     display: flex;
     justify-content: space-evenly;
+    align-items: flex-start;
 }
 
 .starters {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-top: 0.5rem;
-    border: 1px solid #004181;
-    padding: 10px;
-    /* width: 25%; */
-    /* height: 90%; */
-    /* box-sizing: border-box; */
-}
-
-.bench {
-    display: flex;
-    /* flex-direction: column; */
     justify-content: flex-start;
     align-items: flex-start;
     gap: 10px;
     margin-top: 0.5rem;
-    border: 1px solid #004181;
-    padding: 10px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    height: auto;
+}
+
+.bench {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 0.5rem;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    height: auto;
 }
 
 .starters table,
@@ -56,9 +60,8 @@
     border-collapse: collapse;
     font-family: sans-serif;
     font-size: 14px;
-    /* border-bottom: 1px solid #004181; */
-    margin-bottom: 10px;
-    /* height: 350px; */
+    margin-bottom: 0;
+    background-color: #ffffff;
 }
 
 .starters th,
@@ -74,13 +77,21 @@
     background-color: #004181;
     color: white;
     border-bottom: 2px solid #ddd;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 12px;
 }
 
 .sub-header {
     text-align: center; 
-    border: solid 1px black; 
     font-size: 1rem;
     width: 100%;
+    background-color: #004181;
+    color: white;
+    border-bottom: 2px solid #ddd;
+    font-weight: 700;
+    padding: 12px;
 }
 
 /* .dashboard-container table {
@@ -164,4 +175,92 @@ tbody {
 
 .hideondesktop {
     display: none;
+}
+
+/* Schedule Styling */
+.schedule {
+    margin-top: 20px;
+}
+
+.week-container {
+    margin-bottom: 30px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.week-container .table {
+    margin-bottom: 0;
+    background-color: #ffffff;
+}
+
+.week-container .sub-header {
+    /* background-color: #207ad4;
+    color: white;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 12px;
+    border: none; */
+    text-align: center; 
+    border: solid 1px black; 
+    font-size: 1rem;
+    width: 100%;
+    background-color: #004181;
+    color: white;
+    border-bottom: 2px solid #ddd;
+}
+
+.matchup {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    padding: 8px 0;
+}
+
+.away-team, .home-team {
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.vs {
+    color: #75a2cf;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.game-time {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    gap: 4px;
+}
+
+.game-date {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.game-clock {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .matchup {
+        flex-direction: column;
+        gap: 4px;
+        text-align: center;
+    }
+    
+    .game-time {
+        text-align: center;
+    }
+    
+    .week-container {
+        margin-bottom: 20px;
+    }
 }

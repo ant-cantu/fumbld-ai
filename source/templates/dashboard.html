@@ -140,33 +140,41 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
 
-                    <!-- Will fill this with python later.. need to find nfl team logos to use -->
-                    <div class="schedule">
-                        <table class="table table-striped table-borderless">
-                            <thead>
-                                <tr>
-                                    <th colspan="2">NFL Schedule - Week 1</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <ul>
-                                            <li>Baltimore Ravens</li>
-                                            <li>Kanas City Chiefs</li>
-                                        </ul>
-                                    </td>
-                                    <td>
-                                        <ul>
-                                            <li>Thu, Sep 5</li>
-                                            <li>8:20 PM ET</li>
-                                        </ul>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                         <!-- Will fill this with python later.. need to find nfl team logos to use -->
+                        <div class="schedule">
+                            {% set weeks = schedule | groupby('week') %}
+                            {% for week, games in weeks %}
+                            <div class="week-container">
+                                <table class="table table-striped table-borderless">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2" class="sub-header">NFL Schedule - Week {{ week }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for game in games %}
+                                        <tr>
+                                            <td>
+                                                <div class="matchup">
+                                                    <span class="away-team">{{ game.away_team }}</span>
+                                                    <span class="vs">@</span>
+                                                    <span class="home-team">{{ game.home_team }}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="game-time">
+                                                    <span class="game-date">{{ game.weekday }}, {{ game.gameday }}</span>
+                                                    <span class="game-clock">{{ game.gametime }} PST</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>
