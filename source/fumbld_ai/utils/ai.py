@@ -13,8 +13,8 @@ gemini_model = "gemini-2.5-pro"
 gpt_model = "gpt-4o"
 
 # Season Setup
-week = "17"
-season = "2024"
+week = "1"
+season = "2025"
 
 GeminiResult = namedtuple('GeminiResult', ['roster', 'reason'])
 

@@ -308,11 +308,12 @@
                                 {{ sleeper_form.sleeper_username(placeholder="Enter Sleeper Username") }}
                             {% endif %}
                             {{ sleeper_form.submit(id="sleeperSubmitBtn") }}
+                            {{ sleeper_form.disconnect(id="sleeperDisconnectBtn") }}
                         </form>
                     </div>
 
                     <!-- Change Password -->
-                     <a href="#" type=button id="change-password">Change Password</a>
+                     <!-- <a href="#" type=button id="change-password">Change Password</a> -->
                      <div id="pass-reset-container">
                         <form id="pass-reset-form" method="POST" action="{{ url_for('main.change_password') }}">
                             {{ pass_reset.hidden_tag() }}

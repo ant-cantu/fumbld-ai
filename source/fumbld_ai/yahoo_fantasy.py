@@ -6,10 +6,11 @@ from .models import YahooLeague
 import pandas as pd
 import logging, os, re
 
+season = 2025
 logger = logging.getLogger("fumbld_logger")
 
 def yahoo_set_leagues():
-    years = [2024] # The year we are pulling leagues from
+    years = [season] # The year we are pulling leagues from
     starting_positions = {'QB', 'WR', 'RB', 'K', 'TE', 'W/R/T', 'DEF', 'BN'}
 
     league_ids = []

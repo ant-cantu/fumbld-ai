@@ -18,6 +18,10 @@
     background-color: #207ad4;
 }
 
+.settings-container #content {
+    gap: 15px;
+}
+
 /* Connect to Yahoo button */
 .settings-container #content #yahoo-img {
     width: 16rem;
@@ -31,6 +35,28 @@
     }
 }
 
+/* Sleeper Button */
+#sleeperSubmitBtn,
+#sleeperDisconnectBtn {
+    font-size: 16px;
+    font-weight: 700;
+    background-color: #202533;
+    color: white;
+    border-radius: 36px;
+    height: 40px;
+    width: 200px;
+    /* padding: 15px 20px; */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    border: none;
+    transition: 0.3s ease;
+}
+#sleeperSubmitBtn:hover,
+#sleeperDisconnectBtn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 8px 24px 0 rgba(15, 23, 42, 0.22);
+}
+
+/* Discord Button */
 #discord {
     display: flex;
     justify-content: center;

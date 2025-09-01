@@ -7,7 +7,7 @@ import os, re
 
 logger = logging.getLogger("fumbld_logger")
 
-season = "2024"
+season = "2025"
 
 def get_sleeper_userid(username):
     try:

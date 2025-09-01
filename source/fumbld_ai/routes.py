@@ -143,7 +143,7 @@ def account_register():
     # If everything passes validation on forms
     if form.validate_on_submit():
         if verify_recaptcha():
-            username = form.username.data
+            username = form.username.data.lower()
             user_email = form.email.data
             password = form.password.data
             terms = form.terms.data
@@ -240,7 +240,7 @@ def account_login():
         try:
             with limiter.limit("3 per 5 minutes"):
                 if verify_recaptcha():
-                    username = form.username.data
+                    username = form.username.data.lower()
                     raw_password = form.password.data
 
                     # Find the user in the database

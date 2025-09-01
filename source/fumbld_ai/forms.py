@@ -78,4 +78,5 @@ class SleeperForm(FlaskForm):
         Length(min=3, message="Username must be at least 3 characters long.")
     ])
 
-    submit = SubmitField("Save Username")
+    submit = SubmitField("Sleeper Connect")
+    disconnect = SubmitField("Sleeper Disconnect")
