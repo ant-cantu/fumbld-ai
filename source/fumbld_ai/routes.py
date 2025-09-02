@@ -8,6 +8,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from .models import YahooToken, SleeperLeague, RegCodes, YahooLeague
 from flask_limiter.errors import RateLimitExceeded
 import requests, logging
+import pandas as pd
 
 logger = logging.getLogger("fumbld_logger")
 main_bp = Blueprint('main', __name__, template_folder='templates')
@@ -61,7 +62,15 @@ def home():
 @login_required
 def dashboard():
     # Get NFL Schedule
-    schedule = NFLSchedule(2025, 1)
+    response = requests.get("https://api.sleeper.app/v1/state/nfl")
+
+    # print(response.json())
+    df = pd.DataFrame([response.json()])
+
+    week = df['week'].iloc[0]
+    season = df['season'].iloc[0]
+
+    schedule = NFLSchedule(season, week)
     
     # Build schedule data for template
     schedule_data = []

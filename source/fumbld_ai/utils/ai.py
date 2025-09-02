@@ -5,6 +5,8 @@ from google import genai
 from google.genai import types
 import logging, re, json
 from collections import namedtuple
+import requests
+import pandas as pd
 
 logger = logging.getLogger("fumbld_logger")
 
@@ -13,8 +15,13 @@ gemini_model = "gemini-2.5-pro"
 gpt_model = "gpt-4o"
 
 # Season Setup
-week = "1"
-season = "2025"
+response = requests.get("https://api.sleeper.app/v1/state/nfl")
+
+# print(response.json())
+df = pd.DataFrame([response.json()])
+
+week = df['week'].iloc[0]
+season = df['season'].iloc[0]
 
 GeminiResult = namedtuple('GeminiResult', ['roster', 'reason'])
 
