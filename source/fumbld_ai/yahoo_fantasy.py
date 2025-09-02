@@ -229,9 +229,9 @@ def get_player_projection(player_name):
 # Fix player names with suffix  
 def remove_jr_suffix(name):
     print(f"Input: '{name}' (repr: {repr(name)})")
-    # Match 'Jr', 'Jr.', 'jr', 'jr.', 'JR', 'JR.', etc., only if at the end
-    # Allow for optional space/comma before Jr
-    pattern = r'[ ,]*Jr\.?$'
+    # Match 'Jr', 'Jr.', 'Sr', 'Sr.', 'jr', 'jr.', 'sr', 'sr.', 'JR', 'JR.', 'SR', 'SR.', etc., only if at the end
+    # Allow for optional space/comma before Jr/Sr
+    pattern = r'[ ,]*(Jr|Sr)\.?$'
     match = re.search(pattern, name, flags=re.IGNORECASE)
     print(f"Pattern match: {match}")
     result = re.sub(pattern, '', name, flags=re.IGNORECASE).strip()

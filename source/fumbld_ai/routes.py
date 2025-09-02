@@ -402,12 +402,12 @@ def refresh_roster(provider):
         with limiter.limit("1 per minute"):
             if provider == "yahoo":
                 yahoo_query = YahooLeague.query.filter_by(user_id=current_user.id).first()
-                if not yahoo_query:
-                    abort(403)
+                #if not yahoo_query:
+                #    abort(403)
 
-                    # Log a warning here, user should not be able to access this without being authenticated with yahoo.
-                    logger.error(f"User: {current_user.username} accessed refresh_roster API call without being authenticated.")
-                    return jsonify({"error": "There was an error refreshing your Yahoo! data. Try reauthenticating yourself with Yahoo!"}), 403
+                # Log a warning here, user should not be able to access this without being authenticated with yahoo.
+                # logger.error(f"User: {current_user.username} accessed refresh_roster API call without being authenticated.")
+                # return jsonify({"error": "There was an error refreshing your Yahoo! data. Try reauthenticating yourself with Yahoo!"}), 403
 
                 try:
                     # Delete all yahoo related entries in the database and refresh
