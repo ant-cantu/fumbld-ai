@@ -70,9 +70,7 @@ def dashboard():
     week = df['week'].iloc[0]
     season = df['season'].iloc[0]
 
-    print("week", week, "season", season)
-    
-    schedule = NFLSchedule(season, week)
+    schedule = NFLSchedule(int(season), int(week))
     
     # Build schedule data for template
     schedule_data = []
