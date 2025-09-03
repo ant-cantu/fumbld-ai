@@ -11,12 +11,13 @@ logger = logging.getLogger("fumbld_logger")
 
 def yahoo_set_leagues():
     years = [season] # The year we are pulling leagues from
-    starting_positions = {'QB', 'WR', 'RB', 'K', 'TE', 'W/R/T', 'DEF', 'BN'}
+    # starting_positions = {'QB', 'WR', 'RB', 'K', 'TE', 'W/R/T', 'DEF', 'BN'}
 
     league_ids = []
     league_names = []
     league_teams = {}
     league_positions = {}
+    starting_positions = {}
 
     # Query the users leagues
     query_leagues = YahooLeague.query.filter_by(
@@ -80,6 +81,7 @@ def yahoo_set_leagues():
                 if player['selected_position'] in starting_positions:
                     name = player['name']
                     position = player['selected_position']
+                    print(f"*** Player: {name} | Position: {position} ***")
 
                     # Get player projections
                     if name == "Los Angeles":
