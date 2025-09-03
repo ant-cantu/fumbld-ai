@@ -3,7 +3,7 @@ import pytz, datetime
 from .yahoo_fantasy import yahoo_get_roster, yahoo_get_league, yahoo_refresh
 from .sleeper import get_sleeper_leagues, get_sleeper_roster, setup_sleeper, sleeper_refresh
 from .utils import db, is_safe_url, gpt_call, gemini_call, limiter, NFLSchedule
-from .forms import LoginForm, RegistrationForm, ChangePasswordForm, SleeperForm
+from .forms import LoginForm, RegistrationForm, ChangePasswordForm, SleeperForm, SleeperDisconnect
 from flask_login import current_user, login_user, logout_user, login_required
 from .models import YahooToken, SleeperLeague, RegCodes, YahooLeague
 from flask_limiter.errors import RateLimitExceeded
@@ -64,9 +64,7 @@ def dashboard():
     # Get NFL Schedule
     response = requests.get("https://api.sleeper.app/v1/state/nfl")
 
-    # print(response.json())
     df = pd.DataFrame([response.json()])
-
     week = df['week'].iloc[0]
     season = df['season'].iloc[0]
 
@@ -104,6 +102,7 @@ def dashboard():
 
     # Sleeper username form
     sleeper_user_form = SleeperForm()
+    sleeper_dis_btn = SleeperDisconnect()
 
     # Is user authenticated with Yahoo?
     yahoo_query = YahooToken.query.filter_by(user_id=current_user.id).first()
@@ -127,6 +126,7 @@ def dashboard():
     if check_demo_account():
         yahoo_auth = True
 
+    #Add sleeper dis button <------------------------------------------------------------------
     return render_template("dashboard.html",
                             username=current_user.username,
                             last_login=last_login,
@@ -136,7 +136,8 @@ def dashboard():
                             sleeper=sleeper_auth,
                             sleeper_username=sleeper_username,
                             admin=admin_user,
-                            schedule=schedule_data)
+                            schedule=schedule_data,
+                            sleeper_dis=sleeper_dis_btn)
     
 # User Registration
 @main_bp.route('/register', methods=['GET', 'POST'])
@@ -473,6 +474,27 @@ def set_sleeper_username():
             return jsonify({"error": "There was an error processing the username entered. Make sure it is spelled correctly."}), 404
     else:
         return jsonify({'error': 'Please enter your Sleeper username'}), 404
+    
+@main_bp.route('/api/users/me/sleeper/delete', methods=['POST'])
+@login_required
+def del_sleeper_username():
+    button = SleeperDisconnect()
+
+    # Check if this is a demo account
+    if check_demo_account():
+        flash('Sorry this feature is disabled for Demo accounts.', 'error')
+        return redirect(url_for('main.dashboard'))
+    
+    if button.validate_on_submit():
+        sleeper_query = SleeperLeague.query.filter_by(user_id=current_user.id).first()
+        if sleeper_query:
+            SleeperLeague.query.filter_by(user_id=current_user.id).delete()
+            try:
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+                logger.error(f"There was an error deleting the Sleeper account from user: {current_user.username}: {e}")
+                return jsonify({'error': f'There was an error deleting the Sleeper account from user: {current_user.username}: {e}'}), 404
 
 # ------------------------------------------------------------
 # Backend Function Calls

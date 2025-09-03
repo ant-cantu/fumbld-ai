@@ -79,4 +79,6 @@ class SleeperForm(FlaskForm):
     ])
 
     submit = SubmitField("Sleeper Connect")
+
+class SleeperDisconnect(FlaskForm):
     disconnect = SubmitField("Sleeper Disconnect")

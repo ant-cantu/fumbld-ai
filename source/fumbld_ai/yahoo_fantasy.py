@@ -57,6 +57,8 @@ def yahoo_set_leagues():
                         for x in range(pos_amount):
                             league_positions[league].append(position_name)
 
+                starting_positions = league_positions[league]
+
                 # Retrieve league settings which includes the name of the league
                 lg_info = lg.settings()
 
