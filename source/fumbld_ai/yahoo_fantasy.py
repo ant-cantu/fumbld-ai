@@ -39,34 +39,37 @@ def yahoo_set_leagues():
             leagues = gm.league_ids(year=year)
 
             for league in leagues:
-                # Add league id to list of league ids, used for rosters
-                league_ids.append(league)
+                try:
+                    # Add league id to list of league ids, used for rosters
+                    league_ids.append(league)
 
-                # Retrieve league info by league ID
-                lg = gm.to_league(league)
-
-                # Initialize league_positions for this league
-                league_positions[league] = []
-
-                # Get positions played
-                positions_played = lg.positions()
-                for position_name, position_details in positions_played.items():
-                    pos_starting = position_details.get('is_starting_position')
-                    pos_amount = position_details.get('count')
-
-                    if pos_starting == 1:
-                        for x in range(pos_amount):
-                            league_positions[league].append(position_name)
-
-                league_positions[league].append("BN")
-                starting_positions = league_positions[league]
-                print(f"****** Starting positions: {starting_positions} ******")
-
-                # Retrieve league settings which includes the name of the league
-                lg_info = lg.settings()
-
-                # Add league name to the league names list, used for database entry
-                league_names.append(lg_info['name'])
+                    # Retrieve league info by league ID
+                    lg = gm.to_league(league)
+    
+                    # Initialize league_positions for this league
+                    league_positions[league] = []
+    
+                    # Get positions played
+                    positions_played = lg.positions()
+                    for position_name, position_details in positions_played.items():
+                        pos_starting = position_details.get('is_starting_position')
+                        pos_amount = position_details.get('count')
+    
+                        if pos_starting == 1:
+                            for x in range(pos_amount):
+                                league_positions[league].append(position_name)
+    
+                    league_positions[league].append("BN")
+                    starting_positions = league_positions[league]
+                    print(f"****** Starting positions: {starting_positions} ******")
+    
+                    # Retrieve league settings which includes the name of the league
+                    lg_info = lg.settings()
+    
+                    # Add league name to the league names list, used for database entry
+                    league_names.append(lg_info['name'])
+                except Exception as e:
+                    logger.critical(f"There was an error importing users roster: {e}")
         
         # Get users rosters for each league and save all data to database
         for league_id in league_ids:
