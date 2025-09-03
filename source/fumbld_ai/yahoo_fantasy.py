@@ -58,6 +58,7 @@ def yahoo_set_leagues():
                         for x in range(pos_amount):
                             league_positions[league].append(position_name)
 
+                league_positions[league].append("BN")
                 starting_positions = league_positions[league]
                 print(f"****** Starting positions: {starting_positions} ******")
 
