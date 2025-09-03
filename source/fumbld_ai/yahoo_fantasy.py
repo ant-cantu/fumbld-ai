@@ -92,9 +92,19 @@ def yahoo_set_leagues():
                         pp = "??"
                         confidence = "??"
                     else:
-                        projections = get_player_projection(remove_jr_suffix(name))
-                        pp = projections.iloc[0]
-                        confidence = projections.iloc[1]
+                        try:
+                            projections = get_player_projection(remove_jr_suffix(name))
+
+                            if projections is None or not hasattr(projections, "iloc") or len(projections) < 2:
+                                pp = "??"
+                                confidence = "??"
+                            else:
+                                pp = projections.iloc[0]
+                                confidence = projections.iloc[1]
+                        except Exception as e:
+                            logger.critical(f"There was an error importing {name} projections: {e}")
+                            pp = "??"
+                            confidence = "??"
 
                     # Replace W/R/T with D/S/T
                     if position == "W/R/T":
