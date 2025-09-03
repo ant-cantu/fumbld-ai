@@ -126,7 +126,6 @@ def dashboard():
     if check_demo_account():
         yahoo_auth = True
 
-    #Add sleeper dis button <------------------------------------------------------------------
     return render_template("dashboard.html",
                             username=current_user.username,
                             last_login=last_login,
