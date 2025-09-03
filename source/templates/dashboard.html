@@ -308,6 +308,9 @@
                                 {{ sleeper_form.sleeper_username(placeholder="Enter Sleeper Username") }}
                             {% endif %}
                             {{ sleeper_form.submit(id="sleeperSubmitBtn") }}
+                        </form>
+
+                        <form id="sleeper-disconnect-btn" method="POST" action="{{ url_for('main.del_sleeper_username') }}">
                             {{ sleeper_dis.disconnect(id="sleeperDisconnectBtn") }}
                         </form>
                     </div>

@@ -490,6 +490,7 @@ def del_sleeper_username():
             SleeperLeague.query.filter_by(user_id=current_user.id).delete()
             try:
                 db.session.commit()
+                logger.info(f"{current_user.username} deleted their Sleeper account from the database successfully.")
             except Exception as e:
                 db.session.rollback()
                 logger.error(f"There was an error deleting the Sleeper account from user: {current_user.username}: {e}")
