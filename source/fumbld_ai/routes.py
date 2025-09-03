@@ -491,10 +491,14 @@ def del_sleeper_username():
             try:
                 db.session.commit()
                 logger.info(f"{current_user.username} deleted their Sleeper account from the database successfully.")
+                flash("You have successfully unlinked Sleeper from your account.", "success")
+                return redirect(url_for('main.dashboard'))
             except Exception as e:
                 db.session.rollback()
                 logger.error(f"There was an error deleting the Sleeper account from user: {current_user.username}: {e}")
-                return jsonify({'error': f'There was an error deleting the Sleeper account from user: {current_user.username}: {e}'}), 404
+                flash("There was an error unlinking your Sleeper account, please report this error.", "error")
+                return redirect(url_for('main.dashboard'))
+                # return jsonify({'error': f'There was an error deleting the Sleeper account from user: {current_user.username}: {e}'}), 404
 
 # ------------------------------------------------------------
 # Backend Function Calls
