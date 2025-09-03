@@ -311,6 +311,7 @@
                         </form>
 
                         <form id="sleeper-disconnect-btn" method="POST" action="{{ url_for('main.del_sleeper_username') }}">
+                            {{ sleeper_form.hidden_tag() }}
                             {{ sleeper_dis.disconnect(id="sleeperDisconnectBtn") }}
                         </form>
                     </div>
