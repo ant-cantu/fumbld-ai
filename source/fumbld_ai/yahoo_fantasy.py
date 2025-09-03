@@ -58,7 +58,7 @@ def yahoo_set_leagues():
                             league_positions[league].append(position_name)
 
                 starting_positions = league_positions[league]
-                logger.log(f"****** Starting positions: {starting_positions} ******")
+                print(f"****** Starting positions: {starting_positions} ******")
 
                 # Retrieve league settings which includes the name of the league
                 lg_info = lg.settings()
