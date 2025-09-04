@@ -125,7 +125,7 @@ function fetch_recommendation(provider, league_id) {
             //reasonContainer.innerHTML = '';
             //reasonContainer.innerHTML = `<p>${reason}</p>`;
             
-            ai_response = tokenizeResponse(reason);
+            ai_response = reason;
 
             if(mobileInsightBtn.classList.contains("mobile-active")) {
                 sheet.classList.add('open');
@@ -139,91 +139,34 @@ function fetch_recommendation(provider, league_id) {
                 const aiModuleContent = document.querySelector(".ai-container #content");
                 aiModuleContent.style.justifyContent = "flex-start";
 
-                //typeIt(mobileResponse);
-                typeTokens(mobileResponse, tokens, 20);
+                typeIt(mobileResponse);
             } else {
-                //typeIt(response);
-                typeTokens(response, tokens, 20);
+                typeIt(response);
             }
             //mobileInsightBtn.classList.add("ai-active");
             
         });
 }
 
-
-// function formatResponse(responseText) {
-//     // Replace **Player Name** with <br><b>Player Name</b>
-//     return responseText.replace(/\*\*(.*?)\*\*/g, (match, p1) => {
-//         return `<br><b>${p1}</b>`;
-//     });
-// }
-
-// function typeIt(textContainer) {
-//     /**
-//     * Animates the display of the AI response by typing out each character one at a time.
-//     * Continues until the entire response has been displayed, then hides the spinner.
-//     * 
-//     * Assumes the existence of the following global variables:
-//     * - ai_response: {string} The full response text to display.
-//     * - charCount: {number} The current character index being displayed.
-//     * - response: {HTMLElement} The DOM element where the response is shown.
-//     * - spinner: {HTMLElement} The DOM element representing the loading spinner.
-//     */
-//     if (charCount < ai_response.length) {
-//         textContainer.innerHTML += ai_response[charCount];
-//         charCount++;
-//         setTimeout(() => typeIt(textContainer), 20);
-//     }
-//     else {
-//         spinner.style.display = "none";
-//     }
-// }
-
-// Turn **Player Name** into tokens: plain text, <br>, and <strong> nodes
-function tokenizeResponse(responseText) {
-  const tokens = [];
-  const re = /\*\*(.*?)\*\*/g;
-  let last = 0, m;
-
-  while ((m = re.exec(responseText)) !== null) {
-    if (m.index > last) tokens.push({ type: "text", text: responseText.slice(last, m.index) });
-    tokens.push({ type: "br" });
-    tokens.push({ type: "bold", text: m[1] }); // removes the **...**
-    last = re.lastIndex;
-  }
-  if (last < responseText.length) tokens.push({ type: "text", text: responseText.slice(last) });
-  return tokens;
-}
-
-// Typing animation that appends real nodes (no HTML strings)
-function typeTokens(textContainer, tokens, speed = 20) {
-  let ti = 0, ci = 0, node = null;
-
-  // clear container before typing (optional)
-  textContainer.innerHTML = "";
-
-  (function tick() {
-    if (ti >= tokens.length) { spinner.style.display = "none"; return; }
-
-    const t = tokens[ti];
-
-    if (t.type === "br") {
-      textContainer.appendChild(document.createElement("br"));
-      ti++; ci = 0; node = null;
-      setTimeout(tick, speed);
-      return;
+function typeIt(textContainer) {
+    /**
+    * Animates the display of the AI response by typing out each character one at a time.
+    * Continues until the entire response has been displayed, then hides the spinner.
+    * 
+    * Assumes the existence of the following global variables:
+    * - ai_response: {string} The full response text to display.
+    * - charCount: {number} The current character index being displayed.
+    * - response: {HTMLElement} The DOM element where the response is shown.
+    * - spinner: {HTMLElement} The DOM element representing the loading spinner.
+    */
+    if (charCount < ai_response.length) {
+        textContainer.innerHTML += ai_response[charCount];
+        charCount++;
+        setTimeout(() => typeIt(textContainer), 20);
     }
-
-    if (!node) {
-      node = document.createElement(t.type === "bold" ? "strong" : "span");
-      textContainer.appendChild(node);
+    else {
+        spinner.style.display = "none";
     }
-
-    node.textContent += t.text.charAt(ci++);
-    if (ci >= t.text.length) { ti++; ci = 0; node = null; }
-
-    setTimeout(tick, speed);
-  })();
 }
 
 // Insight button event handler
