@@ -120,7 +120,7 @@ function fetch_recommendation(provider, league_id) {
             //reasonContainer.innerHTML = '';
             //reasonContainer.innerHTML = `<p>${reason}</p>`;
             
-            ai_response = reason;
+            ai_response = formatResponse(reason);
 
             if(mobileInsightBtn.classList.contains("mobile-active")) {
                 sheet.classList.add('open');
@@ -141,6 +141,13 @@ function fetch_recommendation(provider, league_id) {
             //mobileInsightBtn.classList.add("ai-active");
             
         });
+}
+
+function formatResponse(responseText) {
+    // Replace **Player Name** with <br><b>Player Name</b>
+    return responseText.replace(/\*\*(.*?)\*\*/g, (match, p1) => {
+        return `<br><b>${p1}</b>`;
+    });
 }
 
 function typeIt(textContainer) {
