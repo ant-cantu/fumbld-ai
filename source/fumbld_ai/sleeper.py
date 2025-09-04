@@ -120,8 +120,12 @@ def get_sleeper_roster(league_id, username):
                                         if name == "Los Angeles":
                                             pp = "??"
                                         else:
-                                            pp = projections.iloc[0]
-                                            conf = projections.iloc[1]
+                                            if projections is None or not hasattr(projections, "iloc") or len(projections) < 2:
+                                                pp = "??"
+                                                conf = "??"
+                                            else:
+                                                pp = projections.iloc[0]
+                                                conf = projections.iloc[1]
 
                                         player_data = pd.read_csv("/app/nfl_stats/data/df_players_2024.csv")
                                         player_url = player_data[player_data['player_name'].str.contains(name, case=False, na=False)]
