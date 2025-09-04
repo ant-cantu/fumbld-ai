@@ -62,9 +62,9 @@ def gemini_call(roster, positions):
         "...etc"
         "\n]\n"
         "---\n"
-        "Then give reasoning:\n"
+        "Then give reasoning, seperate each players reasoning with a line break:\n"
         "---\n\n"
-        "Reason: Your explanation here in detailed paragraphs explaining why. Use HTML to bold each player name and separate each paragraph by line breaks."
+        "Reason: Your explanation here in detailed paragraphs explaining why."
     )
 
     try:
