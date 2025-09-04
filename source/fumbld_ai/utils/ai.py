@@ -64,7 +64,7 @@ def gemini_call(roster, positions):
         "---\n"
         "Then give reasoning:\n"
         "---\n\n"
-        "Reason: Your explanation here in one detailed paragraph."
+        "Reason: Your explanation here in detailed paragraphs explaining why."
     )
 
     try:
