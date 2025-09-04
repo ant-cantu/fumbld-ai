@@ -42,6 +42,9 @@ function fetch_recommendation(provider, league_id) {
     modalSpinner.style.display = "block";
     modalCloseBtn.style.display = "none";
 
+    // Clear the output box
+    response.innerHTML = "";
+
     // fetch('/fetch/ai/recommendation?league-id=' + league_id)
     fetch('/api/' + provider + '/leagues/' + league_id + '/recommendations')
         .then(response => {
