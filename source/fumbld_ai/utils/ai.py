@@ -29,6 +29,11 @@ def gemini_call(roster, positions):
     api_key = current_app.config.get("GEMINI_API_KEY")
     client = genai.Client(api_key=api_key)
 
+    # Define grounding tool
+    grounding_tool = types.Tool(
+        google_search=types.GoogleSearch()
+    )
+
     instructions = (
         f"You are a fantasy football expert. It's Week {week} of the {season} season. "
         #"Below are two rosters: the user's full team and their opponent's starters. "
@@ -45,9 +50,9 @@ def gemini_call(roster, positions):
         "You can include bench players as well as long as their real position matches one of the available positions."
         "All positions must be filled and must be returned in the same order as the positions provided without the benched players."
         # "Your recommendation of players the user should start is based on all player stats. Break ties by upside/risk"
-        "Prioritize projected points, matchup rank, and health. Break ties by upside/risk. Consider weather for game locations.\n"
+        "Prioritize projected points, matchup rank, health, matchups, and weather for game location. Break ties by upside/risk.\n"
         "Only compare players to the current week of the season. "
-        "Do NOT makeup or guess information.\n\n"
+        "Do NOT makeup or guess information. Commence a search to get real-time information.\n\n"
 
         "Respond only in the format:\n"
         "---\n"
@@ -68,7 +73,8 @@ def gemini_call(roster, positions):
             contents=[f"Follow instructions. User's Roster:\n{roster}\n"],
             config=types.GenerateContentConfig(
                 system_instruction=instructions,
-                temperature=0.2
+                temperature=0.2,
+                tools=[grounding_tool]
             )
         )
 
