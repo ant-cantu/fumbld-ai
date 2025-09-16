@@ -14,20 +14,20 @@ logger = logging.getLogger("fumbld_logger")
 gemini_model = "gemini-2.5-pro"
 gpt_model = "gpt-4o"
 
-# Season Setup
-response = requests.get("https://api.sleeper.app/v1/state/nfl")
-
-# print(response.json())
-df = pd.DataFrame([response.json()])
-
-week = df['week'].iloc[0]
-season = df['season'].iloc[0]
-
 GeminiResult = namedtuple('GeminiResult', ['roster', 'reason'])
 
 def gemini_call(roster, positions):
     api_key = current_app.config.get("GEMINI_API_KEY")
     client = genai.Client(api_key=api_key)
+
+    # Season Setup
+    response = requests.get("https://api.sleeper.app/v1/state/nfl")
+    
+    # print(response.json())
+    df = pd.DataFrame([response.json()])
+    
+    week = df['week'].iloc[0]
+    season = df['season'].iloc[0]
 
     # Define grounding tool
     grounding_tool = types.Tool(
