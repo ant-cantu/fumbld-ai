@@ -19,6 +19,37 @@ let ai_response = "";   // This is set with the response from OpenAI
 //                     option available, making them the default choice. Cooper Kupp's bench status and potential injury concerns keep him out of the 
 //                     starting lineup.`;
 
+function formatReason(reason) {
+  // Split the text on ** markers
+  const parts = reason.split("**");
+
+  // parts will alternate: [text, "QB: Lamar Jackson", text, "WR: Davante Adams", text ...]
+  let result = "";
+
+  for (let i = 0; i < parts.length; i++) {
+    if (i % 2 === 1) {
+      // Odd indexes are the **...** contents
+      const section = parts[i].trim();
+      // Split into "label" (QB:, WR:, etc.) and "name"
+      const match = section.match(/^(.*?):\s*(.+)$/);
+      if (match) {
+        const label = match[1];
+        const name = match[2];
+        result += `<br><br>${label}: <strong>${name}</strong>`;
+      } else {
+        // fallback if no colon
+        result += `<br><br><strong>${section}</strong>`;
+      }
+    } else {
+      // Even indexes are normal text, just append
+      result += " " + parts[i].trim();
+    }
+  }
+
+  return result.trim();
+}
+
+
 function fetch_recommendation(provider, league_id) {
     /**
     * Fetches AI player recommendations for a given league and updates the UI table and response area.
@@ -125,7 +156,8 @@ function fetch_recommendation(provider, league_id) {
             //reasonContainer.innerHTML = '';
             //reasonContainer.innerHTML = `<p>${reason}</p>`;
             
-            ai_response = reason;
+            //ai_response = reason;
+            ai_response = formatReason(reason);
 
             if(mobileInsightBtn.classList.contains("mobile-active")) {
                 sheet.classList.add('open');
