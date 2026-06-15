@@ -3,10 +3,16 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, InputRequired
 
+
+# Lowercase validator
+def lowercase_filter(form, field):
+    if field.data:
+        field.data = field.data.lower()
+
 # '/register' form
 class RegistrationForm(FlaskForm):
     username = StringField("Username", validators=[
-        DataRequired(message="Username is required."),
+        lowercase_filter, DataRequired(message="Username is required."),
         Length(min=3, max=30, message="Username must be between 3 and 30 characters.")
     ])
 
@@ -40,7 +46,7 @@ class RegistrationForm(FlaskForm):
 # '/login' form
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[
-        DataRequired(message="Username is required."),
+        lowercase_filter, DataRequired(message="Username is required."),
         Length(min=3, max=30, message="Username must be between 3 and 30 characters.")
     ])
 
